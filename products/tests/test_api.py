@@ -36,6 +36,7 @@ class MainApiTestCase(APITestCase):
         self.assertEqual(serializer_data, response.data)
 
     def test_order(self):
+        """Сортування"""
         url = reverse('clothes-list')
         response = self.client.get(url, data={'ordering': '-price'})
         serializer_data = ClosthSerializer(

@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'products.apps.ProductsConfig',
+    'social_django',
+
+    'products',
 ]
 
 MIDDLEWARE = [
@@ -60,7 +62,7 @@ ROOT_URLCONF = 'TOPUS.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -89,6 +91,11 @@ DATABASES = {
         'PASSWORD': env('POSTGRES_PASSWORD'),
     }
 }
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 
 # Password validation
@@ -145,3 +152,9 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
     )
 }
+
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('AUTH_GOOGLE_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('AUTH_GOOGLE_SECRET')
