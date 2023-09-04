@@ -118,15 +118,16 @@ class Rating(models.Model):
 
 class MainModel(models.Model):
     title = models.CharField(max_length=150, verbose_name='Назва')
-    description = models.TextField('Опис', blank=True, null=True)
+    description = models.TextField('Опис', blank=True)
     price = models.DecimalField('Вартість', max_digits=7, decimal_places=2)
     brand = models.CharField(max_length=50, verbose_name='Бренд', blank=True)
     main_image = models.ImageField(
-        upload_to="main_photo", verbose_name='Фото', blank=True)
+        upload_to="main_photo", verbose_name='Фото', blank=True, null=True)
     category = models.ForeignKey(
-        'Category', on_delete=models.SET_NULL, null=True, verbose_name='Категорія')
+        'Category', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Категорія')
     slug = models.SlugField(max_length=150, unique=True,
                             db_index=True, verbose_name='url')
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     is_published = models.BooleanField(
         default=False, verbose_name='Публікація')
 
@@ -151,9 +152,9 @@ class Clothes(MainModel):
     )
 
     size = models.CharField(max_length=2, choices=SIZE,
-                            verbose_name='Розмір', null=True)
+                            verbose_name='Розмір', blank=True)
     season = models.CharField(
-        max_length=11, choices=SEASON, null=True, verbose_name='Сезон')
+        max_length=11, choices=SEASON, blank=True, verbose_name='Сезон')
 
     class Meta:
         verbose_name = 'Одяг'
@@ -164,8 +165,8 @@ class Gaming(MainModel):
     """Модель ігрової переферії
     """
     model = models.CharField(
-        max_length=50, verbose_name='Модель', null=True)
-    color = models.CharField(max_length=15, null=True, verbose_name='Колір')
+        max_length=50, verbose_name='Модель', blank=True)
+    color = models.CharField(max_length=15, blank=True, verbose_name='Колір')
 
     class Meta:
         verbose_name = 'Ігрова переферія'
@@ -175,8 +176,8 @@ class Gaming(MainModel):
 class Home(MainModel):
     """Модель товарів для дому
     """
-    material = models.CharField(max_length=50, null=True)
-    color = models.CharField(max_length=15, null=True, verbose_name='Колір')
+    material = models.CharField(max_length=50, blank=True)
+    color = models.CharField(max_length=15, blank=True, verbose_name='Колір')
     Room_Type = models.CharField(max_length=50, blank=True)
 
     class Meta:

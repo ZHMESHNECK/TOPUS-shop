@@ -32,10 +32,8 @@ router.register(r'cloth', ClothviewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path('', include('social_django.urls', namespace='social')),
-    # path('', include('products.urls')),
-    path('auth/', auth)
-]
+    path('auth/', include('products.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
 urlpatterns += router.urls
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)

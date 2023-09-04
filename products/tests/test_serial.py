@@ -1,42 +1,46 @@
-from django.test import TestCase
-from django.urls import reverse
-from products.models import Clothes
 from products.serializers import ClosthSerializer
-from rest_framework import status
+from django.contrib.auth.models import User
+from products.models import Clothes
+from django.test import TestCase
 
 
 class ClothSerializerTestCase(TestCase):
     def test_ok(self):
         """тест сериалайзера
         """
-        item = Clothes.objects.create(title='da', price=25)
-        item2 = Clothes.objects.create(title='net', price=55, slug='da')
+        self.user = User.objects.create(username='test2', is_staff=True)
+        item = Clothes.objects.create(title='da', price=25, owner=self.user)
+        item2 = Clothes.objects.create(title='net', price=55, slug='da', owner=self.user)
         data = ClosthSerializer([item, item2], many=True).data
         # що чекаемо отримати, та що отримали
         expected_data = [
             {
                 'id': item.id,
-                'title': 'da',
-                'description': None,
-                'price': '25.00',
-                'brand': None,
-                'slug': '',
-                'size': None,
-                'season': None,
+                'title': "da",
+                'description': "",
+                'price': "25.00",
+                'brand': "",
+                'main_image': None,
+                'slug': "",
+                'size': "",
+                'season': "",
                 'is_published': False,
-                'category': None
+                'category': None,
+                'owner': item.owner.id
             },
             {
                 'id': item2.id,
-                'title': 'net',
-                'description': None,
-                'price': '55.00',
-                'brand': None,
-                'slug': 'da',
-                'size': None,
-                'season': None,
+                'title': "net",
+                'description': "",
+                'price': "55.00",
+                'brand': "",
+                'main_image': None,
+                'slug': "da",
+                'size': "",
+                'season': "",
                 'is_published': False,
-                'category': None
-            },
+                'category': None,
+                'owner': item2.owner.id
+            }
         ]
         self.assertEqual(expected_data, data)

@@ -1,6 +1,6 @@
 from rest_framework.routers import SimpleRouter
+from products.views import ClothviewSet, auth
 from django.conf.urls.static import static
-from products.views import ClothviewSet
 from django.conf import settings
 from django.urls import path
 
@@ -8,7 +8,9 @@ from django.urls import path
 router = SimpleRouter()
 router.register(r'cloth', ClothviewSet)
 urlpatterns = [
-    path('cloth', ClothviewSet.as_view())
+
+    path('', auth)
+
 ]
 
 urlpatterns += router.urls
