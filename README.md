@@ -68,6 +68,14 @@ __
 
 ## Оновлення
 
+version 0.0.3
+- Видалене поле slug для Mainmodel 
+- Добавленні поля date_create | s_code
+- Добавлен генератор серійного коду при створенні нового запису django-admin / postman
+- Добавлена admin.model для Home
+- WARNING в тестах -> DateTimeField MainModel.date_created received a naive datetime (2023-09-06 17:34:00) while time zone support is active.
+- Початок розробки рейтингу для товарів
+
 version 0.0.2
 - Добавленні Permission
 - Зміненні поля в моделях з null=True на blank=True

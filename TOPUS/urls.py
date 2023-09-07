@@ -20,13 +20,14 @@ from django.urls import path, include, re_path
 from django.contrib import admin
 from rest_framework.routers import SimpleRouter
 from django.conf.urls.static import static
-from products.views import ClothviewSet, auth
+from products.views import ClothviewSet, UserRatingViewSet
 from django.conf import settings
 from django.urls import path
 
 
 router = SimpleRouter()
 router.register(r'cloth', ClothviewSet)
+router.register(r'relation', UserRatingViewSet)
 
 
 urlpatterns = [

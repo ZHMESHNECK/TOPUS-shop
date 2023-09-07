@@ -12,11 +12,11 @@ class MainApiTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create(username='test')
         self.item = Clothes.objects.create(
-            title='test1', price='150.00', slug='1', size='S', season='SUMMER', owner=self.user)
+            title='test1', price='150.00', size='S', season='SUMMER', owner=self.user, s_code='123')
         self.item2 = Clothes.objects.create(
-            title='test2', price='100.00', slug='2', size='S', season='test1')
+            title='test2', price='100.00', size='S', season='test1', s_code='223')
         self.item3 = Clothes.objects.create(
-            title='test3', price='500.00', slug='3', size='XL', season='SUMMER')
+            title='test3', price='500.00', size='XL', season='SUMMER', s_code='323')
 
     def test_get(self):
         """Перевірка зв'язку з сервером, створення 3-ох записів 
@@ -53,7 +53,7 @@ class MainApiTestCase(APITestCase):
         data = {
             "title": 'test_create_1',
             "price": 400,
-            "slug": 'slug_test_1',
+            "category": None
         }
         json_data = json.dumps(data)
         self.client.force_login(self.user)
@@ -72,7 +72,7 @@ class MainApiTestCase(APITestCase):
             "price": 5000,
             "brand": self.item.brand,
             "main_image": None,
-            "slug": self.item.slug,
+            "s_code": self.item.s_code,
             "is_published": False,
             "size": self.item.size,
             "season": self.item.season,
@@ -107,7 +107,7 @@ class MainApiTestCase(APITestCase):
             "price": 5000,
             "brand": self.item.brand,
             "main_image": None,
-            "slug": self.item.slug,
+            "s_code": self.item.s_code,
             "is_published": False,
             "size": self.item.size,
             "season": self.item.season,
@@ -142,7 +142,7 @@ class MainApiTestCase(APITestCase):
             "price": 5000,
             "brand": self.item.brand,
             "main_image": None,
-            "slug": self.item.slug,
+            "s_code": self.item.s_code,
             "is_published": False,
             "size": self.item.size,
             "season": self.item.season,
@@ -155,3 +155,21 @@ class MainApiTestCase(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.item.refresh_from_db()
         self.assertEqual(5000, self.item.price)
+
+
+# class RelationTestCase(APITestCase):
+
+#     def setUp(self):
+#         self.user = User.objects.create(username='test')
+#         self.user2 = User.objects.create(username='test2')
+#         self.item = Clothes.objects.create(
+#             title='test1', price='150.00', s_code='1', size='S', season='SUMMER', owner=self.user)
+#         self.item2 = Clothes.objects.create(
+#             title='test2', price='100.00', s_code='2', size='S', season='test1')
+
+#     def test_get(self):
+#         """Перевірка зв'язку з сервером, створення 3-ох записів 
+#         """
+#         url = reverse('rating-detail')
+#         response = self.client.patch(url)
+#         self.assertEqual(status.HTTP_200_OK, response.status_code)

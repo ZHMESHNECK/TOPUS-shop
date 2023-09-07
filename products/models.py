@@ -1,14 +1,15 @@
 from django.contrib.auth.models import User
 from django.db import models
 from PIL import Image
+from django.utils import timezone
 
 
 class Category(models.Model):
     """Модель  категорій
     """
     cat_name = models.CharField('Назва', max_length=100)
-    slug = models.SlugField(max_length=255, unique=True,
-                            db_index=True, verbose_name="URL")
+    slug = models.SlugField('URL', max_length=100, unique=True,
+                            db_index=True)
 
     def __str__(self):
         return self.cat_name
@@ -18,8 +19,109 @@ class Category(models.Model):
         verbose_name_plural = 'Категорії'
 
 
+class MainModel(models.Model):
+    title = models.CharField('Назва', max_length=150)
+    description = models.TextField('Опис', blank=True)
+    price = models.DecimalField('Вартість', max_digits=7, decimal_places=2)
+    brand = models.CharField('Бренд', max_length=50, blank=True)
+    main_image = models.ImageField('Фото',
+                                   upload_to='main_photo', blank=True, null=True)
+    category = models.ForeignKey(
+        'Category', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Категорія')
+    s_code = models.CharField(
+        'Serial_key', max_length=10, unique=True, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    date_created = models.DateTimeField(
+        auto_now_add=True, verbose_name='Час створення')
+    is_published = models.BooleanField('Публікація',
+                                       default=False)
+
+
+class Clothes(MainModel):
+    """Модель одягу
+    """
+
+    SIZE = (
+        ('-', '-'),
+        ('S', 'Small'),
+        ('M', 'Medium'),
+        ('L', 'Large'),
+        ('XL', 'Extra Large')
+    )
+    SEASON = (
+        ('ALL_SEASON', 'Все сезон'),
+        ('SUMMER', 'Літо'),
+        ('AUTUM', 'Осінь'),
+        ('WINTER', 'Зима'),
+        ('SPRING', 'Весна'),
+    )
+
+    DEPART = (
+        ('Women', 'Жіноче'),
+        ('Men', 'Чоловіче'),
+        ('Unisex', 'Унісекс'),
+    )
+
+    size = models.CharField('Розмір', max_length=2, choices=SIZE, blank=True)
+    season = models.CharField('Сезон', max_length=11,
+                              choices=SEASON, blank=True)
+
+    department = models.CharField('Стать', choices=DEPART, blank=True)
+
+    class Meta:
+        verbose_name = 'Одяг'
+        verbose_name_plural = 'Одяг'
+
+
+class Gaming(MainModel):
+    """Модель ігрової переферії
+    """
+    material = models.CharField('Матеріал',
+                                max_length=50, blank=True)
+    model = models.CharField('Модель',
+                             max_length=50, blank=True)
+    color = models.CharField('Колір', max_length=15, blank=True)
+
+    class Meta:
+        verbose_name = 'Ігрова переферія'
+        verbose_name_plural = 'Ігрова переферія'
+
+
+class Home(MainModel):
+    """Модель товарів для дому
+    """
+    material = models.CharField('Матеріал', max_length=50, blank=True)
+    color = models.CharField('Колір', max_length=15, blank=True)
+    room_type = models.CharField('Для кімнат', max_length=50, blank=True)
+    weight = models.DecimalField(
+        'Вага', max_digits=5, decimal_places=1, blank=True)
+    dimensions = models.CharField('Розмір', max_length=30, blank=True)
+
+    class Meta:
+        verbose_name = 'Для дому'
+        verbose_name_plural = 'Для дому'
+
+
+class Rating(models.Model):
+    RATING = (
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4),
+        (5, 5)
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    item_id = models.ForeignKey(
+        'MainModel', on_delete=models.CASCADE, verbose_name='об\'єкт', related_name='cloth')
+
+    class Meta:
+        verbose_name = 'Руйтинг'
+        verbose_name_plural = 'Рейтинг'
+
+
 class Gallery_cloth(models.Model):
-    """Модель декількох фото "одягу" до 1-го об'єкту
+    """Модель декількох фото 'одягу' до 1-го об'єкту
     """
     images = models.ImageField('Фото', upload_to='cloth_photos')
     clothes_id = models.ForeignKey(
@@ -52,24 +154,6 @@ class Gallery_home(models.Model):
     class Meta:
         verbose_name = 'Фото товару'
         verbose_name_plural = 'Фото товару'
-
-
-class Rating(models.Model):
-    RATING = (
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4),
-        (5, 5)
-    )
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item_id = models.ForeignKey(
-        'Clothes', on_delete=models.CASCADE, verbose_name='об\'єкт', related_name='cloth')
-
-    class Meta:
-        verbose_name = 'Руйтинг'
-        verbose_name_plural = 'Рейтинг'
 
 
 # class Review(models.Model):
@@ -114,72 +198,3 @@ class Rating(models.Model):
 #     class Meta:
 #         verbose_name = 'Аккаунт'
 #         verbose_name_plural = 'Аккаунти'
-
-
-class MainModel(models.Model):
-    title = models.CharField(max_length=150, verbose_name='Назва')
-    description = models.TextField('Опис', blank=True)
-    price = models.DecimalField('Вартість', max_digits=7, decimal_places=2)
-    brand = models.CharField(max_length=50, verbose_name='Бренд', blank=True)
-    main_image = models.ImageField(
-        upload_to="main_photo", verbose_name='Фото', blank=True, null=True)
-    category = models.ForeignKey(
-        'Category', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Категорія')
-    slug = models.SlugField(max_length=150, unique=True,
-                            db_index=True, verbose_name='url')
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    is_published = models.BooleanField(
-        default=False, verbose_name='Публікація')
-
-
-class Clothes(MainModel):
-    """Модель одягу
-    """
-
-    SIZE = (
-        ('-', '-'),
-        ('S', 'Small'),
-        ('M', 'Medium'),
-        ('L', 'Large'),
-        ('XL', 'Extra Large')
-    )
-    SEASON = (
-        ('ALL_SEASON', 'Все сезон'),
-        ('SUMMER', 'Літо'),
-        ('AUTUM', 'Осінь'),
-        ('WINTER', 'Зима'),
-        ('SPRING', 'Весна'),
-    )
-
-    size = models.CharField(max_length=2, choices=SIZE,
-                            verbose_name='Розмір', blank=True)
-    season = models.CharField(
-        max_length=11, choices=SEASON, blank=True, verbose_name='Сезон')
-
-    class Meta:
-        verbose_name = 'Одяг'
-        verbose_name_plural = 'Одяг'
-
-
-class Gaming(MainModel):
-    """Модель ігрової переферії
-    """
-    model = models.CharField(
-        max_length=50, verbose_name='Модель', blank=True)
-    color = models.CharField(max_length=15, blank=True, verbose_name='Колір')
-
-    class Meta:
-        verbose_name = 'Ігрова переферія'
-        verbose_name_plural = 'Ігрова переферія'
-
-
-class Home(MainModel):
-    """Модель товарів для дому
-    """
-    material = models.CharField(max_length=50, blank=True)
-    color = models.CharField(max_length=15, blank=True, verbose_name='Колір')
-    Room_Type = models.CharField(max_length=50, blank=True)
-
-    class Meta:
-        verbose_name = 'Для дому'
-        verbose_name_plural = 'Для дому'
