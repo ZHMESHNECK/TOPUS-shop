@@ -34,6 +34,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path('', include('social_django.urls', namespace='social')),
     path('auth/', include('products.urls')),
+    path("__debug__/", include("debug_toolbar.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

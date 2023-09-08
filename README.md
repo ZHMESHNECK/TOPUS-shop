@@ -68,6 +68,10 @@ __
 
 ## Оновлення
 
+version 0.0.4
+- Добавленні поля discount, viewed для mainmodel
+- Добавленні annotaion для оптимізаціії sql запросів + тести
+
 version 0.0.3
 - Видалене поле slug для Mainmodel 
 - Добавленні поля date_create | s_code

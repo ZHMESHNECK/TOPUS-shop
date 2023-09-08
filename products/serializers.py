@@ -1,11 +1,18 @@
 from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 from products.models import Clothes, Gaming, Rating
 
 
-class ClosthSerializer(ModelSerializer):
+class ClothSerializer(ModelSerializer):
+
+    rate_count = serializers.DecimalField(
+        max_digits=2, decimal_places=1, read_only=True)
+    price_w_dis = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Clothes
-        fields = '__all__'
+        fields = ('id', 'title', 'price', 'owner',
+                  'category', 'rate_count', 'price_w_dis', 'discount')
 
 
 class GamingSerializer(ModelSerializer):
@@ -17,4 +24,4 @@ class GamingSerializer(ModelSerializer):
 class RatingSerializer(ModelSerializer):
     class Meta:
         model = Rating
-        fields = ('Clothes_id', 'Gaming_id', 'rate')
+        fields = ('item_id', 'rate')

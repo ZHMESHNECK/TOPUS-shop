@@ -2,17 +2,18 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.mixins import UpdateModelMixin
-from products.serializers import ClosthSerializer, GamingSerializer, RatingSerializer
+from products.serializers import ClothSerializer, GamingSerializer, RatingSerializer
 from products.models import Clothes, Gaming, Rating
 from products.permission import IsStaffOrReadOnly
 from products.utils import serial_code_randomizer
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import render
-
+from django.db.models import Avg
 
 class ClothviewSet(ModelViewSet):
-    queryset = Clothes.objects.all()
-    serializer_class = ClosthSerializer
+    queryset = Clothes.objects.all().annotate(
+            rate_count=Avg('main_item__rate')).order_by('id')
+    serializer_class = ClothSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']
     permission_classes = [IsStaffOrReadOnly]
@@ -36,7 +37,7 @@ class GamingViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user,
                         s_code=serial_code_randomizer(serializer.validated_data['category']))
-        
+
 
 class HomeViewSet(ModelViewSet):
     queryset = Gaming.objects.all()
@@ -59,7 +60,9 @@ class UserRatingViewSet(UpdateModelMixin, GenericViewSet):
     lookup_field = 'item'
 
     def get_object(self):
-        obj, _ = Rating.objects.get_or_create(user=self.request.user,)
+        obj, _ = Rating.objects.get_or_create(
+            user=self.request.user, item_id=self.kwargs['item'])
+        return obj
 
 
 def auth(request):

@@ -30,11 +30,19 @@ class MainModel(models.Model):
         'Category', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Категорія')
     s_code = models.CharField(
         'Serial_key', max_length=10, unique=True, blank=True)
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    owner = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, verbose_name='Власник', related_name='create')
     date_created = models.DateTimeField(
         auto_now_add=True, verbose_name='Час створення')
+    discount = models.SmallIntegerField(default=0) # 0-100%
     is_published = models.BooleanField('Публікація',
                                        default=False)
+
+    viewed = models.ManyToManyField(
+        User, through='Rating', related_name='view')
+
+    def __str__(self) -> str:
+        return f'Id {self.id}: {self.title}'
 
 
 class Clothes(MainModel):
@@ -86,6 +94,9 @@ class Gaming(MainModel):
         verbose_name = 'Ігрова переферія'
         verbose_name_plural = 'Ігрова переферія'
 
+    def __str__(self) -> str:
+        return f'Id {self.id}: {self.title}'
+
 
 class Home(MainModel):
     """Модель товарів для дому
@@ -101,6 +112,9 @@ class Home(MainModel):
         verbose_name = 'Для дому'
         verbose_name_plural = 'Для дому'
 
+    def __str__(self) -> str:
+        return f'Id {self.id}: {self.title}'
+
 
 class Rating(models.Model):
     RATING = (
@@ -111,13 +125,19 @@ class Rating(models.Model):
         (5, 5)
     )
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item_id = models.ForeignKey(
-        'MainModel', on_delete=models.CASCADE, verbose_name='об\'єкт', related_name='cloth')
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name='Юзер')
+    item = models.ForeignKey(
+        'MainModel', on_delete=models.CASCADE, verbose_name='об\'єкт', related_name='main_item')
+    rate = models.PositiveSmallIntegerField(
+        'Оцінка', choices=RATING, null=True)
 
     class Meta:
-        verbose_name = 'Руйтинг'
+        verbose_name = 'Рейтинг'
         verbose_name_plural = 'Рейтинг'
+
+    def __str__(self) -> str:
+        return f'{self.user.username}: {self.item.title} -> {self.rate}'
 
 
 class Gallery_cloth(models.Model):
@@ -156,6 +176,7 @@ class Gallery_home(models.Model):
         verbose_name_plural = 'Фото товару'
 
 
+# https://www.youtube.com/watch?v=reFJ9hBLFUY
 # class Review(models.Model):
 #     email = models.EmailField()
 #     name = models.CharField('логін', max_length=100)

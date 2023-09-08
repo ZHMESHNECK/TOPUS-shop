@@ -1,9 +1,11 @@
-from products.models import Clothes, Gaming, Category
-from products.serializers import ClosthSerializer
-from rest_framework.test import APITestCase
+from products.models import Clothes, Gaming, Category, Rating
+from products.serializers import ClothSerializer
+from django.db.models import Case, Count, When, Avg
 from django.contrib.auth.models import User
-from rest_framework import status
 from django.urls import reverse
+from django.utils import timezone
+from rest_framework.test import APITestCase
+from rest_framework import status
 import json
 
 
@@ -12,28 +14,35 @@ class MainApiTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create(username='test')
         self.item = Clothes.objects.create(
-            title='test1', price='150.00', size='S', season='SUMMER', owner=self.user, s_code='123')
+            title='test1', price='150.00', size='S', season='SUMMER', owner=self.user, s_code='123', date_created=timezone.now())
         self.item2 = Clothes.objects.create(
-            title='test2', price='100.00', size='S', season='test1', s_code='223')
+            title='test2', price='100.00', size='S', season='test1', s_code='223', date_created=timezone.now(), discount=30)
         self.item3 = Clothes.objects.create(
-            title='test3', price='500.00', size='XL', season='SUMMER', s_code='323')
+            title='test3', price='500.00', size='XL', season='SUMMER', s_code='323', date_created=timezone.now())
+        Rating.objects.create(user=self.user, item=self.item, rate=4)
 
     def test_get(self):
         """Перевірка зв'язку з сервером, створення 3-ох записів 
         """
         url = reverse('clothes-list')
         response = self.client.get(url)
-        serializer_data = ClosthSerializer(
-            [self.item, self.item2, self.item3], many=True).data
+        items = Clothes.objects.all().annotate(
+            rate_count=Avg('main_item__rate')).order_by('id')
+
+        serializer_data = ClothSerializer(items, many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(serializer_data, response.data)
+        self.assertEqual(serializer_data[0]['rate_count'], '4.0')
 
     def test_search(self):
         """Пошук по декількох полях"""
         url = reverse('clothes-list')
+        items = Clothes.objects.filter(id__in=[self.item.id, self.item2.id]).annotate(
+            rate_count=Avg('main_item__rate')).order_by('id')
+
         response = self.client.get(url, data={'search': 'test1'})
-        serializer_data = ClosthSerializer(
-            [self.item, self.item2], many=True).data
+        serializer_data = ClothSerializer(
+            items, many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(serializer_data, response.data)
 
@@ -41,8 +50,11 @@ class MainApiTestCase(APITestCase):
         """Сортування"""
         url = reverse('clothes-list')
         response = self.client.get(url, data={'ordering': '-price'})
-        serializer_data = ClosthSerializer(
-            [self.item3, self.item, self.item2], many=True).data
+        items = Clothes.objects.filter(
+            id__in=[self.item.id, self.item2.id, self.item3.id]).annotate(
+            rate_count=Avg('main_item__rate')).order_by('-price')
+        serializer_data = ClothSerializer(
+            items, many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(serializer_data, response.data)
 
@@ -51,9 +63,9 @@ class MainApiTestCase(APITestCase):
         self.assertEqual(3, Clothes.objects.all().count())
         url = reverse('clothes-list')
         data = {
-            "title": 'test_create_1',
-            "price": 400,
-            "category": None
+            'title': 'test_create_1',
+            'price': 400,
+            'category': None
         }
         json_data = json.dumps(data)
         self.client.force_login(self.user)
@@ -67,20 +79,11 @@ class MainApiTestCase(APITestCase):
         url = reverse('clothes-detail', args=(self.item.id,))
 
         data = {
-            "title": self.item.title,
-            "description": self.item.description,
-            "price": 5000,
-            "brand": self.item.brand,
-            "main_image": None,
-            "s_code": self.item.s_code,
-            "is_published": False,
-            "size": self.item.size,
-            "season": self.item.season,
-            "category": self.item.category
+            'price': 5000,
         }
         json_data = json.dumps(data)
         self.client.force_login(self.user)
-        response = self.client.put(
+        response = self.client.patch(
             url, data=json_data, content_type='application/json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.item.refresh_from_db()  # дістаємо з БД оновлену модель
@@ -102,20 +105,12 @@ class MainApiTestCase(APITestCase):
         url = reverse('clothes-detail', args=(self.item.id,))
 
         data = {
-            "title": self.item.title,
-            "description": self.item.description,
-            "price": 5000,
-            "brand": self.item.brand,
-            "main_image": None,
-            "s_code": self.item.s_code,
-            "is_published": False,
-            "size": self.item.size,
-            "season": self.item.season,
-            "category": self.item.category
+
+            'price': 5000,
         }
         json_data = json.dumps(data)
         self.client.force_login(self.user2)
-        response = self.client.put(
+        response = self.client.patch(
             url, data=json_data, content_type='application/json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
         self.item.refresh_from_db()
@@ -137,39 +132,76 @@ class MainApiTestCase(APITestCase):
         url = reverse('clothes-detail', args=(self.item.id,))
 
         data = {
-            "title": self.item.title,
-            "description": self.item.description,
-            "price": 5000,
-            "brand": self.item.brand,
-            "main_image": None,
-            "s_code": self.item.s_code,
-            "is_published": False,
-            "size": self.item.size,
-            "season": self.item.season,
-            "category": self.item.category
+            'title': self.item.title,
+            'description': self.item.description,
+            'price': 5000,
+            'rate_count': 1
         }
         json_data = json.dumps(data)
         self.client.force_login(self.user)
         response = self.client.put(
             url, data=json_data, content_type='application/json')
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(status.HTTP_200_OK,
+                         response.status_code, response.data)
         self.item.refresh_from_db()
         self.assertEqual(5000, self.item.price)
 
+    def test_discount(self):
+        """Встановлення знижки в 30%"""
+        self.user3 = User.objects.create(username='test2', is_staff=True)
+        url = reverse('clothes-detail', args=(self.item.id,))
 
-# class RelationTestCase(APITestCase):
+        data = {
+            "price": 5000,
+            "discount": 30,
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.user)
+        response = self.client.patch(
+            url, data=json_data, content_type='application/json')
+        self.assertEqual(status.HTTP_200_OK,
+                         response.status_code, response.data)
+        self.item.refresh_from_db()
+        self.assertEqual(5000, self.item.price)
+        self.assertEqual(30, self.item.discount)
 
-#     def setUp(self):
-#         self.user = User.objects.create(username='test')
-#         self.user2 = User.objects.create(username='test2')
-#         self.item = Clothes.objects.create(
-#             title='test1', price='150.00', s_code='1', size='S', season='SUMMER', owner=self.user)
-#         self.item2 = Clothes.objects.create(
-#             title='test2', price='100.00', s_code='2', size='S', season='test1')
 
-#     def test_get(self):
-#         """Перевірка зв'язку з сервером, створення 3-ох записів 
-#         """
-#         url = reverse('rating-detail')
-#         response = self.client.patch(url)
-#         self.assertEqual(status.HTTP_200_OK, response.status_code)
+class RelationTestCase(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(username='test')
+        self.user2 = User.objects.create(username='test2')
+        self.item = Clothes.objects.create(
+            title='test1', price='150.00', s_code='1', size='S', season='SUMMER', owner=self.user)
+        self.item2 = Clothes.objects.create(
+            title='test2', price='100.00', s_code='2', size='S', season='test1')
+
+    def test_rate(self):
+        """Змінення рейтингу
+        """
+        url = reverse('rating-detail', args=(self.item.id,))
+
+        data = {
+            'rate': 2,
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.user)
+        response = self.client.patch(
+            url, data=json_data, content_type='application/json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        relation = Rating.objects.get(user=self.user, item=self.item)
+        self.assertEqual(relation.rate, 2)
+
+    def test_rate_wrong(self):
+        """Ставлення невірного рейтингу 
+        """
+        url = reverse('rating-detail', args=(self.item.id,))
+
+        data = {
+            'rate': 6,
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.user)
+        response = self.client.patch(
+            url, data=json_data, content_type='application/json')
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)

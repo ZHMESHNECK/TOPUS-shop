@@ -33,8 +33,8 @@ class ClothAdmin(admin.ModelAdmin):
     list_editable = ('is_published',)
     search_fields = ('title', 'season', 'size')
     fields = ('title', 'description', 'price', 'category', 'brand',
-              'main_image', 'is_published', 'size', 'season', 'department', 's_code', 'date_created')
-    readonly_fields = ('s_code', 'date_created')
+              'main_image', 'is_published', 'size', 'season', 'department', 's_code', 'date_created', 'owner')
+    readonly_fields = ('s_code', 'date_created', 'owner')
     inlines = [GalleryClInline]
 
     def get_html_photo(self, object):
@@ -56,8 +56,8 @@ class GamingAdmin(admin.ModelAdmin):
     list_editable = ('is_published',)
     search_fields = ('title', 'brand', 'model')
     fields = ('title', 'description', 'price', 'category', 'brand',
-              'main_image', 'is_published', 'material', 'model', 'color', 's_code')
-    readonly_fields = ('s_code', 'date_created')
+              'main_image', 'is_published', 'material', 'model', 'color', 's_code', 'owner')
+    readonly_fields = ('s_code', 'date_created', 'owner')
     inlines = [GalleryGaInline]
 
     def get_html_photo(self, object):
@@ -79,8 +79,8 @@ class HomeAdmin(admin.ModelAdmin):
     list_editable = ('is_published',)
     search_fields = ('title', 'room_type')
     fields = ('title', 'description', 'price', 'category', 'brand',
-              'main_image', 'is_published', 'material', 'color', 'room_type', 'weight', 'dimensions', 's_code')
-    readonly_fields = ('s_code', 'date_created')
+              'main_image', 'is_published', 'material', 'color', 'room_type', 'weight', 'dimensions', 's_code', 'owner')
+    readonly_fields = ('s_code', 'date_created', 'owner')
     inlines = [GalleryHmInline]
 
     def get_html_photo(self, object):
@@ -97,4 +97,4 @@ class HomeAdmin(admin.ModelAdmin):
 
 @admin.register(Rating)
 class RatingAdmin(admin.ModelAdmin):
-    pass
+    fields = ('user', 'item_id', 'rate')
