@@ -7,12 +7,14 @@ from products.models import Clothes, Gaming, Rating
 from products.permission import IsStaffOrReadOnly
 from products.utils import serial_code_randomizer
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Avg, F, Prefetch, Count
+from django.contrib.auth.models import User
 from django.shortcuts import render
-from django.db.models import Avg
+
 
 class ClothviewSet(ModelViewSet):
-    queryset = Clothes.objects.all().annotate(
-            rate_count=Avg('main_item__rate')).order_by('id')
+    queryset = Clothes.objects.all().annotate(price_w_dis=F('price')-F('price') /
+                                              100*F('discount'), views=Count('viewed')).order_by('id')
     serializer_class = ClothSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']

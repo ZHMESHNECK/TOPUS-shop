@@ -1,6 +1,12 @@
 import random
 from string import ascii_uppercase, digits
-from products.models import MainModel
+from products.models import MainModel, Rating
+from django.db.models import Avg
+
+
+def gen_code(x: str) -> str:
+    return x+''.join(random.choice([*
+                                    ascii_uppercase, *digits]) for _ in range(9))
 
 
 def serial_code_randomizer(args):
@@ -13,13 +19,19 @@ def serial_code_randomizer(args):
         str: Повертає рандомно згенеровану строку
     """
     if args == None:
-        args = 0
-    code_serial = str(args)+''.join(random.choice([*
-                                                   ascii_uppercase, *digits]) for _ in range(9))
+        args = '0'
+    else:
+        args = str(args.id)
+    code_serial = gen_code(args)
     find_copy = MainModel.objects.filter(s_code=code_serial).first()
     while find_copy is not None:
-        code_serial = str(args.id)+''.join(random.choice([*
-                                                          ascii_uppercase, *digits]) for _ in range(9))
+        code_serial = gen_code(args)
         find_copy = MainModel.objects.filter(
             s_code=code_serial).first()
     return code_serial
+
+
+def set_rating(item):
+    rating = Rating.objects.filter(item=item).aggregate(rating=Avg('rate')).get('rating')
+    item.rating =  rating
+    item.save()

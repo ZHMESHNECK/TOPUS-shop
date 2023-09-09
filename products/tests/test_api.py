@@ -1,6 +1,6 @@
 from products.models import Clothes, Gaming, Category, Rating
 from products.serializers import ClothSerializer
-from django.db.models import Case, Count, When, Avg
+from django.db.models import Case, Count, When, Avg, F
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
@@ -14,11 +14,11 @@ class MainApiTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create(username='test')
         self.item = Clothes.objects.create(
-            title='test1', price='150.00', size='S', season='SUMMER', owner=self.user, s_code='123', date_created=timezone.now())
+            title='test1', price='150.00', size='S', season='SUMMER', owner=self.user, s_code='123')
         self.item2 = Clothes.objects.create(
-            title='test2', price='100.00', size='S', season='test1', s_code='223', date_created=timezone.now(), discount=30)
+            title='test2', price='100.00', size='S', season='test1', s_code='223', discount=30)
         self.item3 = Clothes.objects.create(
-            title='test3', price='500.00', size='XL', season='SUMMER', s_code='323', date_created=timezone.now())
+            title='test3', price='500.00', size='XL', season='SUMMER', s_code='323')
         Rating.objects.create(user=self.user, item=self.item, rate=4)
 
     def test_get(self):
@@ -26,19 +26,19 @@ class MainApiTestCase(APITestCase):
         """
         url = reverse('clothes-list')
         response = self.client.get(url)
-        items = Clothes.objects.all().annotate(
-            rate_count=Avg('main_item__rate')).order_by('id')
+        items = Clothes.objects.all().annotate(price_w_dis=F(
+            'price')-F('price')/100*F('discount'), views=Count('viewed')).order_by('id')
 
         serializer_data = ClothSerializer(items, many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(serializer_data, response.data)
-        self.assertEqual(serializer_data[0]['rate_count'], '4.0')
+        self.assertEqual(serializer_data[0]['rating'], '4.0')
 
     def test_search(self):
         """Пошук по декількох полях"""
         url = reverse('clothes-list')
-        items = Clothes.objects.filter(id__in=[self.item.id, self.item2.id]).annotate(
-            rate_count=Avg('main_item__rate')).order_by('id')
+        items = Clothes.objects.filter(id__in=[self.item.id, self.item2.id]).annotate(price_w_dis=F(
+            'price')-F('price')/100*F('discount'), views=Count('viewed')).order_by('id')
 
         response = self.client.get(url, data={'search': 'test1'})
         serializer_data = ClothSerializer(
@@ -51,8 +51,8 @@ class MainApiTestCase(APITestCase):
         url = reverse('clothes-list')
         response = self.client.get(url, data={'ordering': '-price'})
         items = Clothes.objects.filter(
-            id__in=[self.item.id, self.item2.id, self.item3.id]).annotate(
-            rate_count=Avg('main_item__rate')).order_by('-price')
+            id__in=[self.item.id, self.item2.id, self.item3.id]).annotate(price_w_dis=F(
+                'price')-F('price')/100*F('discount'), views=Count('viewed')).order_by('-price')
         serializer_data = ClothSerializer(
             items, many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)

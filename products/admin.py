@@ -32,7 +32,7 @@ class ClothAdmin(admin.ModelAdmin):
     list_filter = ('category', 'brand', 'price')
     list_editable = ('is_published',)
     search_fields = ('title', 'season', 'size')
-    fields = ('title', 'description', 'price', 'category', 'brand',
+    fields = ('title', 'description', 'price', 'discount', 'category', 'brand',
               'main_image', 'is_published', 'size', 'season', 'department', 's_code', 'date_created', 'owner')
     readonly_fields = ('s_code', 'date_created', 'owner')
     inlines = [GalleryClInline]
@@ -45,7 +45,8 @@ class ClothAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.owner = request.user
-        obj.s_code = serial_code_randomizer(obj.category)
+        if not obj.s_code:
+            obj.s_code = serial_code_randomizer(obj.category)
         obj.save()
 
 
@@ -55,7 +56,7 @@ class GamingAdmin(admin.ModelAdmin):
     list_filter = ('category', 'brand', 'price')
     list_editable = ('is_published',)
     search_fields = ('title', 'brand', 'model')
-    fields = ('title', 'description', 'price', 'category', 'brand',
+    fields = ('title', 'description', 'price', 'discount', 'category', 'brand',
               'main_image', 'is_published', 'material', 'model', 'color', 's_code', 'owner')
     readonly_fields = ('s_code', 'date_created', 'owner')
     inlines = [GalleryGaInline]
@@ -68,7 +69,8 @@ class GamingAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.owner = request.user
-        obj.s_code = serial_code_randomizer(obj.category)
+        if not obj.s_code:
+            obj.s_code = serial_code_randomizer(obj.category)
         obj.save()
 
 
@@ -78,7 +80,7 @@ class HomeAdmin(admin.ModelAdmin):
     list_filter = ('category', 'brand', 'price')
     list_editable = ('is_published',)
     search_fields = ('title', 'room_type')
-    fields = ('title', 'description', 'price', 'category', 'brand',
+    fields = ('title', 'description', 'price', 'discount', 'category', 'brand',
               'main_image', 'is_published', 'material', 'color', 'room_type', 'weight', 'dimensions', 's_code', 'owner')
     readonly_fields = ('s_code', 'date_created', 'owner')
     inlines = [GalleryHmInline]
@@ -91,10 +93,11 @@ class HomeAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.owner = request.user
-        obj.s_code = serial_code_randomizer(obj.category)
+        if not obj.s_code:
+            obj.s_code = serial_code_randomizer(obj.category)
         obj.save()
 
 
 @admin.register(Rating)
 class RatingAdmin(admin.ModelAdmin):
-    fields = ('user', 'item_id', 'rate')
+    fields = ('user', 'item', 'rate')

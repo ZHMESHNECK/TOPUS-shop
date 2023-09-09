@@ -20,6 +20,8 @@ class Category(models.Model):
 
 
 class MainModel(models.Model):
+    """Головна модель
+    """
     title = models.CharField('Назва', max_length=150)
     description = models.TextField('Опис', blank=True)
     price = models.DecimalField('Вартість', max_digits=7, decimal_places=2)
@@ -34,12 +36,14 @@ class MainModel(models.Model):
         User, on_delete=models.SET_NULL, null=True, verbose_name='Власник', related_name='create')
     date_created = models.DateTimeField(
         auto_now_add=True, verbose_name='Час створення')
-    discount = models.SmallIntegerField(default=0) # 0-100%
+    discount = models.SmallIntegerField(
+        default=0, verbose_name='Знижка')  # 0-100%
     is_published = models.BooleanField('Публікація',
                                        default=False)
-
     viewed = models.ManyToManyField(
         User, through='Rating', related_name='view')
+    rating = models.DecimalField(
+        max_digits=2, decimal_places=1, default=None, null=True, verbose_name='Рейтинг')  # кэшуюче поле
 
     def __str__(self) -> str:
         return f'Id {self.id}: {self.title}'
@@ -117,6 +121,7 @@ class Home(MainModel):
 
 
 class Rating(models.Model):
+
     RATING = (
         (1, 1),
         (2, 2),
@@ -128,7 +133,7 @@ class Rating(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, verbose_name='Юзер')
     item = models.ForeignKey(
-        'MainModel', on_delete=models.CASCADE, verbose_name='об\'єкт', related_name='main_item')
+        'MainModel', on_delete=models.CASCADE, verbose_name='об\'єкт', related_name='rati')
     rate = models.PositiveSmallIntegerField(
         'Оцінка', choices=RATING, null=True)
 
@@ -138,6 +143,12 @@ class Rating(models.Model):
 
     def __str__(self) -> str:
         return f'{self.user.username}: {self.item.title} -> {self.rate}'
+
+    def save(self, *args, **kwargs):
+        from products.utils import set_rating
+
+        super().save(*args, **kwargs)
+        set_rating(self.item)
 
 
 class Gallery_cloth(models.Model):

@@ -1,23 +1,29 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
-from products.models import Clothes, Gaming, Rating
+from products.models import Clothes, Gaming, Rating, Home
+from django.contrib.auth.models import User
 
 
 class ClothSerializer(ModelSerializer):
 
-    rate_count = serializers.DecimalField(
-        max_digits=2, decimal_places=1, read_only=True)
     price_w_dis = serializers.IntegerField(read_only=True)
+    views = serializers.CharField(read_only=True)
 
     class Meta:
         model = Clothes
-        fields = ('id', 'title', 'price', 'owner',
-                  'category', 'rate_count', 'price_w_dis', 'discount')
+        fields = ('id', 'title', 'description', 'price', 'discount', 'brand',
+                  'category', 'rating', 'price_w_dis', 'date_created', 'views')
 
 
 class GamingSerializer(ModelSerializer):
     class Meta:
         model = Gaming
+        fields = '__all__'
+
+
+class HomeSerializer(ModelSerializer):
+    class Meta:
+        model = Home
         fields = '__all__'
 
 
