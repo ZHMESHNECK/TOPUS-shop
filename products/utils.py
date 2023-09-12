@@ -1,7 +1,18 @@
 import random
 from string import ascii_uppercase, digits
 from products.models import MainModel, Rating
-from django.db.models import Avg
+from django.db.models import Avg, Count
+
+
+class Decorator:
+    count = 0
+
+    def __init__(self, fun):
+        self._fun = fun
+
+    def __call__(self, *args, **kwargs):
+        self.count += 1
+        return self._fun(*args, **kwargs)
 
 
 def gen_code(x: str) -> str:
@@ -31,7 +42,12 @@ def serial_code_randomizer(args):
     return code_serial
 
 
+@Decorator
 def set_rating(item):
-    rating = Rating.objects.filter(item=item).aggregate(rating=Avg('rate')).get('rating')
-    item.rating =  rating
+    rating = Rating.objects.filter(item=item).aggregate(
+        rating=Avg('rate')).get('rating')
+    count = Rating.objects.filter(item=item).aggregate(
+        count=Count('user')).get('count')
+    item.rating = rating
+    item.count = count
     item.save()

@@ -101,3 +101,12 @@ class HomeAdmin(admin.ModelAdmin):
 @admin.register(Rating)
 class RatingAdmin(admin.ModelAdmin):
     fields = ('user', 'item', 'rate')
+
+    def save_model(self, request, obj, form, change):
+        new_obj, creating = Rating.objects.get_or_create(
+            user=obj.user, item=obj.item)
+        if creating:
+            obj.save()
+        else:
+            new_obj.rate = obj.rate
+            new_obj.save()

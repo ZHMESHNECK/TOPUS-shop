@@ -1,10 +1,9 @@
 from products.serializers import ClothSerializer
 from products.models import Clothes, Rating
-from django.db.models import Case, Count, When, Avg, F
 from django.contrib.auth.models import User
-from django.utils import timezone
 from django.test import TestCase
-from datetime import timedelta, datetime
+from django.db.models import F
+from datetime import timedelta
 
 
 class ClothSerializerTestCase(TestCase):
@@ -20,17 +19,21 @@ class ClothSerializerTestCase(TestCase):
         item2 = Clothes.objects.create(
             title='net', price=550, s_code='da', owner=user2)
 
-        Rating.objects.create(user=user1, item=item, rate=3)
-        Rating.objects.create(user=user2, item=item, rate=3)
-        Rating.objects.create(user=user3, item=item, rate=3)
+        Rating.objects.update_or_create(user=user1, item=item, rate=4)
+        Rating.objects.update_or_create(user=user2, item=item, rate=3)
+        user_item_3 = Rating.objects.update_or_create(user=user3, item=item)
+        user_item_3[0].rate = 4
+        user_item_3[0].save()
 
-        Rating.objects.create(user=user1, item=item2, rate=5)
-        Rating.objects.create(user=user2, item=item2, rate=4)
-        Rating.objects.create(user=user3, item=item)
+        Rating.objects.update_or_create(user=user1, item=item2, rate=3)
+        Rating.objects.update_or_create(user=user1, item=item2, rate=3)
+        Rating.objects.update_or_create(user=user2, item=item2, rate=4)
+        Rating.objects.update_or_create(user=user3, item=item2)
 
         items = Clothes.objects.all().annotate(price_w_dis=F(
             'price')-F('price')/100*F('discount')).order_by('id')
         data = ClothSerializer(items, many=True).data
+        print(data)
         # що чекаемо отримати, та що отримали
         expected_data = [
             {
@@ -38,11 +41,15 @@ class ClothSerializerTestCase(TestCase):
                 'title': 'da',
                 'description': '',
                 'price': '250.00',
+                'price_w_dis': '200.00',
+                's_code': item.s_code,
                 'discount': 20,
                 'brand': '',
                 'category': None,
-                'rating': '3.0',
-                'price_w_dis': 200,
+                'rating': '3.7',
+                'size': '',
+                'season': '',
+                'department': '',
                 'date_created': (item.date_created+timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
             },
             {
@@ -50,12 +57,17 @@ class ClothSerializerTestCase(TestCase):
                 'title': 'net',
                 'description': '',
                 'price': '550.00',
+                'price_w_dis': '550.00',
+                's_code': item2.s_code,
                 'discount': 0,
                 'brand': '',
                 'category': None,
-                'rating': '4.5',
-                'price_w_dis': 550,
+                'rating': '3.5',
+                'size': '',
+                'season': '',
+                'department': '',
                 'date_created': (item2.date_created+timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
             }
         ]
+        print(expected_data)
         self.assertEqual(expected_data, data)

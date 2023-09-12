@@ -144,11 +144,17 @@ class Rating(models.Model):
     def __str__(self) -> str:
         return f'{self.user.username}: {self.item.title} -> {self.rate}'
 
-    def save(self, *args, **kwargs):
-        from products.utils import set_rating
+    def __init__(self, *args, **kwargs):
+        super(Rating, self).__init__(*args, **kwargs)
+        self.old_rate = self.rate
 
+    def save(self, *args, **kwargs):
+        # При створенні зв'язку
+        creating = not self.pk
         super().save(*args, **kwargs)
-        set_rating(self.item)
+        if self.old_rate != self.rate or creating:
+            from products.utils import set_rating
+            set_rating(self.item)
 
 
 class Gallery_cloth(models.Model):

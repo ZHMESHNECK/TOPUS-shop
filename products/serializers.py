@@ -6,13 +6,14 @@ from django.contrib.auth.models import User
 
 class ClothSerializer(ModelSerializer):
 
-    price_w_dis = serializers.IntegerField(read_only=True)
+    price_w_dis = serializers.DecimalField(
+        max_digits=7, decimal_places=2, read_only=True)
     views = serializers.CharField(read_only=True)
 
     class Meta:
         model = Clothes
-        fields = ('id', 'title', 'description', 'price', 'discount', 'brand',
-                  'category', 'rating', 'price_w_dis', 'date_created', 'views')
+        fields = ('id', 'title', 'description', 'price', 'price_w_dis', 's_code', 'discount', 'brand',
+                  'category', 'rating',  'size', 'season', 'department', 'date_created', 'views')
 
 
 class GamingSerializer(ModelSerializer):
@@ -28,6 +29,15 @@ class HomeSerializer(ModelSerializer):
 
 
 class RatingSerializer(ModelSerializer):
+
+    def create(self, validated_data):
+        rating = Rating.objects.update_or_create(
+            user=validated_data.get('user', None),
+            item=validated_data.get('item', None),
+            defaults={'rate': validated_data.get('rate')}
+        )
+        return rating
+
     class Meta:
         model = Rating
         fields = ('item_id', 'rate')

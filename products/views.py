@@ -65,7 +65,7 @@ class UserRatingViewSet(UpdateModelMixin, GenericViewSet):
         obj, _ = Rating.objects.get_or_create(
             user=self.request.user, item_id=self.kwargs['item'])
         return obj
-
+    
 
 def auth(request):
     return render(request, 'oauth.html')  # перенести в новую app

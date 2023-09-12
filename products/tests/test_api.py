@@ -1,9 +1,8 @@
-from products.models import Clothes, Gaming, Category, Rating
 from products.serializers import ClothSerializer
-from django.db.models import Case, Count, When, Avg, F
+from products.models import Clothes, Rating
 from django.contrib.auth.models import User
+from django.db.models import Count, F
 from django.urls import reverse
-from django.utils import timezone
 from rest_framework.test import APITestCase
 from rest_framework import status
 import json
