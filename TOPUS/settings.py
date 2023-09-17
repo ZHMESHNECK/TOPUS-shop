@@ -10,10 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
+import mimetypes
 import environ
 import os
-import mimetypes
 
 mimetypes.add_type("application/javascript", ".js", True)
 
@@ -33,6 +34,9 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 
 # Application definition
@@ -45,10 +49,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework',
+    'djoser',
     'social_django',
     'debug_toolbar',
+    'rest_framework_simplejwt',
+    'crispy_forms',
 
     'products',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +77,7 @@ ROOT_URLCONF = 'TOPUS.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': ['templates', 'users/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,6 +85,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -97,11 +108,6 @@ DATABASES = {
         'PASSWORD': env('POSTGRES_PASSWORD'),
     }
 }
-
-AUTHENTICATION_BACKENDS = (
-    'social_core.backends.google.GoogleOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
-)
 
 
 # Password validation
@@ -150,23 +156,90 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    ),
-    'DEFAULT_PARSER_CLASSES': (
-        'rest_framework.parsers.JSONParser',
+    # 'DEFAULT_RENDERER_CLASSES': (
+    #     'rest_framework.renderers.JSONRenderer',
+    # ),
+    # 'DEFAULT_PARSER_CLASSES': (
+    #     'rest_framework.parsers.JSONParser',
+    # ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 
     'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
 }
+# JWT configure
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "UPDATE_LAST_LOGIN": False,
+    "AUTH_HEADER_TYPES": ("JWT",),
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "ROTATE_REFRESH_TOKENS": True,
+}
+
+# Djoser configure
+DJOSER = {
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'ACTIVATION_URL': '/api/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SEND_CONFIRMATION_EMAIL': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'PASSWORD_RESET_CONFIRM_URL': '/password-reset/{uid}/{token}',
+    'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
+    'TOKEN_MODEL': None,
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.UserCreateSerializer',
+        'user': 'users.serializers.UserSerializer',
+        'user_delete': 'users.serializers.UserDeleteSerializer',
+    },
+    'EMAIL': {
+        'activation': 'users.email.ActivationEmail',
+        'confirmation': 'users.email.ConfirmationEmail',
+        'password_reset': 'users.email.PasswordResetEmail',
+        'password_changed_confirmation': 'users.email.PasswordChangedConfirmationEmail',
+    }
+}
+
+AUTH_USER_MODEL = 'users.User'
+
+# Google login / register
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'users.login.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.profile'
+]
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+)
 
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
-SOCIAL_AUTH_URL_NAMESPACE = 'social'
-
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('AUTH_GOOGLE_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('AUTH_GOOGLE_SECRET')
 
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
+# Email configure
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = env('EMAIL_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_PASS')
+EMAIL_USE_TLS = True
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'

@@ -1,7 +1,6 @@
-from django.contrib.auth.models import User
+from users.models import User
+# from django.contrib.auth.models import User
 from django.db import models
-from PIL import Image
-from django.utils import timezone
 
 
 class Category(models.Model):
@@ -31,7 +30,7 @@ class MainModel(models.Model):
     category = models.ForeignKey(
         'Category', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Категорія')
     s_code = models.CharField(
-        'Serial_key', max_length=10, unique=True, blank=True)
+        'Код', max_length=10, unique=True, blank=True)
     owner = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, verbose_name='Власник', related_name='create')
     date_created = models.DateTimeField(
@@ -121,6 +120,7 @@ class Home(MainModel):
 
 
 class Rating(models.Model):
+    """Модель рейтингу"""
 
     RATING = (
         (1, 1),
@@ -211,28 +211,3 @@ class Gallery_home(models.Model):
 #     class Meta:
 #         verbose_name = 'Коментар'
 #         verbose_name_plural = 'Коментарі'
-
-
-# class Profile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     email = models.EmailField()
-#     password = models.CharField()
-#     image = models.ImageField(default='avatar.png', upload_to='profile/')
-#     status = models.BooleanField(default=False)
-
-#     def __str__(self):
-#         return f'{self.user.username} Profile'
-
-#     def save(self):
-#         super().save()
-
-#         img = Image.open(self.image.path)
-
-#         if img.height > 300 or img.width > 300:
-#             output_size = (300, 300)
-#             img.thumbnail(output_size)
-#             img.save(self.image.path)
-
-#     class Meta:
-#         verbose_name = 'Аккаунт'
-#         verbose_name_plural = 'Аккаунти'

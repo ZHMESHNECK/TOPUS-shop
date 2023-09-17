@@ -1,0 +1,21 @@
+{% load i18n %}
+
+{% block subject %}
+{% blocktrans %}{{ site_name }} - Ваш обліковий запис успішно активовано!{% endblocktrans %}
+{% endblock %}
+
+{% block text_body %}
+Ваш обліковий запис створений та готовий для використання!
+
+Дякуємо що обрали саме нас!
+
+{% blocktrans %}The {{ site_name }} команда{% endblocktrans %}
+{% endblock text_body %}
+
+{% block html_body %}
+<p>Ваш обліковий запис створений та готовий для використання!</p>
+
+<p>Дякуємо що обрали саме нас!</p>
+
+<p>{% blocktrans %}{{ site_name }} команда{% endblocktrans %}</p>
+{% endblock html_body %}

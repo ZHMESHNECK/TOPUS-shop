@@ -28,7 +28,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Clothes)
 class ClothAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'main_image', 'is_published')
+    list_display = ('title', 'category', 'main_image',
+                    'is_published', 's_code')
     list_filter = ('category', 'brand', 'price')
     list_editable = ('is_published',)
     search_fields = ('title', 'season', 'size')
@@ -105,8 +106,5 @@ class RatingAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         new_obj, creating = Rating.objects.get_or_create(
             user=obj.user, item=obj.item)
-        if creating:
-            obj.save()
-        else:
-            new_obj.rate = obj.rate
-            new_obj.save()
+        new_obj.rate = obj.rate
+        new_obj.save()

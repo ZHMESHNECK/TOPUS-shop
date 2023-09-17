@@ -18,24 +18,16 @@ Including another URLconf
 
 from django.urls import path, include, re_path
 from django.contrib import admin
-from rest_framework.routers import SimpleRouter
+
 from django.conf.urls.static import static
-from products.views import ClothviewSet, UserRatingViewSet
+
 from django.conf import settings
 from django.urls import path
 
 
-router = SimpleRouter()
-router.register(r'cloth', ClothviewSet)
-router.register(r'relation', UserRatingViewSet)
-
-
 urlpatterns = [
+    path('', include('products.urls')),
+    path('api/', include('users.urls')),
     path('admin/', admin.site.urls),
-    re_path('', include('social_django.urls', namespace='social')),
-    path('auth/', include('products.urls')),
     path("__debug__/", include("debug_toolbar.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-urlpatterns += router.urls

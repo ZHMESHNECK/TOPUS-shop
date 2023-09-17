@@ -1,7 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from products.models import Clothes, Gaming, Rating, Home
-from django.contrib.auth.models import User
 
 
 class ClothSerializer(ModelSerializer):
@@ -12,7 +11,7 @@ class ClothSerializer(ModelSerializer):
 
     class Meta:
         model = Clothes
-        fields = ('id', 'title', 'description', 'price', 'price_w_dis', 's_code', 'discount', 'brand',
+        fields = ('id', 'title', 'description', 'price', 'discount', 'price_w_dis', 's_code', 'brand',
                   'category', 'rating',  'size', 'season', 'department', 'date_created', 'views')
 
 

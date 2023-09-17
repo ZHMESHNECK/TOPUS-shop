@@ -6,9 +6,9 @@ from products.models import Clothes, Category, Rating, User
 class UtilsTestCase(TestCase):
 
     def setUp(self) -> None:
-        self.user1 = User.objects.create(username='test1', is_staff=True)
-        self.user2 = User.objects.create(username='test2', is_staff=True)
-        self.user3 = User.objects.create(username='test3', is_staff=True)
+        self.user1 = User.objects.create(username='test1', is_staff=True, email='email1@email.email')
+        self.user2 = User.objects.create(username='test2', is_staff=True, email='email2@email.email')
+        self.user3 = User.objects.create(username='test3', is_staff=True, email='email3@email.email')
 
         self.cat = Category.objects.create(cat_name='1', slug='1')
         self.cat2 = Category.objects.create(cat_name='2', slug='2')

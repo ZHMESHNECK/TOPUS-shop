@@ -7,8 +7,7 @@ from products.models import Clothes, Gaming, Rating
 from products.permission import IsStaffOrReadOnly
 from products.utils import serial_code_randomizer
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Avg, F, Prefetch, Count
-from django.contrib.auth.models import User
+from django.db.models import F, Count
 from django.shortcuts import render
 
 
@@ -65,7 +64,6 @@ class UserRatingViewSet(UpdateModelMixin, GenericViewSet):
         obj, _ = Rating.objects.get_or_create(
             user=self.request.user, item_id=self.kwargs['item'])
         return obj
-    
 
-def auth(request):
-    return render(request, 'oauth.html')  # перенести в новую app
+def main(request):
+    return render(request, 'main_page.html')

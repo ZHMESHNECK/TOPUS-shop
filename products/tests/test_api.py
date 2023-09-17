@@ -1,6 +1,6 @@
 from products.serializers import ClothSerializer
 from products.models import Clothes, Rating
-from django.contrib.auth.models import User
+from users.models import User
 from django.db.models import Count, F
 from django.urls import reverse
 from rest_framework.test import APITestCase
@@ -11,7 +11,8 @@ import json
 class MainApiTestCase(APITestCase):
 
     def setUp(self):
-        self.user = User.objects.create(username='test')
+        self.user = User.objects.create(
+            username='test', email='email1@email.email')
         self.item = Clothes.objects.create(
             title='test1', price='150.00', size='S', season='SUMMER', owner=self.user, s_code='123')
         self.item2 = Clothes.objects.create(
@@ -67,7 +68,7 @@ class MainApiTestCase(APITestCase):
             'category': None
         }
         json_data = json.dumps(data)
-        self.client.force_login(self.user)
+        self.client.force_authenticate(self.user)
         response = self.client.post(
             url, data=json_data, content_type='application/json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
@@ -81,7 +82,7 @@ class MainApiTestCase(APITestCase):
             'price': 5000,
         }
         json_data = json.dumps(data)
-        self.client.force_login(self.user)
+        self.client.force_authenticate(self.user)
         response = self.client.patch(
             url, data=json_data, content_type='application/json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
@@ -91,7 +92,7 @@ class MainApiTestCase(APITestCase):
     def test_delete(self):
         """Видалення"""
         self.assertEqual(3, Clothes.objects.all().count())
-        self.client.force_login(self.user)
+        self.client.force_authenticate(self.user)
         url = reverse('clothes-detail', args=(self.item.id,))
         response = self.client.delete(url)
         self.assertEqual(204, response.status_code)
@@ -108,7 +109,7 @@ class MainApiTestCase(APITestCase):
             'price': 5000,
         }
         json_data = json.dumps(data)
-        self.client.force_login(self.user2)
+        self.client.force_authenticate(self.user2)
         response = self.client.patch(
             url, data=json_data, content_type='application/json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
@@ -119,7 +120,7 @@ class MainApiTestCase(APITestCase):
         """Видалення запису без прав"""
         self.user2 = User.objects.create(username='test2')
         self.assertEqual(3, Clothes.objects.all().count())
-        self.client.force_login(self.user2)
+        self.client.force_authenticate(self.user2)
         url = reverse('clothes-detail', args=(self.item.id,))
         response = self.client.delete(url)
         self.assertEqual(403, response.status_code)
@@ -137,7 +138,7 @@ class MainApiTestCase(APITestCase):
             'rate_count': 1
         }
         json_data = json.dumps(data)
-        self.client.force_login(self.user)
+        self.client.force_authenticate(self.user)
         response = self.client.put(
             url, data=json_data, content_type='application/json')
         self.assertEqual(status.HTTP_200_OK,
@@ -155,7 +156,7 @@ class MainApiTestCase(APITestCase):
             "discount": 30,
         }
         json_data = json.dumps(data)
-        self.client.force_login(self.user)
+        self.client.force_authenticate(self.user3)
         response = self.client.patch(
             url, data=json_data, content_type='application/json')
         self.assertEqual(status.HTTP_200_OK,
@@ -168,8 +169,8 @@ class MainApiTestCase(APITestCase):
 class RelationTestCase(APITestCase):
 
     def setUp(self):
-        self.user = User.objects.create(username='test')
-        self.user2 = User.objects.create(username='test2')
+        self.user = User.objects.create(username='test', email='email1@email.email', is_staff=True)
+        self.user2 = User.objects.create(username='test2', email='email2@email.email')
         self.item = Clothes.objects.create(
             title='test1', price='150.00', s_code='1', size='S', season='SUMMER', owner=self.user)
         self.item2 = Clothes.objects.create(
@@ -184,7 +185,7 @@ class RelationTestCase(APITestCase):
             'rate': 2,
         }
         json_data = json.dumps(data)
-        self.client.force_login(self.user)
+        self.client.force_authenticate(self.user)
         response = self.client.patch(
             url, data=json_data, content_type='application/json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
@@ -200,7 +201,7 @@ class RelationTestCase(APITestCase):
             'rate': 6,
         }
         json_data = json.dumps(data)
-        self.client.force_login(self.user)
+        self.client.force_authenticate(self.user)
         response = self.client.patch(
             url, data=json_data, content_type='application/json')
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
