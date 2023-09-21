@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p>HOME</p>
+
+<ul>
+    {% for p in data %}
+    {% if p.main_image %}
+    <p><img src="{{ p.main_image }}" width="300 300"></p>
+    {% endif %}
+    <a href="{{p.pk}}"><p>{{p.title}}</p></a>
+    <ul>Ціна: {{p.price}}</ul>
+    {% if p.discount is not 0 %}
+    <ul>Знижка: {{p.discount}}%</ul>
+    <ul>Ціна зі знижкою: {{p.price_w_dis}}</ul>
+    {% endif %}
+    
+    <ul>Рейтинг {{p.rating}}</ul>
+    {% endfor %}
+    {%for image in data.gallery_cloth_set%}
+    <p>image</p>
+    {%endfor%}
+</ul>
+{% endblock %}

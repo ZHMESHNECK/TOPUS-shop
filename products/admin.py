@@ -23,26 +23,25 @@ class GalleryHmInline(admin.TabularInline):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'cat_name',)
     list_display_links = ('cat_name',)
-    prepopulated_fields = {'slug': ('cat_name',)}
 
 
 @admin.register(Clothes)
 class ClothAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'main_image',
-                    'is_published', 's_code')
+    list_display = ('title', 'category', 'get_html_photo',
+                    's_code', 'is_published')
     list_filter = ('category', 'brand', 'price')
     list_editable = ('is_published',)
     search_fields = ('title', 'season', 'size')
     fields = ('title', 'description', 'price', 'discount', 'category', 'brand',
-              'main_image', 'is_published', 'size', 'season', 'department', 's_code', 'date_created', 'owner')
-    readonly_fields = ('s_code', 'date_created', 'owner')
+              'main_image', 'get_html_photo', 'is_published', 'size', 'season', 'department', 's_code', 'date_created', 'owner')
+    readonly_fields = ('s_code', 'date_created', 'owner', 'get_html_photo')
     inlines = [GalleryClInline]
 
     def get_html_photo(self, object):
         if object.main_image:
             return mark_safe(f'<img src="{object.main_image.url}" width=50>')
 
-    get_html_photo.short_description = 'Зображення'
+    get_html_photo.short_description = 'попередній перегляд'
 
     def save_model(self, request, obj, form, change):
         obj.owner = request.user
@@ -99,12 +98,12 @@ class HomeAdmin(admin.ModelAdmin):
         obj.save()
 
 
-@admin.register(Rating)
+@admin.register(Relation)
 class RatingAdmin(admin.ModelAdmin):
     fields = ('user', 'item', 'rate')
 
     def save_model(self, request, obj, form, change):
-        new_obj, creating = Rating.objects.get_or_create(
+        new_obj, creating = Relation.objects.get_or_create(
             user=obj.user, item=obj.item)
         new_obj.rate = obj.rate
         new_obj.save()

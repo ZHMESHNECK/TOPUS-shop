@@ -1,5 +1,5 @@
 from products.serializers import ClothSerializer
-from products.models import Clothes, Rating
+from products.models import Clothes, Relation
 from users.models import User
 from django.test import TestCase
 from django.db.models import F
@@ -19,16 +19,16 @@ class ClothSerializerTestCase(TestCase):
         item2 = Clothes.objects.create(
             title='net', price=550, s_code='da', owner=user2)
 
-        Rating.objects.update_or_create(user=user1, item=item, rate=4)
-        Rating.objects.update_or_create(user=user2, item=item, rate=3)
-        user_item_3 = Rating.objects.update_or_create(user=user3, item=item)
+        Relation.objects.update_or_create(user=user1, item=item, rate=4)
+        Relation.objects.update_or_create(user=user2, item=item, rate=3)
+        user_item_3 = Relation.objects.update_or_create(user=user3, item=item)
         user_item_3[0].rate = 4
         user_item_3[0].save()
 
-        Rating.objects.update_or_create(user=user1, item=item2, rate=3)
-        Rating.objects.update_or_create(user=user1, item=item2, rate=3)
-        Rating.objects.update_or_create(user=user2, item=item2, rate=4)
-        Rating.objects.update_or_create(user=user3, item=item2)
+        Relation.objects.update_or_create(user=user1, item=item2, rate=3)
+        Relation.objects.update_or_create(user=user1, item=item2, rate=3)
+        Relation.objects.update_or_create(user=user2, item=item2, rate=4)
+        Relation.objects.update_or_create(user=user3, item=item2)
 
         items = Clothes.objects.all().annotate(price_w_dis=F(
             'price')-F('price')/100*F('discount')).order_by('id')
@@ -39,6 +39,7 @@ class ClothSerializerTestCase(TestCase):
             {
                 'id': item.id,
                 'title': 'da',
+                'main_image': None,
                 'description': '',
                 'price': '250.00',
                 'price_w_dis': '200.00',
@@ -55,6 +56,7 @@ class ClothSerializerTestCase(TestCase):
             {
                 'id': item2.id,
                 'title': 'net',
+                'main_image': None,
                 'description': '',
                 'price': '550.00',
                 'price_w_dis': '550.00',

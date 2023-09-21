@@ -10,3 +10,5 @@ class UserProfileUAdmin(admin.ModelAdmin):
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'email', 'is_active', 'is_staff')
+    list_filter = ('is_staff',)
+    search_fields = ('email', 'username')

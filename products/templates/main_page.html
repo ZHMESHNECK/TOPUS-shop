@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <title>{{ title }}</title>
-    <meta charset="UTF-8">
-</head>
-
-    <a href="api/login/">Логін</a>
-    <a href="api/registration/">register</a>
-    <a href="admin/">admin</a>
+{% load tags %}
 
 
-</html>
+{% block content %}
+<a href="api/login/">Логін</a>
+<a href="api/registration/">register</a>
+<a href="admin/">admin</a>
+
+{% show_categories %}
+
+{% endblock %}

@@ -1,5 +1,5 @@
 from products.serializers import ClothSerializer
-from products.models import Clothes, Rating
+from products.models import Clothes, Relation
 from users.models import User
 from django.db.models import Count, F
 from django.urls import reverse
@@ -12,14 +12,16 @@ class MainApiTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create(
-            username='test', email='email1@email.email')
+            username='test', email='email1@email.email', is_staff=True)
+        self.user2 = User.objects.create(
+            username='test22', email='email12@email.email', is_staff=True)
         self.item = Clothes.objects.create(
-            title='test1', price='150.00', size='S', season='SUMMER', owner=self.user, s_code='123')
+            title='test1', price='150.00', size='S', season='SUMMER', owner=self.user, s_code='123', is_published=True)
         self.item2 = Clothes.objects.create(
-            title='test2', price='100.00', size='S', season='test1', s_code='223', discount=30)
+            title='test2', price='100.00', size='S', season='test1', owner=self.user2, s_code='223', discount=30, is_published=True)
         self.item3 = Clothes.objects.create(
-            title='test3', price='500.00', size='XL', season='SUMMER', s_code='323')
-        Rating.objects.create(user=self.user, item=self.item, rate=4)
+            title='test3', price='500.00', size='XL', season='SUMMER', owner=self.user, s_code='323', is_published=True)
+        Relation.objects.create(user=self.user, item=self.item, rate=4)
 
     def test_get(self):
         """Перевірка зв'язку з сервером, створення 3-ох записів 
@@ -39,7 +41,6 @@ class MainApiTestCase(APITestCase):
         url = reverse('clothes-list')
         items = Clothes.objects.filter(id__in=[self.item.id, self.item2.id]).annotate(price_w_dis=F(
             'price')-F('price')/100*F('discount'), views=Count('viewed')).order_by('id')
-
         response = self.client.get(url, data={'search': 'test1'})
         serializer_data = ClothSerializer(
             items, many=True).data
@@ -85,7 +86,8 @@ class MainApiTestCase(APITestCase):
         self.client.force_authenticate(self.user)
         response = self.client.patch(
             url, data=json_data, content_type='application/json')
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(status.HTTP_200_OK,
+                         response.status_code, response.data)
         self.item.refresh_from_db()  # дістаємо з БД оновлену модель
         self.assertEqual(5000, self.item.price)
 
@@ -152,8 +154,8 @@ class MainApiTestCase(APITestCase):
         url = reverse('clothes-detail', args=(self.item.id,))
 
         data = {
-            "price": 5000,
-            "discount": 30,
+            "price": "5000",
+            "discount": "30",
         }
         json_data = json.dumps(data)
         self.client.force_authenticate(self.user3)
@@ -169,8 +171,10 @@ class MainApiTestCase(APITestCase):
 class RelationTestCase(APITestCase):
 
     def setUp(self):
-        self.user = User.objects.create(username='test', email='email1@email.email', is_staff=True)
-        self.user2 = User.objects.create(username='test2', email='email2@email.email')
+        self.user = User.objects.create(
+            username='test', email='email1@email.email', is_staff=True)
+        self.user2 = User.objects.create(
+            username='test2', email='email2@email.email')
         self.item = Clothes.objects.create(
             title='test1', price='150.00', s_code='1', size='S', season='SUMMER', owner=self.user)
         self.item2 = Clothes.objects.create(
@@ -179,7 +183,7 @@ class RelationTestCase(APITestCase):
     def test_rate(self):
         """Змінення рейтингу
         """
-        url = reverse('rating-detail', args=(self.item.id,))
+        url = reverse('relation-detail', args=(self.item.id,))
 
         data = {
             'rate': 2,
@@ -189,13 +193,13 @@ class RelationTestCase(APITestCase):
         response = self.client.patch(
             url, data=json_data, content_type='application/json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        relation = Rating.objects.get(user=self.user, item=self.item)
+        relation = Relation.objects.get(user=self.user, item=self.item)
         self.assertEqual(relation.rate, 2)
 
     def test_rate_wrong(self):
         """Ставлення невірного рейтингу 
         """
-        url = reverse('rating-detail', args=(self.item.id,))
+        url = reverse('relation-detail', args=(self.item.id,))
 
         data = {
             'rate': 6,

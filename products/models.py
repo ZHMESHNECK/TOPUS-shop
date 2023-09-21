@@ -1,5 +1,5 @@
 from users.models import User
-# from django.contrib.auth.models import User
+from django.urls import reverse
 from django.db import models
 
 
@@ -17,6 +17,9 @@ class Category(models.Model):
         verbose_name = 'Категорію'
         verbose_name_plural = 'Категорії'
 
+    def get_absolute_url(self):
+        return reverse('', kwargs={'cat_slug': self.slug})
+
 
 class MainModel(models.Model):
     """Головна модель
@@ -25,7 +28,7 @@ class MainModel(models.Model):
     description = models.TextField('Опис', blank=True)
     price = models.DecimalField('Вартість', max_digits=7, decimal_places=2)
     brand = models.CharField('Бренд', max_length=50, blank=True)
-    main_image = models.ImageField('Фото',
+    main_image = models.ImageField('Головне фото',
                                    upload_to='main_photo', blank=True, null=True)
     category = models.ForeignKey(
         'Category', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Категорія')
@@ -40,7 +43,7 @@ class MainModel(models.Model):
     is_published = models.BooleanField('Публікація',
                                        default=False)
     viewed = models.ManyToManyField(
-        User, through='Rating', related_name='view')
+        User, through='Relation', related_name='view')
     rating = models.DecimalField(
         max_digits=2, decimal_places=1, default=None, null=True, verbose_name='Рейтинг')  # кэшуюче поле
 
@@ -82,6 +85,7 @@ class Clothes(MainModel):
     class Meta:
         verbose_name = 'Одяг'
         verbose_name_plural = 'Одяг'
+        ordering = ['-date_created']
 
 
 class Gaming(MainModel):
@@ -119,7 +123,7 @@ class Home(MainModel):
         return f'Id {self.id}: {self.title}'
 
 
-class Rating(models.Model):
+class Relation(models.Model):
     """Модель рейтингу"""
 
     RATING = (
@@ -136,6 +140,7 @@ class Rating(models.Model):
         'MainModel', on_delete=models.CASCADE, verbose_name='об\'єкт', related_name='rati')
     rate = models.PositiveSmallIntegerField(
         'Оцінка', choices=RATING, null=True)
+    in_liked = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Рейтинг'
@@ -145,7 +150,7 @@ class Rating(models.Model):
         return f'{self.user.username}: {self.item.title} -> {self.rate}'
 
     def __init__(self, *args, **kwargs):
-        super(Rating, self).__init__(*args, **kwargs)
+        super(Relation, self).__init__(*args, **kwargs)
         self.old_rate = self.rate
 
     def save(self, *args, **kwargs):
@@ -211,3 +216,6 @@ class Gallery_home(models.Model):
 #     class Meta:
 #         verbose_name = 'Коментар'
 #         verbose_name_plural = 'Коментарі'
+
+
+# https://pocoz.gitbooks.io/django-v-primerah/content/glava-7-sozdanie-internet-magazina/sozdanie-korzini/ispolzovanie-sessii-django.html

@@ -1,6 +1,6 @@
 import random
 from string import ascii_uppercase, digits
-from products.models import MainModel, Rating
+from products.models import MainModel, Relation
 from django.db.models import Avg, Count
 
 
@@ -44,9 +44,9 @@ def serial_code_randomizer(args):
 
 @Decorator
 def set_rating(item):
-    rating = Rating.objects.filter(item=item).aggregate(
+    rating = Relation.objects.filter(item=item).aggregate(
         rating=Avg('rate')).get('rating')
-    count = Rating.objects.filter(item=item).aggregate(
+    count = Relation.objects.filter(item=item).aggregate(
         count=Count('user')).get('count')
     item.rating = rating
     item.count = count

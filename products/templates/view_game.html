@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+{{data}}
+
+<p>{{data.title}}</p>
+<ul>{{data.description}}</ul>
+{% if data.main_image %}
+<img src="{{data.main_image}}" width="300 300">
+{%endif%}
+{% for image in images %}
+<img src="{{image.images.url}}" width="300 300" >
+{%endfor%}
+{% endblock %}

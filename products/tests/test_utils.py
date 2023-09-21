@@ -1,6 +1,6 @@
 from django.test import TestCase
 from products.utils import serial_code_randomizer, set_rating
-from products.models import Clothes, Category, Rating, User
+from products.models import Clothes, Category, Relation, User
 
 
 class UtilsTestCase(TestCase):
@@ -18,9 +18,9 @@ class UtilsTestCase(TestCase):
         self.item2 = Clothes.objects.create(
             title='net', price=250, s_code='da', category=self.cat2)
 
-        Rating.objects.create(user=self.user1, item=self.item, rate=5)
-        Rating.objects.create(user=self.user2, item=self.item)
-        Rating.objects.create(user=self.user3, item=self.item)
+        Relation.objects.create(user=self.user1, item=self.item, rate=5)
+        Relation.objects.create(user=self.user2, item=self.item)
+        Relation.objects.create(user=self.user3, item=self.item)
 
     def test_generator(self):
         """тест генератора"""
@@ -33,10 +33,10 @@ class UtilsTestCase(TestCase):
         """Тест на спам рейтингу від 1 юзеру"""
         self.assertEqual(26, set_rating.count)
         self.assertEqual('5.0', str(self.item.rating))
-        Rating.objects.get_or_create(user=self.user1, item=self.item, rate=5)
-        Rating.objects.get_or_create(user=self.user1, item=self.item, rate=5)
-        Rating.objects.get_or_create(user=self.user1, item=self.item, rate=5)
-        Rating.objects.get_or_create(user=self.user1, item=self.item, rate=4)
+        Relation.objects.get_or_create(user=self.user1, item=self.item, rate=5)
+        Relation.objects.get_or_create(user=self.user1, item=self.item, rate=5)
+        Relation.objects.get_or_create(user=self.user1, item=self.item, rate=5)
+        Relation.objects.get_or_create(user=self.user1, item=self.item, rate=4)
         self.item.refresh_from_db()
         self.assertEqual('4.5', str(self.item.rating))
         self.assertEqual(27, set_rating.count)
