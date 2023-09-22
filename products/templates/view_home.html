@@ -3,12 +3,22 @@
 
 
 {{data}}
+{% if request.user.is_authenticated %}
+<p>{{user.username}}</p>
+{%endif%}
+
+{% if rating is not None %}
+<p>Ваша оцінка {{rating.rate}}</p>
+<p>В обраному: {{rating.in_liked}}</p>
+{% endif %}
+
 
 <p>{{data.title}}</p>
 <ul>{{data.description}}</ul>
 {% if data.main_image %}
 <img src="{{data.main_image}}" width="300 300">
 {%endif%}
+
 {% for image in images %}
 <img src="{{image.images.url}}" width="300 300" >
 {%endfor%}

@@ -1,10 +1,21 @@
+from django import forms
 from django.contrib import admin
 from users.models import *
 
+from phonenumber_field.widgets import PhoneNumberPrefixWidget
+
+
+class ProfileFormAdmin(forms.ModelForm):
+    class Meta:
+        widgets = {
+            'phone_number': PhoneNumberPrefixWidget(),
+        }
+
 
 @admin.register(Profile)
-class UserProfileUAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user')
+class UserProfileAdmin(admin.ModelAdmin):
+    form = ProfileFormAdmin
+    fields = ('user', 'phone_number', 'department')
 
 
 @admin.register(User)

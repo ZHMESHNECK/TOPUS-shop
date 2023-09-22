@@ -56,7 +56,6 @@ class Clothes(MainModel):
     """
 
     SIZE = (
-        ('-', '-'),
         ('S', 'Small'),
         ('M', 'Medium'),
         ('L', 'Large'),
@@ -124,7 +123,7 @@ class Home(MainModel):
 
 
 class Relation(models.Model):
-    """Модель рейтингу"""
+    """Модель відношень"""
 
     RATING = (
         (1, 1),
@@ -140,11 +139,11 @@ class Relation(models.Model):
         'MainModel', on_delete=models.CASCADE, verbose_name='об\'єкт', related_name='rati')
     rate = models.PositiveSmallIntegerField(
         'Оцінка', choices=RATING, null=True)
-    in_liked = models.BooleanField(default=False)
+    in_liked = models.BooleanField('Обране', default=False)
 
     class Meta:
-        verbose_name = 'Рейтинг'
-        verbose_name_plural = 'Рейтинг'
+        verbose_name = "Зв'язок"
+        verbose_name_plural = "Зв'язок"
 
     def __str__(self) -> str:
         return f'{self.user.username}: {self.item.title} -> {self.rate}'

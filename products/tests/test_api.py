@@ -209,3 +209,19 @@ class RelationTestCase(APITestCase):
         response = self.client.patch(
             url, data=json_data, content_type='application/json')
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+
+
+    def test_in_liked(self):
+        """Ставлення та перевірка 'лайка'"""
+        url = reverse('relation-detail', args=(self.item.id,))
+
+        data = {
+            'in_liked': True,
+        }
+        json_data = json.dumps(data)
+        self.client.force_authenticate(self.user)
+        response = self.client.patch(
+            url, data=json_data, content_type='application/json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        relation = Relation.objects.get(user=self.user,item=self.item)
+        self.assertTrue(relation.in_liked)

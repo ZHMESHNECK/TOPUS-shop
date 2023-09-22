@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'rest_framework_simplejwt',
     'crispy_forms',
+    'phonenumber_field',
 
     'products',
     'users',
@@ -246,3 +247,5 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+PHONENUMBER_DEFAULT_REGION = 'UA'

@@ -8,7 +8,7 @@
     {% if p.main_image %}
     <p><img src="{{ p.main_image }}" width="300 300"></p>
     {% endif %}
-    <a href="{{p.pk}}"><p>{{p.title}}</p></a>
+    <a href="{{p.id}}"><p>{{p.title}}</p></a>
     <ul>Ціна: {{p.price}}</ul>
     {% if p.discount is not 0 %}
     <ul>Знижка: {{p.discount}}%</ul>

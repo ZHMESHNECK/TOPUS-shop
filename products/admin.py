@@ -33,8 +33,9 @@ class ClothAdmin(admin.ModelAdmin):
     list_editable = ('is_published',)
     search_fields = ('title', 'season', 'size')
     fields = ('title', 'description', 'price', 'discount', 'category', 'brand',
-              'main_image', 'get_html_photo', 'is_published', 'size', 'season', 'department', 's_code', 'date_created', 'owner')
-    readonly_fields = ('s_code', 'date_created', 'owner', 'get_html_photo')
+              'main_image', 'get_html_photo', 'is_published', 'size', 'season', 'department', 'rating', 's_code', 'date_created', 'owner')
+    readonly_fields = ('s_code', 'date_created', 'owner',
+                       'get_html_photo', 'rating')
     inlines = [GalleryClInline]
 
     def get_html_photo(self, object):
@@ -100,10 +101,10 @@ class HomeAdmin(admin.ModelAdmin):
 
 @admin.register(Relation)
 class RatingAdmin(admin.ModelAdmin):
-    fields = ('user', 'item', 'rate')
+    fields = ('user', 'item', 'rate', 'in_liked')
 
     def save_model(self, request, obj, form, change):
-        new_obj, creating = Relation.objects.get_or_create(
+        new_obj, _ = Relation.objects.get_or_create(
             user=obj.user, item=obj.item)
         new_obj.rate = obj.rate
         new_obj.save()

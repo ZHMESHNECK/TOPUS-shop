@@ -1,5 +1,6 @@
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
@@ -11,6 +12,7 @@ from products.utils import serial_code_randomizer
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import F, Count
 from django.shortcuts import render
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class ClothviewSet(ModelViewSet):
@@ -22,7 +24,8 @@ class ClothviewSet(ModelViewSet):
     permission_classes = [IsStaffOrReadOnly]
     search_fields = ['title', 'description', 'season', 'size']
     ordering_fields = ['title', 'price', 'category', 'season', 'size']
-    # renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+    authentication_classes = [SessionAuthentication]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user,
@@ -38,7 +41,12 @@ class ClothviewSet(ModelViewSet):
         response = super(ClothviewSet, self).retrieve(request, pk)
         if request.accepted_renderer.format == 'html':
             images = Gallery_cloth.objects.filter(clothes_id=pk)
-            return Response({'data': response.data, 'images': images}, template_name='view_cloth.html')
+            try:
+                rating = Relation.objects.get(
+                    user=self.request.user.id, item=pk)
+            except ObjectDoesNotExist:
+                rating = None
+            return Response({'data': response.data, 'images': images, 'rating': rating}, template_name='view_cloth.html')
         return response
 
 
@@ -52,6 +60,7 @@ class GamingViewSet(ModelViewSet):
     search_fields = ['title', 'description', 'brand', 'model']
     ordering_fields = ['title', 'brand', 'price', 'model']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+    authentication_classes = [SessionAuthentication]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user,
@@ -81,6 +90,7 @@ class HomeViewSet(ModelViewSet):
     search_fields = ['title', 'description', 'brand', 'model']
     ordering_fields = ['title', 'brand', 'price', 'model']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+    authentication_classes = [SessionAuthentication]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user,
@@ -104,7 +114,9 @@ class UserRelationViewSet(UpdateModelMixin, GenericViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Relation.objects.all()
     serializer_class = RelationSerializer
+    filter_backends = [DjangoFilterBackend]
     lookup_field = 'item'
+    filterset_fields = ['in_liked']
 
     def get_object(self):
         obj, _ = Relation.objects.get_or_create(

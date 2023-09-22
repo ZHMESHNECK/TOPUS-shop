@@ -3,6 +3,15 @@
 
 
 {{data}}
+{% if request.user.is_authenticated %}
+<p>{{user.username}}</p>
+{%endif%}
+
+{% if rating is not None %}
+<p>Ваша оцінка {{rating.rate}}</p>
+<p>В обраному: {{rating.in_liked}}</p>
+{% endif %}
+
 
 <p>{{data.title}}</p>
 <ul>{{data.description}}</ul>

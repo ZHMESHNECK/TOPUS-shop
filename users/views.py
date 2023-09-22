@@ -1,17 +1,13 @@
 from django.contrib.auth.views import LoginView
-from django.contrib.auth import logout, login
+from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, TemplateView
-from rest_framework.generics import GenericAPIView, CreateAPIView, ListAPIView
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from django.views.generic import CreateView, TemplateView
+from rest_framework.generics import GenericAPIView
 from users.serializers import *
 from users.forms import UserRegistrationForm, LoginUserForm
 from users.models import User
 import requests
-import json
-from django import forms
 
 
 class ActivateUser(GenericAPIView):

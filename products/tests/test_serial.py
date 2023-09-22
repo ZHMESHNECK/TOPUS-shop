@@ -33,7 +33,7 @@ class ClothSerializerTestCase(TestCase):
         items = Clothes.objects.all().annotate(price_w_dis=F(
             'price')-F('price')/100*F('discount')).order_by('id')
         data = ClothSerializer(items, many=True).data
-        print(data)
+        # print(data)
         # що чекаемо отримати, та що отримали
         expected_data = [
             {
@@ -71,5 +71,5 @@ class ClothSerializerTestCase(TestCase):
                 'date_created': (item2.date_created+timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
             }
         ]
-        print(expected_data)
+        # print(expected_data)
         self.assertEqual(expected_data, data)

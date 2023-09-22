@@ -52,4 +52,4 @@ class RelationSerializer(ModelSerializer):
 
     class Meta:
         model = Relation
-        fields = ('item_id', 'rate')
+        fields = ('item_id', 'rate','in_liked')
