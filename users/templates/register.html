@@ -1,27 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <title>{{ title }}</title>
-    <meta charset="UTF-8">
-</head>
-<h1>Регістрація</h1>
+
+{% block content %}
+<h1>Реєстрація</h1>
 {% if request.user.is_authenticated %}
-    <p>Ви вже увійшли в свій аккаунт,
-        якщо ви бажаєте зареєструвати нового користувача, вам потрібно вийти зі старого профілю <a  href="{% url 'logout' %}">Вихід</a></button>
-    </p>
-    
+<p>Ви вже увійшли в свій аккаунт,
+    якщо ви бажаєте зареєструвати нового користувача, вам потрібно вийти зі старого профілю<a
+        href="{% url 'logout' %}">Вихід</a></button>
+</p>
+
 {% else %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        {{ form.as_p }}
-        <p><input type="submit" value="Зареєструватися"></p>
-    </form>
+<form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {{ form.as_p }}
+    <p><input type="submit" value="Зареєструватися"></p>
+</form>
 
-    <a href="{% url 'social:begin' 'google-oauth2' %}">Google</a>
-    <a href="#">Вже э аккаунт?</a>
+<a href="{% url 'social:begin' 'google-oauth2' %}">Google</a>
+<a href="{% url 'login' %}">Вже э аккаунт?</a>
 {% endif %}
 
-</html>
+{% endblock %}

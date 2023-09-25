@@ -1,13 +1,22 @@
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import logout
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import GenericAPIView
-from users.serializers import *
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.response import Response
+from rest_framework import renderers
 from users.forms import UserRegistrationForm, LoginUserForm
+from users.serializers import *
 from users.models import User
+from users.permission import *
+from relations.models import Relation
 import requests
+
+
+# https://www.django-rest-framework.org/tutorial/3-class-based-views/
 
 
 class ActivateUser(GenericAPIView):
@@ -49,7 +58,7 @@ class RegisterView(CreateView):
         data["re_password"] = form.clean_password2()
         url = 'http://localhost:8000/api/auth/users/'
         response = requests.post(url, data=data)
-        if response.status_code == 400:
+        if not response.status_code == 201:
             form.error_400(response.content.decode())
 
             parametrs = {
@@ -87,3 +96,23 @@ class LoginUser(LoginView):
 def logout_user(request):
     logout(request)
     return redirect('/')
+
+
+class ProfileViewSet(ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [IsOwnerOrReadOnly, IsStaffOrReadOnly]
+    authentication_classes = [SessionAuthentication]
+    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+
+    def retrieve(self, request, pk=None):
+        try:
+            response = self.queryset.get(user_id=pk)
+        except:
+            return render('eror')
+        relation = Relation.objects.filter(user=pk)
+        if len(relation) == 0:
+            relation = None
+        if request.accepted_renderer.format == 'html':
+            return Response({'data': response,'relation': relation}, template_name='user_profile.html')
+        return response

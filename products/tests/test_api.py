@@ -1,5 +1,6 @@
 from products.serializers import ClothSerializer
-from products.models import Clothes, Relation
+from products.models import Clothes
+from relations.models import Relation
 from users.models import User
 from django.db.models import Count, F
 from django.urls import reverse
@@ -166,62 +167,3 @@ class MainApiTestCase(APITestCase):
         self.item.refresh_from_db()
         self.assertEqual(5000, self.item.price)
         self.assertEqual(30, self.item.discount)
-
-
-class RelationTestCase(APITestCase):
-
-    def setUp(self):
-        self.user = User.objects.create(
-            username='test', email='email1@email.email', is_staff=True)
-        self.user2 = User.objects.create(
-            username='test2', email='email2@email.email')
-        self.item = Clothes.objects.create(
-            title='test1', price='150.00', s_code='1', size='S', season='SUMMER', owner=self.user)
-        self.item2 = Clothes.objects.create(
-            title='test2', price='100.00', s_code='2', size='S', season='test1')
-
-    def test_rate(self):
-        """Змінення рейтингу
-        """
-        url = reverse('relation-detail', args=(self.item.id,))
-
-        data = {
-            'rate': 2,
-        }
-        json_data = json.dumps(data)
-        self.client.force_authenticate(self.user)
-        response = self.client.patch(
-            url, data=json_data, content_type='application/json')
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
-        relation = Relation.objects.get(user=self.user, item=self.item)
-        self.assertEqual(relation.rate, 2)
-
-    def test_rate_wrong(self):
-        """Ставлення невірного рейтингу 
-        """
-        url = reverse('relation-detail', args=(self.item.id,))
-
-        data = {
-            'rate': 6,
-        }
-        json_data = json.dumps(data)
-        self.client.force_authenticate(self.user)
-        response = self.client.patch(
-            url, data=json_data, content_type='application/json')
-        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-
-
-    def test_in_liked(self):
-        """Ставлення та перевірка 'лайка'"""
-        url = reverse('relation-detail', args=(self.item.id,))
-
-        data = {
-            'in_liked': True,
-        }
-        json_data = json.dumps(data)
-        self.client.force_authenticate(self.user)
-        response = self.client.patch(
-            url, data=json_data, content_type='application/json')
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
-        relation = Relation.objects.get(user=self.user,item=self.item)
-        self.assertTrue(relation.in_liked)

@@ -1,6 +1,7 @@
 from users.models import User
 from django.urls import reverse
 from django.db import models
+from relations.models import Relation
 
 
 class Category(models.Model):
@@ -43,7 +44,7 @@ class MainModel(models.Model):
     is_published = models.BooleanField('Публікація',
                                        default=False)
     viewed = models.ManyToManyField(
-        User, through='Relation', related_name='view')
+        User, through=Relation, related_name='view')
     rating = models.DecimalField(
         max_digits=2, decimal_places=1, default=None, null=True, verbose_name='Рейтинг')  # кэшуюче поле
 
@@ -56,23 +57,23 @@ class Clothes(MainModel):
     """
 
     SIZE = (
-        ('S', 'Small'),
-        ('M', 'Medium'),
-        ('L', 'Large'),
-        ('XL', 'Extra Large')
+        ('S', 'S'),
+        ('M', 'M'),
+        ('L', 'L'),
+        ('XL', 'XL')
     )
     SEASON = (
-        ('ALL_SEASON', 'Все сезон'),
-        ('SUMMER', 'Літо'),
-        ('AUTUM', 'Осінь'),
-        ('WINTER', 'Зима'),
-        ('SPRING', 'Весна'),
+        ('Все сезон', 'Все сезон'),
+        ('Літо', 'Літо'),
+        ('Осінь', 'Осінь'),
+        ('Зима', 'Зима'),
+        ('Весна', 'Весна'),
     )
 
     DEPART = (
-        ('Women', 'Жіноче'),
-        ('Men', 'Чоловіче'),
-        ('Unisex', 'Унісекс'),
+        ('Жіноче', 'Жіноче'),
+        ('Чоловіче', 'Чоловіче'),
+        ('Унісекс', 'Унісекс'),
     )
 
     size = models.CharField('Розмір', max_length=2, choices=SIZE, blank=True)
@@ -122,45 +123,6 @@ class Home(MainModel):
         return f'Id {self.id}: {self.title}'
 
 
-class Relation(models.Model):
-    """Модель відношень"""
-
-    RATING = (
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4),
-        (5, 5)
-    )
-
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name='Юзер')
-    item = models.ForeignKey(
-        'MainModel', on_delete=models.CASCADE, verbose_name='об\'єкт', related_name='rati')
-    rate = models.PositiveSmallIntegerField(
-        'Оцінка', choices=RATING, null=True)
-    in_liked = models.BooleanField('Обране', default=False)
-
-    class Meta:
-        verbose_name = "Зв'язок"
-        verbose_name_plural = "Зв'язок"
-
-    def __str__(self) -> str:
-        return f'{self.user.username}: {self.item.title} -> {self.rate}'
-
-    def __init__(self, *args, **kwargs):
-        super(Relation, self).__init__(*args, **kwargs)
-        self.old_rate = self.rate
-
-    def save(self, *args, **kwargs):
-        # При створенні зв'язку
-        creating = not self.pk
-        super().save(*args, **kwargs)
-        if self.old_rate != self.rate or creating:
-            from products.utils import set_rating
-            set_rating(self.item)
-
-
 class Gallery_cloth(models.Model):
     """Модель декількох фото 'одягу' до 1-го об'єкту
     """
@@ -195,26 +157,3 @@ class Gallery_home(models.Model):
     class Meta:
         verbose_name = 'Фото товару'
         verbose_name_plural = 'Фото товару'
-
-
-# https://www.youtube.com/watch?v=reFJ9hBLFUY
-# class Review(models.Model):
-#     email = models.EmailField()
-#     name = models.CharField('логін', max_length=100)
-#     text = models.TextField('текст', max_length=5000)
-#     parent = models.ForeignKey(
-#         'self', verbose_name="parent", on_delete=models.SET_NULL, blank=True, null=True
-#     )
-
-#     item = models.ForeignKey(
-#         'Main_model', verbose_name='Об\'єкт', on_delete=models.CASCADE)
-
-#     def __str__(self):
-#         return f'{self.email} - {self.name}'
-
-#     class Meta:
-#         verbose_name = 'Коментар'
-#         verbose_name_plural = 'Коментарі'
-
-
-# https://pocoz.gitbooks.io/django-v-primerah/content/glava-7-sozdanie-internet-magazina/sozdanie-korzini/ispolzovanie-sessii-django.html

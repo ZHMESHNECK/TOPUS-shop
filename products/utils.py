@@ -1,6 +1,7 @@
 import random
 from string import ascii_uppercase, digits
-from products.models import MainModel, Relation
+from products.models import MainModel
+from relations.models import Relation
 from django.db.models import Avg, Count
 
 

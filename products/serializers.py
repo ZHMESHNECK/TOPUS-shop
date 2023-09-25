@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
-from products.models import Clothes, Gaming, Relation, Home
+from products.models import Clothes, Gaming, Home
 
 
 class ClothSerializer(ModelSerializer):
@@ -38,18 +38,3 @@ class HomeSerializer(ModelSerializer):
         model = Home
         fields = ('id', 'title', 'main_image', 'description', 'price', 'discount', 'price_w_dis', 's_code', 'brand',
                   'category', 'rating', 'material', 'color', 'room_type', 'weight', 'dimensions', 'date_created', 'views', 'in_liked')
-
-
-class RelationSerializer(ModelSerializer):
-
-    def create(self, validated_data):
-        rating = Relation.objects.update_or_create(
-            user=validated_data.get('user', None),
-            item=validated_data.get('item', None),
-            defaults={'rate': validated_data.get('rate')}
-        )
-        return rating
-
-    class Meta:
-        model = Relation
-        fields = ('item_id', 'rate','in_liked')

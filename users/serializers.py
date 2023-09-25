@@ -1,9 +1,15 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from rest_framework.serializers import ModelSerializer
 from django.contrib.auth.password_validation import validate_password
-from users.models import User
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from django.contrib.auth import get_user_model
+from users.models import User, Profile
+
+
+class ProfileSerializer(ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
 
 
 class UserCreateSerializer(UserCreateSerializer):
@@ -28,6 +34,7 @@ class UserCreateSerializer(UserCreateSerializer):
         )
 
         return user
+
 
 class UserLoginSerializer(UserSerializer):
     class Meta(UserCreateSerializer.Meta):

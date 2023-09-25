@@ -17,7 +17,6 @@ class EmailBackend(ModelBackend):
                 Q(username__exact=username) | (
                     Q(email__iexact=username))
             )
-            print(f'user {user}')
         except UserModel.DoesNotExist:
             # Run the default password hasher once to reduce the timing
             # difference between an existing and a nonexistent user (#20760).

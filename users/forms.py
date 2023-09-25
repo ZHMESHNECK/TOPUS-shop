@@ -14,10 +14,6 @@ class UserRegistrationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email', 'username', 'password')
-    #     extra_kwargs = {
-    #         're_password': {'required': True},
-
-    #     }
 
     def clean_password2(self):
         cd = self.data

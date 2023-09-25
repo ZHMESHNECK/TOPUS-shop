@@ -1,8 +1,9 @@
 from products.serializers import ClothSerializer
-from products.models import Clothes, Relation
+from products.models import Clothes
+from relations.models import Relation
 from users.models import User
-from django.test import TestCase
 from django.db.models import F
+from django.test import TestCase
 from datetime import timedelta
 
 
@@ -10,9 +11,12 @@ class ClothSerializerTestCase(TestCase):
     def test_ok(self):
         """тест сериалайзера
         """
-        user1 = User.objects.create(username='test1', is_staff=True, email='email1@email.email')
-        user2 = User.objects.create(username='test2', is_staff=True, email='email2@email.email')
-        user3 = User.objects.create(username='test3', is_staff=True, email='email3@email.email')
+        user1 = User.objects.create(
+            username='test1', is_staff=True, email='email1@email.email')
+        user2 = User.objects.create(
+            username='test2', is_staff=True, email='email2@email.email')
+        user3 = User.objects.create(
+            username='test3', is_staff=True, email='email3@email.email')
 
         item = Clothes.objects.create(
             title='da', price=250, s_code='', owner=user1, discount=20)

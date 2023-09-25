@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<p>{{data}}</p>
+{% if relation is not None %}
+<p>{{relation}}</p>
+{%else%}
+<p>Ваш список обраного пустий</p>
+{%endif%}
+{% endblock %}

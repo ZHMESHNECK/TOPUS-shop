@@ -1,13 +1,11 @@
 from django.test import TestCase
-from products.utils import serial_code_randomizer, set_rating
-from products.models import Clothes, Category, Relation, User
+from products.utils import serial_code_randomizer
+from products.models import Clothes, Category
 
 
 class UtilsTestCase(TestCase):
 
     def setUp(self) -> None:
-        self.user1 = User.objects.create(
-            username='test1', is_staff=True, email='email1@email.email')
 
         self.cat = Category.objects.create(cat_name='1', slug='1')
         self.cat2 = Category.objects.create(cat_name='2', slug='2')
@@ -17,27 +15,9 @@ class UtilsTestCase(TestCase):
         self.item2 = Clothes.objects.create(
             title='net', price=250, s_code='da', category=self.cat2)
 
-        Relation.objects.create(user=self.user1, item=self.item, rate=5)
-
     def test_generator(self):
         """тест генератора
         """
-
         self.assertEqual(10, len(serial_code_randomizer(None)))
         self.assertEqual('1', serial_code_randomizer(self.item.category)[0])
         self.assertEqual('2', serial_code_randomizer(self.item2.category)[0])
-
-    def test_not_ok(self):
-        """Тест на спам рейтингу від 1 юзеру.
-        Повинен бути на 1 запит більше.
-        Працює без переробленої функції get_or_create як в продакшені, але це 'не баг, а фіча'.
-        """
-        count = set_rating.count
-        self.assertEqual('5.0', str(self.item.rating))
-        Relation.objects.get_or_create(user=self.user1, item=self.item, rate=5)
-        Relation.objects.get_or_create(user=self.user1, item=self.item, rate=5)
-        Relation.objects.get_or_create(user=self.user1, item=self.item, rate=5)
-        Relation.objects.get_or_create(user=self.user1, item=self.item, rate=4)
-        self.item.refresh_from_db()
-        self.assertEqual('4.5', str(self.item.rating))
-        self.assertEqual(count+1, set_rating.count)

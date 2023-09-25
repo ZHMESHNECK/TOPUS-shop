@@ -98,13 +98,3 @@ class HomeAdmin(admin.ModelAdmin):
             obj.s_code = serial_code_randomizer(obj.category)
         obj.save()
 
-
-@admin.register(Relation)
-class RatingAdmin(admin.ModelAdmin):
-    fields = ('user', 'item', 'rate', 'in_liked')
-
-    def save_model(self, request, obj, form, change):
-        new_obj, _ = Relation.objects.get_or_create(
-            user=obj.user, item=obj.item)
-        new_obj.rate = obj.rate
-        new_obj.save()
