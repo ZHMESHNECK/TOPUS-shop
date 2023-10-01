@@ -1,70 +1,88 @@
 {% extends "base.html" %}
 
 {% block content %}
-{{data}}
+{{ data }}
 {% if request.user.is_authenticated %}
-<p>{{user.username}}</p>
-{%endif%}
+<p>{{ user.username }}</p>
+{% endif %}
 
 
-<p>{{data.title}}</p>
-<ul>{{data.description}}</ul>
-<p>Рейтинг товару</p>
-<p>{{data.rating}}</p>
+<p>{{ data.title }}</p>
+<ul>{{ data.description }}</ul>
+<p>Рейтинг товару: {{ data.rating }}</p>
 {% if data.main_image %}
 <img src="{{data.main_image}}" width="300 300">
-{%endif%}
+{% endif %}
 
 {% for image in images %}
 <img src="{{image.images.url}}" width="300 300">
-{%endfor%}
+{% endfor %}
 
-<p>Рейтинг юзера</p>
-{% if rating is not None %}
-<p>Ваша оцінка {{rating.rate}}</p>
-<p>В обраному: {{rating.in_liked}}</p>
-{% endif %}
+<p>
+    <li>В обраному: {{ relation.in_liked }}</li>
+</p>
+
 <form method="post">
-<div id="full-stars-example">
-    <div class="rating-group">
-        {%if rating.rate is None%}
-        <input class="rating__input rating__input--none" name="rating" id="rating-none" value="0" type="radio" checked>0
-        {%else%}
-        <input class="rating__input rating__input--none" name="rating" id="rating-none" value="0" type="radio">0
-        {%endif%}
-
-        {%if rating.rate is 1%}
-        <input class="rating__input" name="rating" id="rating-1" value="1" type="radio" checked>1
-        {%else%}
-        <input class="rating__input" name="rating" id="rating-1" value="1" type="radio">1
-        {%endif%}
-
-        {%if rating.rate is 2%}
-        <input class="rating__input" name="rating" id="rating-2" value="2" type="radio" checked>2
-        {%else%}
-        <input class="rating__input" name="rating" id="rating-2" value="2" type="radio" >2
-        {%endif%}
-
-        {%if rating.rate is 3%}
-        <input class="rating__input" name="rating" id="rating-3" value="3" type="radio" checked>3
-        {%else%}
-        <input class="rating__input" name="rating" id="rating-3" value="3" type="radio">3
-        {%endif%}
-
-        {%if rating.rate is 4%}
-        <input class="rating__input" name="rating" id="rating-4" value="4" type="radio" checked>4
-        {%else%}
-        <input class="rating__input" name="rating" id="rating-4" value="4" type="radio">4
-        {%endif%}
-
-        {%if rating.rate is 5%}
-        <input class="rating__input" name="rating" id="rating-5" value="5" type="radio" checked>5
-        {%else%}
-        <input class="rating__input" name="rating" id="rating-5" value="5" type="radio">5
-        {%endif%}
-    </div>
-    <p class="desc" style="margin-bottom: 2rem; font-family: sans-serif; font-size:0.9rem">Full stars<br />'No rating'
-        option</p>
-</div>
+    {% csrf_token %}
+    <p>Напишіть свій відгук:</p>
+    <div id="full-stars-example">
+        <div class="rating-group">
+            <label aria-label="1 star" class="rating__label" for="rating-1"><i
+                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+            <input class="rating__input" name="rate" id="rating-1" value="1" type="radio" {% if parametrs.rate == 1 %} checked {%endif%}>1
+            <label aria-label="2 stars" class="rating__label" for="rating-2"><i
+                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+            <input class="rating__input" name="rate" id="rating-2" value="2" type="radio" {% if parametrs.rate == 2 %} checked {%endif%}>2
+            <label aria-label="3 stars" class="rating__label" for="rating-3"><i
+                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+            <input class="rating__input" name="rate" id="rating-3" value="3" type="radio" {% if parametrs.rate == 3 %} checked {%endif%}>3
+            <label aria-label="4 stars" class="rating__label" for="rating-4"><i
+                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+            <input class="rating__input" name="rate" id="rating-4" value="4" type="radio" {% if parametrs.rate == 4 %} checked {%endif%}>4
+            <label aria-label="5 stars" class="rating__label" for="rating-5"><i
+                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+            <input class="rating__input" name="rate" id="rating-5" value="5" type="radio" {% if parametrs.rate == 5 %} checked {%endif%}>5
+        </div>
+        <textarea rows="5" name="comment">{{ parametrs.comment }}</textarea>
+        {% if request.user.is_authenticated and parametrs.accept is True %}
+        <button type="submit">
+            Надіслати
+        </button>
+        {% else %}
+        <button disabled type="submit">
+            Надіслати
+        </button>
+        {% endif %}
 </form>
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li class="{{ message.tags }}">
+        {% if message.extra_tags == '1' %}
+        {{ message|safe }}
+        <form action="{% url 'make_relation' data.id %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="rate" value="{{ parametrs.rate }}"> 
+            <input type="hidden" name="comment" value="{{ parametrs.comment }}">
+            <button type="submit">✔</button>
+            <a href="{{ requst.META.HTTP_REFERER }}">✖</a>
+        </form>
+        {% else %}
+        {{ message|safe }}
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<p>Коментарі</p>
+{% for review in relation %}
+<br>
+<hr>
+<p>Дата: {{ review.created_at }}</p>
+<p>Юзер: {{ review.user.username }}</p>
+<p>Оцінка: {{ review.rate }}</p>
+<p>Текст: {{ review.comment }}</p>
+{% endfor %}
 {% endblock %}

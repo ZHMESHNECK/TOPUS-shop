@@ -1,19 +1,28 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from django.shortcuts import render, redirect
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import UpdateModelMixin
+from rest_framework.views import APIView
 from relations.serializers import RelationSerializer
 from relations.models import Relation
-from django.shortcuts import render
 
 
-class UserRelationViewSet(UpdateModelMixin, GenericViewSet):
+class UserRelationViewSet(APIView):
     permission_classes = [IsAuthenticated]
     queryset = Relation.objects.all()
     serializer_class = RelationSerializer
     filter_backends = [DjangoFilterBackend]
     lookup_field = 'item'
     filterset_fields = ['in_liked']
+    authentication_classes = [SessionAuthentication]
+
+    def post(self, request, pk=None):
+        obj, _ = Relation.objects.get_or_create(
+            user=self.request.user, item_id=pk)
+        obj.rate = request.data.get('rate')
+        obj.comment = request.data.get('comment')
+        obj.save()
+        return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
 
     def get_object(self):
         obj, _ = Relation.objects.get_or_create(

@@ -50,6 +50,7 @@ class MainModel(models.Model):
 
     def __str__(self) -> str:
         return f'Id {self.id}: {self.title}'
+    
 
 
 class Clothes(MainModel):

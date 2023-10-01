@@ -10,11 +10,11 @@ router = SimpleRouter()
 router.register(r'cloth', ClothviewSet)
 router.register(r'gaming', GamingViewSet)
 router.register(r'for_home', HomeViewSet)
-router.register(r'relation', UserRelationViewSet)
 
 
 urlpatterns = [
-    path('',  main)
+    path('',  main),
+    path('relation/<int:pk>', UserRelationViewSet.as_view(), name='make_relation')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

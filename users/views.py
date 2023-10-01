@@ -1,18 +1,18 @@
+from django.shortcuts import render, redirect
+from django.views.generic import CreateView, TemplateView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import logout
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView
+from django.contrib import messages
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import GenericAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import renderers
+from relations.models import Relation
 from users.forms import UserRegistrationForm, LoginUserForm
 from users.serializers import *
 from users.models import User
 from users.permission import *
-from relations.models import Relation
 import requests
 
 
@@ -51,11 +51,8 @@ class RegisterView(CreateView):
 
         form = UserRegistrationForm(request.POST)
 
-        data = {"email": "", "username": "", "password": "", "re_password": ""}
-        data["email"] = request.POST['email']
-        data["username"] = request.POST['username']
-        data["password"] = request.POST['password']
-        data["re_password"] = form.clean_password2()
+        data = {"email": request.POST['email'], "username": request.POST['username'],
+                "password": request.POST['password'], "re_password": form.clean_password2()}
         url = 'http://localhost:8000/api/auth/users/'
         response = requests.post(url, data=data)
         if not response.status_code == 201:
@@ -68,7 +65,8 @@ class RegisterView(CreateView):
                 "re_password": "",
                 "form": form
             }
-            return render(request, 'register.html', parametrs)
+            return render(request, self.template_name, parametrs)
+        messages.success(request, 'Успіх')  # тест
         return redirect('success_registration')
 
 
@@ -105,6 +103,9 @@ class ProfileViewSet(ModelViewSet):
     authentication_classes = [SessionAuthentication]
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
 
+    def list(self, request):
+        return Response(template_name='404.html')
+
     def retrieve(self, request, pk=None):
         try:
             response = self.queryset.get(user_id=pk)
@@ -114,5 +115,5 @@ class ProfileViewSet(ModelViewSet):
         if len(relation) == 0:
             relation = None
         if request.accepted_renderer.format == 'html':
-            return Response({'data': response,'relation': relation}, template_name='user_profile.html')
+            return Response({'data': response, 'relation': relation}, template_name='user_profile.html')
         return response

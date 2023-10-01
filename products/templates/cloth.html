@@ -4,22 +4,24 @@
 <p>CLOTH</p>
 
 <ul>
-    {% for p in data %}
-    {% if p.main_image %}
-    <p><img src="{{ p.main_image }}" width="300 300"></p>
+    {% for item in data %}
+    {% if item.main_image %}
+    <p><img src="{{ item.main_image }}" width="300 300"></p>
     {% endif %}
-    <a href="{{p.id}}"><p>{{p.title}}</p></a>
-    <ul>Ціна: {{p.price}}</ul>
-    {% if p.discount is not 0 %}
-    <ul>Знижка: {{p.discount}}%</ul>
-    <ul>Ціна зі знижкою: {{p.price_w_dis}}</ul>
+    <a href="{{ item.id }}">
+        <p>{{ item.title }}</p>
+    </a>
+    <ul>Ціна: {{ item.price }}</ul>
+    {% if item.discount is not 0 %}
+    <ul>Знижка: {{ item.discount }}%</ul>
+    <ul>Ціна зі знижкою: {{ item.price_w_dis }}</ul>
     {% endif %}
-    
-    <ul>Рейтинг {{p.rating}}</ul>
-    
+
+    <ul>Рейтинг {{item.rating}}</ul>
+
     {% endfor %}
-    {%for image in data.gallery_cloth_set%}
+    {% for image in data.gallery_cloth_set %}
     <p>image</p>
-    {%endfor%}
+    {% endfor %}
 </ul>
 {% endblock %}
