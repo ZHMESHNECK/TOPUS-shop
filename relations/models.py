@@ -30,7 +30,7 @@ class Relation(models.Model):
     comment = models.TextField(
         'Коментарій', max_length=3000, null=True, blank=True)
     parent = models.ForeignKey(
-        'self', verbose_name='parent', on_delete=models.SET_NULL, blank=True, null=True
+        'self', verbose_name='Відповідь на відгук', on_delete=models.SET_NULL, blank=True, null=True
     )
     created_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
@@ -38,7 +38,6 @@ class Relation(models.Model):
         verbose_name = "Зв'язок"
         verbose_name_plural = "Зв'язок"
         ordering = ['-created_at']
-        
 
     def __str__(self) -> str:
         return f'{self.user.username} -> {self.item.title}'

@@ -32,7 +32,6 @@ class ClothSerializerTestCase(TestCase):
         Relation.objects.update_or_create(user=user1, item=item2, rate=3)
         Relation.objects.update_or_create(user=user1, item=item2, rate=3)
         Relation.objects.update_or_create(user=user2, item=item2, rate=4)
-        Relation.objects.update_or_create(user=user3, item=item2)
 
         items = Clothes.objects.all().annotate(price_w_dis=F(
             'price')-F('price')/100*F('discount')).order_by('id')
@@ -46,9 +45,9 @@ class ClothSerializerTestCase(TestCase):
                 'main_image': None,
                 'description': '',
                 'price': '250.00',
+                'discount': 20,
                 'price_w_dis': '200.00',
                 's_code': item.s_code,
-                'discount': 20,
                 'brand': '',
                 'category': None,
                 'rating': '3.7',
@@ -63,9 +62,9 @@ class ClothSerializerTestCase(TestCase):
                 'main_image': None,
                 'description': '',
                 'price': '550.00',
+                'discount': 0,
                 'price_w_dis': '550.00',
                 's_code': item2.s_code,
-                'discount': 0,
                 'brand': '',
                 'category': None,
                 'rating': '3.5',

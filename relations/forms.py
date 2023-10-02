@@ -4,7 +4,7 @@ from relations.models import Relation
 
 class RelationForm(forms.ModelForm):
 
-    rate = forms.IntegerField(label='Пароль')
+    rate = forms.IntegerField(label='Оцінка')
     comment = forms.CharField(
         label='Текст', required=False)
 

@@ -5,17 +5,6 @@ from relations.models import Relation
 from django.db.models import Avg, Count
 
 
-class Decorator:
-    count = 0
-
-    def __init__(self, fun):
-        self._fun = fun
-
-    def __call__(self, *args, **kwargs):
-        self.count += 1
-        return self._fun(*args, **kwargs)
-
-
 def gen_code(x: str) -> str:
     return x+''.join(random.choice([*
                                     ascii_uppercase, *digits]) for _ in range(9))
@@ -43,7 +32,6 @@ def serial_code_randomizer(args):
     return code_serial
 
 
-@Decorator
 def set_rating(item):
     rating = Relation.objects.filter(item=item).aggregate(
         rating=Avg('rate')).get('rating')

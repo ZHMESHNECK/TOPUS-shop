@@ -1,6 +1,6 @@
 from rest_framework.routers import SimpleRouter
 from products.views import ClothviewSet, GamingViewSet, HomeViewSet
-from relations.views import UserRelationViewSet, main
+from relations.views import main
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -14,7 +14,6 @@ router.register(r'for_home', HomeViewSet)
 
 urlpatterns = [
     path('',  main),
-    path('relation/<int:pk>', UserRelationViewSet.as_view(), name='make_relation')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

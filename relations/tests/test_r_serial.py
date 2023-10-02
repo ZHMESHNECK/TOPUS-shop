@@ -3,7 +3,6 @@ from relations.models import Relation
 from products.models import Clothes
 from users.models import User
 from django.test import TestCase
-from datetime import timedelta
 
 
 class ClothSerializerTestCase(TestCase):
@@ -31,19 +30,19 @@ class ClothSerializerTestCase(TestCase):
         # що чекаемо отримати, та що отримали
         expected_data = [
             {
+                'item_id': item2.id,
+                'rate': 5,
+                'comment': 'text2',
+                'parent': None,
+                'in_liked': False,
+            },
+            {
                 'item_id': item.id,
                 'rate': 4,
                 'comment': 'text1',
                 'parent': None,
                 'in_liked': True,
             },
-            {
-                'item_id': item2.id,
-                'rate': 5,
-                'comment': 'text2',
-                'parent': None,
-                'in_liked': False,
-            }
         ]
         # print(expected_data)
         self.assertEqual(expected_data, data)

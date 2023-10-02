@@ -1,4 +1,5 @@
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
@@ -7,7 +8,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.messages import get_messages
 from django.contrib import messages
 from django.db.models import F, Count
-from users.permission import IsStaffOrReadOnly
 from products.utils import serial_code_randomizer
 from products.serializers import *
 from products.models import *
@@ -22,7 +22,7 @@ class ClothviewSet(ModelViewSet):
     serializer_class = ClothSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']
-    # permission_classes = [IsStaffOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     search_fields = ['title', 'description', 'season', 'size']
     ordering_fields = ['title', 'price', 'category', 'season', 'size']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
@@ -31,8 +31,6 @@ class ClothviewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user,
                         s_code=serial_code_randomizer(serializer.validated_data['category']))
-
-# сделать подтверждение создание поста в alert ( указать там ссылку relation/<int:pk>/ + удалить старый комент)
 
     def post(self, request, pk) -> Response:
         form = RelationForm(request.POST)
@@ -90,7 +88,7 @@ class GamingViewSet(ModelViewSet):
     serializer_class = GamingSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']
-    permission_classes = [IsStaffOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     search_fields = ['title', 'description', 'brand', 'model']
     ordering_fields = ['title', 'brand', 'price', 'model']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
@@ -120,7 +118,7 @@ class HomeViewSet(ModelViewSet):
     serializer_class = HomeSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']
-    permission_classes = [IsStaffOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     search_fields = ['title', 'description', 'brand', 'model']
     ordering_fields = ['title', 'brand', 'price', 'model']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
