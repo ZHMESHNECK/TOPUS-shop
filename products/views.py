@@ -6,14 +6,12 @@ from rest_framework.response import Response
 from rest_framework import renderers
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.messages import get_messages
-from django.contrib import messages
 from django.db.models import F, Count
 from products.utils import serial_code_randomizer
 from products.serializers import *
 from products.models import *
 from relations.models import Relation
-from relations.views import UserRelationViewSet
-from relations.forms import RelationForm
+from relations.utils import accept_post
 
 
 class ClothviewSet(ModelViewSet):
@@ -32,37 +30,18 @@ class ClothviewSet(ModelViewSet):
         serializer.save(owner=self.request.user,
                         s_code=serial_code_randomizer(serializer.validated_data['category']))
 
-    def post(self, request, pk) -> Response:
-        form = RelationForm(request.POST)
-        relation = Relation.objects.filter(
-            user_id=self.request.user.id, item_id=pk)
+    def post(self, request, pk):
+        request, parametrs = accept_post(self, request, pk)
 
-        if form.is_valid():
-
-            if len(relation) == 0:
-                UserRelationViewSet.post(self, form, int(pk))
-            else:
-                messages.info(
-                    request, 'У вас вже є відгук на цей товар, якщо ви створите новий відгук - старий видалиться', extra_tags='1')
-        else:
-            messages.info(
-                request, 'Вам потрібно обрати рейтинг для цього товару', extra_tags='2')
         response = super(ClothviewSet, self).retrieve(request, pk)
         images = Gallery_cloth.objects.filter(clothes_id=pk)
-        relation = Relation.objects.filter(item=pk)
-        parametrs = {
-            "rate": form.cleaned_data.get('rate', None),
-            "comment": form.cleaned_data['comment'],
-            "form": form,
-            "accept": True
+        relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
 
-        }
         for message in get_messages(request):
             if message.extra_tags == '1':
                 parametrs['accept'] = False
-        return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='view_cloth.html')
 
-        # return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+        return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='view_cloth.html')
 
     def list(self, request, *args, **kwargs):
         response = super(ClothviewSet, self).list(request, *args, **kwargs)
@@ -74,7 +53,7 @@ class ClothviewSet(ModelViewSet):
         response = super(ClothviewSet, self).retrieve(request, pk)
         if request.accepted_renderer.format == 'html':
             images = Gallery_cloth.objects.filter(clothes_id=pk)
-            relation = Relation.objects.filter(item=pk)
+            relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
             parametrs = {
                 "accept": True
             }
@@ -97,6 +76,19 @@ class GamingViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user,
                         s_code=serial_code_randomizer(serializer.validated_data['category']))
+        
+    def post(self, request, pk):
+        request, parametrs = accept_post(self, request, pk)
+
+        response = super(GamingViewSet, self).retrieve(request, pk)
+        images = Gallery_gaming.objects.filter(clothes_id=pk)
+        relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
+
+        for message in get_messages(request):
+            if message.extra_tags == '1':
+                parametrs['accept'] = False
+
+        return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='view_game.html')
 
     def list(self, request, *args, **kwargs):
         response = super(GamingViewSet, self).list(request, *args, **kwargs)
@@ -107,8 +99,12 @@ class GamingViewSet(ModelViewSet):
     def retrieve(self, request, pk=None):
         response = super(GamingViewSet, self).retrieve(request, pk)
         if request.accepted_renderer.format == 'html':
-            images = Gallery_gaming.objects.filter(gaming_id=pk)
-            return Response({'data': response.data, 'images': images}, template_name='view_game.html')
+            images = Gallery_gaming.objects.filter(clothes_id=pk)
+            relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
+            parametrs = {
+                "accept": True
+            }
+            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='view_game.html')
         return response
 
 
@@ -128,6 +124,19 @@ class HomeViewSet(ModelViewSet):
         serializer.save(owner=self.request.user,
                         s_code=serial_code_randomizer(serializer.validated_data['category']))
 
+    def post(self, request, pk):
+        request, parametrs = accept_post(self, request, pk)
+
+        response = super(HomeViewSet, self).retrieve(request, pk)
+        images = Gallery_home.objects.filter(clothes_id=pk)
+        relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
+
+        for message in get_messages(request):
+            if message.extra_tags == '1':
+                parametrs['accept'] = False
+
+        return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='view_home.html')
+
     def list(self, request, *args, **kwargs):
         response = super(HomeViewSet, self).list(request, *args, **kwargs)
         if request.accepted_renderer.format == 'html':
@@ -137,6 +146,10 @@ class HomeViewSet(ModelViewSet):
     def retrieve(self, request, pk=None):
         response = super(HomeViewSet, self).retrieve(request, pk)
         if request.accepted_renderer.format == 'html':
-            images = Gallery_home.objects.filter(home_id=pk)
-            return Response({'data': response.data, 'images': images}, template_name='view_home.html')
+            images = Gallery_home.objects.filter(clothes_id=pk)
+            relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
+            parametrs = {
+                "accept": True
+            }
+            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='view_home.html')
         return response

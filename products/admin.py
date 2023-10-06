@@ -32,7 +32,7 @@ class ClothAdmin(admin.ModelAdmin):
     list_filter = ('category', 'brand', 'price')
     list_editable = ('is_published',)
     search_fields = ('title', 'season', 'size')
-    fields = ('title', 'description', 'price', 'discount', 'category', 'brand',
+    fields = ('title', 'description', 'price', 'discount', 'brand',
               'main_image', 'get_html_photo', 'is_published', 'size', 'season', 'department', 'rating', 's_code', 'date_created', 'owner')
     readonly_fields = ('s_code', 'date_created', 'owner',
                        'get_html_photo', 'rating')
@@ -46,6 +46,8 @@ class ClothAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.owner = request.user
+        if not obj.category:
+            obj.category = Category.objects.get(pk=1)
         if not obj.s_code:
             obj.s_code = serial_code_randomizer(obj.category)
         obj.save()
@@ -70,6 +72,8 @@ class GamingAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.owner = request.user
+        if not obj.category:
+            obj.category = Category.objects.get(pk=2)
         if not obj.s_code:
             obj.s_code = serial_code_randomizer(obj.category)
         obj.save()
@@ -94,6 +98,8 @@ class HomeAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.owner = request.user
+        if not obj.category:
+            obj.category = Category.objects.get(pk=3)
         if not obj.s_code:
             obj.s_code = serial_code_randomizer(obj.category)
         obj.save()

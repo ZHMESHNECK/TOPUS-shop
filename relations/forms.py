@@ -11,3 +11,12 @@ class RelationForm(forms.ModelForm):
     class Meta:
         model = Relation
         fields = ('rate', 'comment')
+
+class AnswerForm(forms.ModelForm):
+
+    comment = forms.CharField(
+        label='Текст',required=True)
+
+    class Meta:
+        model = Relation
+        fields = ('comment',)
