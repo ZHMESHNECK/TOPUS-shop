@@ -40,3 +40,19 @@ class UserLoginSerializer(UserSerializer):
     class Meta(UserCreateSerializer.Meta):
         model = User
         fields = '__all__'
+
+
+class UserForgotPassSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('email',)
+
+
+class ChangePassSerializer(ModelSerializer):
+    password = serializers.CharField(
+        write_only=True, required=True, validators=[validate_password])
+    re_password = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = '__all__'

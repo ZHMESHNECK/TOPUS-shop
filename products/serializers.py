@@ -8,7 +8,6 @@ class ClothSerializer(ModelSerializer):
     price_w_dis = serializers.DecimalField(
         max_digits=7, decimal_places=2, read_only=True)
     views = serializers.CharField(read_only=True)
-    in_liked = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Clothes
@@ -20,7 +19,6 @@ class GamingSerializer(ModelSerializer):
     price_w_dis = serializers.DecimalField(
         max_digits=7, decimal_places=2, read_only=True)
     views = serializers.CharField(read_only=True)
-    in_liked = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Gaming
@@ -32,7 +30,6 @@ class HomeSerializer(ModelSerializer):
     price_w_dis = serializers.DecimalField(
         max_digits=7, decimal_places=2, read_only=True)
     views = serializers.CharField(read_only=True)
-    in_liked = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Home

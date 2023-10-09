@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.db import models
 from users.models import User
 
@@ -22,7 +23,6 @@ class Relation(models.Model):
         'products.MainModel', on_delete=models.CASCADE, verbose_name='об\'єкт', related_name='rati')
     rate = models.PositiveSmallIntegerField(
         'Оцінка', choices=RATING, default=None, blank=True, null=True)
-    in_liked = models.BooleanField('Обране', default=False)
     comment = models.TextField(
         'Коментарій', max_length=3000, null=True, blank=True)
     parent = models.ForeignKey(
@@ -49,5 +49,5 @@ class Relation(models.Model):
             from products.utils import set_rating
             set_rating(self.item)
 
-    # def get_absolute_url(self):
-    #     return reverse('', kwargs={'id': self.id})
+    def get_absolute_url(self):
+        return reverse(self.item, args=(self.item.id,))

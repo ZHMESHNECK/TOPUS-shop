@@ -20,9 +20,9 @@ class ClothSerializerTestCase(TestCase):
             title='net', price=550, s_code='da', owner=user2)
 
         Relation.objects.update_or_create(
-            user=user1, item=item, rate=4, comment='text1', in_liked=True)
+            user=user1, item=item, rate=4, comment='text1')
         Relation.objects.update_or_create(
-            user=user2, item=item2, rate=5, comment='text2', in_liked=False)
+            user=user2, item=item2, rate=5, comment='text2')
 
         items = Relation.objects.all()
         data = RelationSerializer(items, many=True).data
@@ -34,14 +34,12 @@ class ClothSerializerTestCase(TestCase):
                 'rate': 5,
                 'comment': 'text2',
                 'parent': None,
-                'in_liked': False,
             },
             {
                 'item_id': item.id,
                 'rate': 4,
                 'comment': 'text1',
                 'parent': None,
-                'in_liked': True,
             },
         ]
         # print(expected_data)

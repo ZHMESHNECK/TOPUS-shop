@@ -1,11 +1,21 @@
+from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from relations.models import Relation
 from relations.forms import AnswerForm, RelationForm
+from products.models import MainModel
 from products.utils import set_rating
-import traceback
 
 
 def accept_post(self, request, pk):
+    """ Приймає post запит та обробляє його
+
+    Args:
+        request (_type_): запит
+        pk (_type_): id товару
+
+    Returns:
+        request, parametrs: 
+    """
     fill_the_form = True   # чи потрібно автоматично заповняти форму
 
     # користувач підтвердив змінення відгугку
@@ -64,6 +74,16 @@ def accept_post(self, request, pk):
 
 
 def pre_save(self, request, pk, answer=False) -> bool:
+    """ Функція зберігає відгук чи відповідь на відгук
+
+    Args:
+        request (_type_): запит
+        pk (_type_): id товару
+        answer (bool, optional): Це відповідь на відгук чи ні. Defaults to False.
+
+    Returns:
+        bool
+    """
     if answer:
         form = AnswerForm(request.data)
         if form.is_valid():
@@ -90,6 +110,15 @@ def pre_save(self, request, pk, answer=False) -> bool:
 
 
 def relation_delete(self, request, pk):
+    """ Видаляє відгук
+
+    Args:
+        request (_type_): запит
+        pk (_type_): id відгука
+
+    Returns:
+        bool
+    """
     try:
         relation = Relation.objects.get(
             user_id=request.user.id, item_id=pk, pk=int(request.data.get('delete_relation')))
@@ -97,5 +126,25 @@ def relation_delete(self, request, pk):
         set_rating(relation.item)
         return True
     except:
-        print(traceback.format_exc())
         return False
+
+
+def favourite_rel(request, pk):
+    """ Додає товар до улюбленого чи видаляє з нього якщо товар вже був доданий
+
+    Args:
+        request (_type_): запит
+        pk (_type_): id користувача
+
+    Returns:
+        redirect: login  ( якщо користувач не залогінен )
+        redirect: На ту ж сторінку при успішному додаванні
+    """
+    if request.user.is_authenticated:
+        item = get_object_or_404(MainModel, pk=pk)
+        if item.in_liked.filter(pk=request.user.id).exists():
+            item.in_liked.remove(request.user)
+        else:
+            item.in_liked.add(request.user)
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+    return redirect('login')

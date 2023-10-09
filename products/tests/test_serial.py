@@ -54,6 +54,7 @@ class ClothSerializerTestCase(TestCase):
                 'size': '',
                 'season': '',
                 'department': '',
+                'in_liked': [],
                 'date_created': (item.date_created+timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
             },
             {
@@ -71,6 +72,7 @@ class ClothSerializerTestCase(TestCase):
                 'size': '',
                 'season': '',
                 'department': '',
+                'in_liked': [],
                 'date_created': (item2.date_created+timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
             }
         ]

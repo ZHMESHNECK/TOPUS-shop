@@ -5,7 +5,7 @@
 {% endblock subject %}
 
 {% block text_body %}
-{% blocktrans %}Ви отримали це повідомлення для завершення регістрації на  {{ site_name }}.{% endblocktrans %}
+{% blocktrans %}Ви отримали це повідомлення для завершення регістрації на {{ site_name }}.{% endblocktrans %}
 
 Натисніть кнопку "Активувати" щоб завершити регістрацію
 {{ protocol }}://{{ domain }}{{ url|safe }}
@@ -16,10 +16,12 @@
 {% endblock text_body %}
 
 {% block html_body %}
-<p>{% blocktrans %}Ви отримали це повідомлення для завершення регістрації на  {{ site_name }}.{% endblocktrans %}</p>
+<p>{% blocktrans %}Ви отримали це повідомлення для завершення регістрації на {{ site_name }}.{% endblocktrans %}</p>
 
 <p>Натисніть кнопку "Активувати" щоб завершити регістрацію</p>
-<p style="margin-bottom:100px"><a style="display: inline-block; padding: 10px 20px; background-color: red; color: white; text-decoration: none;" href="{{ protocol }}://{{ domain }}{{ url|safe }}">Активувати</a></p>
+<p style="margin-bottom:100px"><a
+        style="display: inline-block; padding: 10px 20px; background-color: red; color: white; text-decoration: none;"
+        href="{{ protocol }}://{{ domain }}{{ url|safe }}">Активувати</a></p>
 
 <p>Дякуємо що користуєтесь {{ site_name }}!</p>
 

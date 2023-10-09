@@ -147,7 +147,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 
@@ -186,9 +185,10 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
     'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
-    'PASSWORD_RESET_CONFIRM_URL': '/password-reset/{uid}/{token}',
-    'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_URL': '/api/password-reset/{uid}/{token}',
     'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'SET_PASSWORD_RETYPE': True,
     'TOKEN_MODEL': None,
     'SERIALIZERS': {
         'user_create': 'users.serializers.UserCreateSerializer',

@@ -229,19 +229,32 @@ class RelationTestCase(APITestCase):
         review.refresh_from_db()
         self.assertEqual('5.0', str(review.rating))
 
-    # def test_in_liked(self):
-    #     """Ставлення та перевірка лайка
-    #     """
-    #     url = reverse('make_relation', args=(self.item.id,))
+    def test_in_liked(self):
+        """Ставлення та перевірка лайка
+        """
+        url = reverse('add_to_fav', args=(self.item.id,))
+        item = self.item
+        self.assertFalse(item.in_liked.filter(pk=self.user.id).exists())
+        self.client.force_login(self.user)
+        response = self.client.post(
+            url, content_type='application/json')
 
-    #     data = {
-    #         'in_liked': True,
-    #     }
-    #     json_data = json.dumps(data)
-    #     self.client.force_authenticate(self.user)
-    #     response = self.client.post(
-    #         url, data=json_data, content_type='application/json')
-    #     # self.assertEqual(status.HTTP_200_OK, response.status_code)
-    #     relation = Relation.objects.get(user=self.user, item=self.item)
-    #     self.assertTrue(relation.in_liked)
-    #     print('da')
+        item.refresh_from_db()
+
+        self.assertTrue(item.in_liked.filter(pk=self.user.id).exists())
+
+
+    def test_in_liked_not_authenticate(self):
+        """Ставлення та перевірка лайка
+        """
+        url = reverse('add_to_fav', args=(self.item.id,))
+        item = self.item
+        self.assertFalse(item.in_liked.filter(pk=self.user.id).exists())
+
+        response = self.client.post(
+            url, content_type='application/json')
+
+        item.refresh_from_db()
+        self.assertEqual(response.url, '/api/login/')
+
+        self.assertFalse(item.in_liked.filter(pk=self.user.id).exists())

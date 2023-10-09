@@ -4,7 +4,7 @@ from relations.models import Relation
 
 @admin.register(Relation)
 class RatingAdmin(admin.ModelAdmin):
-    fields = ('user', 'item', 'rate', 'in_liked', 'comment', 'parent')
+    fields = ('user', 'item', 'rate', 'comment', 'parent')
 
     def save_model(self, request, obj, form, change):
         new_obj, _ = Relation.objects.get_or_create(

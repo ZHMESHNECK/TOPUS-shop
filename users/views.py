@@ -1,20 +1,20 @@
-from django.shortcuts import render, redirect
-from django.views.generic import CreateView, TemplateView
-from django.contrib.auth.views import LoginView
-from django.contrib.auth import logout
+from django.contrib.auth.views import *
+from django.contrib.auth import logout, login
 from django.contrib import messages
+from django.views.generic.edit import FormView
+from django.views.generic import CreateView, TemplateView
+from django.shortcuts import render, redirect
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import GenericAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import renderers
 from relations.models import Relation
-from users.forms import UserRegistrationForm, LoginUserForm
 from users.serializers import *
-from users.models import User
 from users.permission import *
+from users.models import User
+from users.forms import *
 import requests
-
 
 # https://www.django-rest-framework.org/tutorial/3-class-based-views/
 
@@ -28,10 +28,59 @@ class ActivateUser(GenericAPIView):
         response = requests.post(url, json=payload)
 
         if response.status_code in (204, 301, 302):
+            login(request)
             return redirect('/')
         else:
-            print('error')
-            # return redirect('error')
+            return render(request, '404.html')
+
+
+class ChangePasswordUser(PasswordContextMixin, FormView):
+    """Сторінка вводу нового пароля
+    """
+    form_class = SetPasswordForm
+    template_name = 'make_new_pass.html'
+    title = 'Зміна пароля'
+
+    def post(self, request, *args, **kwargs):
+        form = SetPasswordForm(request.POST)
+
+        data = {"uid": kwargs['uidb64'], "token": kwargs['token'], "new_password": request.POST['new_password'],
+                "re_new_password": request.POST['re_new_password']}
+
+        url = 'http://localhost:8000/api/auth/users/reset_password_confirm/'
+        response = requests.post(url, data=data)
+        if response.status_code != 204:
+            form.error_400(response.content.decode())
+            parametrs = {
+                "new_password": "",
+                "re_new_password": "",
+                "form": form
+            }
+            return render(request, self.template_name, parametrs)
+        messages.success(request, 'Пароль успішно змінено')
+        return render(request, self.template_name)
+
+
+class ForgotPassword(PasswordResetView):
+    """Сторінка вводу пошти для зміни пароля
+    """
+    form_class = ForgotPasswordForm
+    template_name = 'send_change_pass.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Змінити пароль'
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = ForgotPasswordForm(request.POST)
+
+        data = {"email": request.POST['email']}
+        url = 'http://localhost:8000/api/auth/users/reset_password/'
+        response = requests.post(url, data=data)
+        if response.status_code != 204:
+            return render(request,  '404.html')
+        return render(request, 'success_send.html', context={'info': 'щоб змінити пароль'})
 
 
 class RegisterView(CreateView):
@@ -66,11 +115,10 @@ class RegisterView(CreateView):
                 "form": form
             }
             return render(request, self.template_name, parametrs)
-        messages.success(request, 'Успіх')  # тест
-        return redirect('success_registration')
+        return render(request, 'success_send.html', context={'info': 'щоб завершити реєстрацію'})
 
 
-class EmailSentView(TemplateView):
+class EmailSendView(TemplateView):
 
     template_name = 'success_register.html'
 
@@ -81,6 +129,8 @@ class EmailSentView(TemplateView):
 
 
 class LoginUser(LoginView):
+    """Сторінка логіну
+    """
     serializer_class = UserLoginSerializer
     form_class = LoginUserForm
     template_name = 'login.html'
@@ -97,6 +147,8 @@ def logout_user(request):
 
 
 class ProfileViewSet(ModelViewSet):
+    """Сторінка відображення профіля юзера
+    """
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [IsOwnerOrReadOnly, IsStaffOrReadOnly]
@@ -110,7 +162,7 @@ class ProfileViewSet(ModelViewSet):
         try:
             response = self.queryset.get(user_id=pk)
         except:
-            return render('eror')
+            return redirect('404.html')
         relation = Relation.objects.filter(user=pk)
         if len(relation) == 0:
             relation = None

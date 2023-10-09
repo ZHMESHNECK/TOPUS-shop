@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{ data }}
+{% if request.user.is_authenticated %}
+<p>{{ user.username }} - {{ user.id }}</p>
+{% endif %}
+
+<p>{{ data.title }}</p>
+<ul> {{ data.description | linebreaks}}</ul>
+
+
+<!-- https://www.youtube.com/watch?v=H8QnlH6sou0&t -->
+<p>Рейтинг товару: {{ data.rating }}</p>
+<div id="half-stars-example">
+    <div class="rating-group">
+        <label aria-label="1 star" class="rating__label"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+        
+        {% if data.rating|floatformat >= 1.3|floatformat and data.rating|floatformat <= 1.8|floatformat %}
+            <label aria-label="1.5 stars" class="rating__label rating__label--half"><i class="rating__icon rating__icon--star fa-solid fa-star-half-stroke"></i></label>
+            
+        {% elif data.rating|floatformat <= 1.8|floatformat %}
+            <label aria-label="2 stars" class="rating__label"><i class="rating__icon rating__icon--none fa fa-star"></i></label>
+        {% elif data.rating|floatformat >= 1.9|floatformat %}
+            <label aria-label="2 stars" class="rating__label"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+        {% endif %}
+
+        {% if data.rating|floatformat >= 2.3|floatformat and data.rating|floatformat <= 2.8|floatformat %}
+            <label aria-label="2.5 stars" class="rating__label rating__label--half"><i class="rating__icon rating__icon--star fa fa-solid fa-star-half-stroke"></i></label>
+            
+        {% elif data.rating|floatformat <= 2.8|floatformat %}
+            <label aria-label="3 stars" class="rating__label"><i class="rating__icon rating__icon--none fa fa-star"></i></label>
+        {% elif data.rating|floatformat >= 2.9|floatformat %}
+            <label aria-label="3 stars" class="rating__label"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+        {% endif %}
+
+        {% if data.rating|floatformat >= 4.3|floatformat and data.rating|floatformat <= 4.8|floatformat %}
+            <label aria-label="3.5 stars" class="rating__label rating__label--half"><i class="rating__icon rating__icon--star fa fa-solid fa-star-half-stroke"></i></label>
+        {% elif data.rating|floatformat <= 3.8|floatformat %}
+            <label aria-label="4 stars" class="rating__label"><i class="rating__icon rating__icon--none fa fa-star"></i></label>
+        {% elif data.rating|floatformat >= 3.9|floatformat %}
+            <label aria-label="4 stars" class="rating__label"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+        {% endif %}
+
+        {% if data.rating|floatformat >= 4.3|floatformat and data.rating|floatformat < 4.8|floatformat %}
+            <label aria-label="4.5 stars" class="rating__label rating__label--half"><i class="rating__icon rating__icon--star fa fa-solid fa-star-half-stroke"></i></label>
+        {% endif %}
+
+        {% if data.rating|floatformat >= 4.9|floatformat %}
+            <label aria-label="5 stars" class="rating__label"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+        {% elif data.rating|floatformat < 4.9|floatformat %}
+            <label aria-label="5 stars" class="rating__label"><i class="rating__icon rating__icon--none fa fa-star"></i></label>
+        {% endif %}
+    </div>
+</div>
+
+
+
+
+{% if data.main_image %}
+<img src="{{data.main_image}}" width="300 300">
+{% endif %}
+
+{% for image in images %}
+<img src="{{image.images.url}}" width="300 300">
+{% endfor %}
+<br>
+{% if request.user.id in data.in_liked %}
+Вже в обраному
+<a href="{% url 'add_to_fav' data.id %}">
+    <li class="fa-solid fa-heart fa-lg"></li>
+</a>
+{% else %}
+Додати в обране
+<a href="{% url 'add_to_fav' data.id %}">
+    <li class="fa-regular fa-heart fa-lg"></li>
+</a>
+{% endif %}
+
+
+<form method="post" id="relation_form">
+    {% csrf_token %}
+    <p>Напишіть свій відгук:</p>
+    <div id="full-stars-example">
+        <div class="rating-group">
+            <input disabled class="rating__input rating__input--none" name="rating3" id="rating3-none" value="0"
+                type="radio">
+            <label aria-label="1 star" class="rating__label" for="rating3-1"><i
+                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+            <input class="rating__input" name="rate" id="rating3-1" value="1" type="radio" {% if parametrs.rate is 1 %}
+                checked {% endif %}>
+            <label aria-label="2 stars" class="rating__label" for="rating3-2"><i
+                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+            <input class="rating__input" name="rate" id="rating3-2" value="2" type="radio" {% if parametrs.rate is 2 %}
+                checked {% endif %}>
+            <label aria-label="3 stars" class="rating__label" for="rating3-3"><i
+                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+            <input class="rating__input" name="rate" id="rating3-3" value="3" type="radio" {% if parametrs.rate is 3 %}
+                checked {% endif %}>
+            <label aria-label="4 stars" class="rating__label" for="rating3-4"><i
+                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+            <input class="rating__input" name="rate" id="rating3-4" value="4" type="radio" {% if parametrs.rate is 4 %}
+                checked {% endif %}>
+            <label aria-label="5 stars" class="rating__label" for="rating3-5"><i
+                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+            <input class="rating__input" name="rate" id="rating3-5" value="5" type="radio" {% if parametrs.rate is 5 %}
+                checked {% endif %}>
+        </div>
+        <br>
+        {% if request.user.is_authenticated and parametrs.accept is True %}
+        <textarea rows="5" name="comment" id="contactcomment">{{ parametrs.comment }}</textarea>
+        <button type="submit">
+            Надіслати
+        </button>
+        {% else %}
+        <textarea rows="5" name="comment" id="contactcomment" disabled>{{ parametrs.comment }}</textarea>
+        <button disabled type="submit">
+            Надіслати
+        </button>
+        {% endif %}
+    </div>
+</form>
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li class="{{ message.tags }}">
+        {% if message.extra_tags == '1' %}
+        {{ message|safe }}
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="rate" value="{{ parametrs.rate }}">
+            <input type="hidden" name="comment" value="{{ parametrs.comment }}">
+            <button type="submit" name="confirm" value="True">✔</button>
+            <a href="{{ requst.META.HTTP_REFERER }}">✖</a>
+        </form>
+        {% else %}
+        {{ message|safe }}
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<p>Коментарі</p>
+
+{% for review in relation %}
+{% if review.rate is not None %}
+<br>
+<hr>
+<p>Дата: {{ review.created_at }}</p>
+<p>Юзер: {{ review.user.username }}</p>
+<p>Оцінка: {{ review.rate }}</p>
+<p>Текст: {{ review.comment }}</p>
+{% if review.user.id is request.user.id %}
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Видалити</button>
+    <input type="hidden" name="delete_relation" value="{{review.id}}">
+</form>
+{% endif %}
+{% endif %}
+
+{% if request.user.is_staff %}
+<a href="#relation_form" onclick="AddReview('{{ review.user.username }}','{{ review.id }}')">Відповісти</a>
+{% endif %}
+{% for ans in review.relation_set.all %}
+<br>
+<p>{{ ans.user.username }} відповів {{ review.user.username }}</p>
+<p>{{ ans.comment }}</p>
+{% if ans.user.id is request.user.id %}
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Видалити</button>
+    <input type="hidden" name="delete_relation" value="{{ans.id}}">
+</form>
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+
+<script>
+    function AddReview(name, id) {
+        document.getElementById("contactparent").value = id;
+        document.getElementById("contactparent").name = 'parent';
+        document.getElementById("contactcomment").innerText = `${name}, `
+    }
+</script>
+{% endblock %}

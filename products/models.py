@@ -1,7 +1,7 @@
-from users.models import User
 from django.urls import reverse
 from django.db import models
 from relations.models import Relation
+from users.models import User
 
 
 class Category(models.Model):
@@ -47,10 +47,11 @@ class MainModel(models.Model):
         User, through=Relation, related_name='view')
     rating = models.DecimalField(
         max_digits=2, decimal_places=1, default=None, null=True, verbose_name='Рейтинг')  # кэшуюче поле
+    in_liked = models.ManyToManyField(
+        User, related_name='in_favourite', blank=True)
 
     def __str__(self) -> str:
         return f'Id {self.id}: {self.title}'
-    
 
 
 class Clothes(MainModel):

@@ -33,7 +33,7 @@ class ClothAdmin(admin.ModelAdmin):
     list_editable = ('is_published',)
     search_fields = ('title', 'season', 'size')
     fields = ('title', 'description', 'price', 'discount', 'brand',
-              'main_image', 'get_html_photo', 'is_published', 'size', 'season', 'department', 'rating', 's_code', 'date_created', 'owner')
+              'main_image', 'get_html_photo', 'is_published','in_liked', 'size', 'season', 'department', 'rating', 's_code', 'date_created', 'owner')
     readonly_fields = ('s_code', 'date_created', 'owner',
                        'get_html_photo', 'rating')
     inlines = [GalleryClInline]
@@ -60,7 +60,7 @@ class GamingAdmin(admin.ModelAdmin):
     list_editable = ('is_published',)
     search_fields = ('title', 'brand', 'model')
     fields = ('title', 'description', 'price', 'discount', 'category', 'brand',
-              'main_image', 'is_published', 'material', 'model', 'color', 's_code', 'owner')
+              'main_image', 'is_published','in_liked', 'material', 'model', 'color', 's_code', 'owner')
     readonly_fields = ('s_code', 'date_created', 'owner')
     inlines = [GalleryGaInline]
 
@@ -86,7 +86,7 @@ class HomeAdmin(admin.ModelAdmin):
     list_editable = ('is_published',)
     search_fields = ('title', 'room_type')
     fields = ('title', 'description', 'price', 'discount', 'category', 'brand',
-              'main_image', 'is_published', 'material', 'color', 'room_type', 'weight', 'dimensions', 's_code', 'owner')
+              'main_image', 'is_published','in_liked', 'material', 'color', 'room_type', 'weight', 'dimensions', 's_code', 'owner')
     readonly_fields = ('s_code', 'date_created', 'owner')
     inlines = [GalleryHmInline]
 
