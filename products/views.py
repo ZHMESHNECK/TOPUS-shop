@@ -12,6 +12,7 @@ from products.models import *
 from products.utils import serial_code_randomizer
 from relations.models import Relation
 from relations.utils import accept_post
+import json
 
 
 class ClothviewSet(ModelViewSet):
@@ -22,7 +23,9 @@ class ClothviewSet(ModelViewSet):
     filterset_fields = ['price']
     permission_classes = [IsAuthenticatedOrReadOnly]
     search_fields = ['title', 'description', 'season', 'size']
-    ordering_fields = ['title', 'price', 'category', 'season', 'size']
+    ordering_fields = ['title', 'price', 'category',
+                       'season', 'size', 'date_created']
+    ordering = ['-date_created']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
     authentication_classes = [SessionAuthentication]
 
@@ -46,7 +49,7 @@ class ClothviewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         response = super(ClothviewSet, self).list(request, *args, **kwargs)
         if request.accepted_renderer.format == 'html':
-            return Response({'data': response.data}, template_name='item_page.html')
+            return Response({'data': response.data}, template_name='list_item_page.html')
         return response
 
     def retrieve(self, request, pk=None):
@@ -70,6 +73,7 @@ class GamingViewSet(ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     search_fields = ['title', 'description', 'brand', 'model']
     ordering_fields = ['title', 'brand', 'price', 'model']
+    ordering = ['-date_created']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
     authentication_classes = [SessionAuthentication]
 
@@ -93,7 +97,7 @@ class GamingViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         response = super(GamingViewSet, self).list(request, *args, **kwargs)
         if request.accepted_renderer.format == 'html':
-            return Response({'data': response.data}, template_name='item_page.html')
+            return Response({'data': response.data}, template_name='list_item_page.html')
         return response
 
     def retrieve(self, request, pk=None):
@@ -117,6 +121,7 @@ class HomeViewSet(ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     search_fields = ['title', 'description', 'brand', 'model']
     ordering_fields = ['title', 'brand', 'price', 'model']
+    ordering = ['-date_created']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
     authentication_classes = [SessionAuthentication]
 
@@ -140,7 +145,7 @@ class HomeViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         response = super(HomeViewSet, self).list(request, *args, **kwargs)
         if request.accepted_renderer.format == 'html':
-            return Response({'data': response.data}, template_name='item_page.html')
+            return Response({'data': response.data}, template_name='list_item_page.html')
         return response
 
     def retrieve(self, request, pk=None):

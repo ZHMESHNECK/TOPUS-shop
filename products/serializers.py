@@ -11,8 +11,8 @@ class ClothSerializer(ModelSerializer):
 
     class Meta:
         model = Clothes
-        fields = ('id', 'title', 'main_image', 'description', 'price', 'discount', 'price_w_dis', 's_code', 'brand',
-                  'category', 'rating', 'size', 'season', 'department', 'date_created', 'views', 'in_liked')
+        # fields = '__all__'
+        exclude = ('owner', 'date_created')
 
 
 class GamingSerializer(ModelSerializer):
@@ -22,8 +22,8 @@ class GamingSerializer(ModelSerializer):
 
     class Meta:
         model = Gaming
-        fields = ('id', 'title', 'main_image', 'description', 'price', 'discount', 'price_w_dis', 's_code', 'brand',
-                  'category', 'rating', 'material', 'model', 'color', 'date_created', 'views', 'in_liked')
+        # fields = '__all__'
+        exclude = ('owner', 'date_created')
 
 
 class HomeSerializer(ModelSerializer):
@@ -33,5 +33,5 @@ class HomeSerializer(ModelSerializer):
 
     class Meta:
         model = Home
-        fields = ('id', 'title', 'main_image', 'description', 'price', 'discount', 'price_w_dis', 's_code', 'brand',
-                  'category', 'rating', 'material', 'color', 'room_type', 'weight', 'dimensions', 'date_created', 'views', 'in_liked')
+        # fields = '__all__'
+        exclude = ('owner', 'date_created')
