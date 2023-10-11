@@ -2,8 +2,6 @@ from django.urls import reverse
 from django.db import models
 from users.models import User
 
-# https://pocoz.gitbooks.io/django-v-primerah/content/glava-7-sozdanie-internet-magazina/sozdanie-korzini/ispolzovanie-sessii-django.html
-
 
 class Relation(models.Model):
     """Модель відношень користувача та товару
