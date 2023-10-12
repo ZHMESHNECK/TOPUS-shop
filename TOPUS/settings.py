@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'products',
     'users',
     'relations',
+    'cart',
 ]
 
 MIDDLEWARE = [
@@ -203,6 +204,7 @@ DJOSER = {
     }
 }
 
+# Custom User model
 AUTH_USER_MODEL = 'users.User'
 
 # Google login / register
@@ -246,3 +248,5 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 PHONENUMBER_DEFAULT_REGION = 'UA'
+
+CART_SESSION_ID = 'cart'
