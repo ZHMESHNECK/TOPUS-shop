@@ -6,7 +6,7 @@
 
 :warning: [Вимоги](#вимоги) :warning:
 
-:black_nib: [Установка](#установка) :black_nib:
+:black_nib: [Встановлення](#встановлення) :black_nib:
 
 :question: [Що у планах](#що_у_планах) :question:
 
@@ -39,9 +39,9 @@ __
 - PostgreSQL 14+
 
 
-<a name="Установка"></a>
+<a name="Встановлення"></a>
 
-## Установка
+## Встановлення
 
 __
 
@@ -56,6 +56,8 @@ __
 ## Джерела
 
 - https://www.youtube.com/@SeniorPomidorDeveloper
+- https://www.youtube.com/@CodeWithClinton
+- https://www.youtube.com/@geekyshows
 
 
 <a name="дякую"></a>

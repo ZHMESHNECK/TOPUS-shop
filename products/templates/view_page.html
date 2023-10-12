@@ -66,6 +66,17 @@
 {% endfor %}
 <br>
 
+{% if request.user.id in data.in_liked %}
+Вже в обраному
+<a href="{% url 'add_to_fav' data.id %}">
+    <li class="fa-solid fa-heart fa-lg"></li>
+</a>
+{% else %}
+Додати в обране
+<a href="{% url 'add_to_fav' data.id %}">
+    <li class="fa-regular fa-heart fa-lg"></li>
+</a>
+{% endif %}
 
 <div class="add_to_cart_btn">
 <button value="{{ data.id }}">Придбати</button>
