@@ -36,7 +36,10 @@ class LoginUserForm(AuthenticationForm):
     """ Форма логіну
     """
 
-    username = forms.CharField(label='Пошта / Логін')
+    username = forms.CharField(
+        label='Пошта / Логін')
+    password = forms.CharField(
+        label='Пароль')
 
 
 class ForgotPasswordForm(forms.ModelForm):

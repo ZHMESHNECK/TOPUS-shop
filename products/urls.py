@@ -14,7 +14,7 @@ router.register(r'for_home', HomeViewSet, basename='home')
 
 
 urlpatterns = [
-    path('',  main),
+    path('', main, name='home'),
     path('add_to_fav/<int:pk>', favourite_rel, name='add_to_fav')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
