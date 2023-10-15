@@ -87,7 +87,6 @@ class Clothes(MainModel):
     class Meta:
         verbose_name = 'Одяг'
         verbose_name_plural = 'Одяг'
-        ordering = ['date_created']
 
 
 class Gaming(MainModel):

@@ -22,14 +22,12 @@ btns.forEach(btn => {
 })
 
 function AddToCart(e) {
-    // console.log(e.target.value)
     let item = e.target.value
     let url = '/cart'
-    console.log(JSON.stringify(item))
 
 
     let data = {
-        product_id: item,
+        product_id: Number(item),
         quantity: 1
     }
 

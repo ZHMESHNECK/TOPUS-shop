@@ -2,7 +2,7 @@ from products.serializers import ClothSerializer
 from products.models import Clothes
 from relations.models import Relation
 from users.models import User
-from django.db.models import F
+from django.db.models import F, Count
 from django.test import TestCase
 from datetime import timedelta
 
@@ -34,46 +34,48 @@ class ClothSerializerTestCase(TestCase):
         Relation.objects.update_or_create(user=user2, item=item2, rate=4)
 
         items = Clothes.objects.all().annotate(price_w_dis=F(
-            'price')-F('price')/100*F('discount')).order_by('id')
+            'price')-F('price')/100*F('discount'), views=Count('viewed')).order_by('id')
         data = ClothSerializer(items, many=True).data
         # print(data)
         # що чекаемо отримати, та що отримали
         expected_data = [
             {
                 'id': item.id,
+                'price_w_dis': '200.00',
+                'views': '3',
                 'title': 'da',
-                'main_image': None,
                 'description': '',
                 'price': '250.00',
-                'discount': 20,
-                'price_w_dis': '200.00',
-                's_code': item.s_code,
                 'brand': '',
-                'category': None,
+                'main_image': None,
+                's_code': item.s_code,
+                'date_created': (item.date_created+timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
+                'discount': 20,
                 'rating': '3.7',
                 'size': '',
                 'season': '',
                 'department': '',
+                'category': None,
                 'in_liked': [],
-                'date_created': (item.date_created+timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
             },
             {
                 'id': item2.id,
+                'price_w_dis': '550.00',
+                'views': '2',
                 'title': 'net',
-                'main_image': None,
                 'description': '',
                 'price': '550.00',
-                'discount': 0,
-                'price_w_dis': '550.00',
-                's_code': item2.s_code,
                 'brand': '',
-                'category': None,
+                'main_image': None,
+                's_code': item2.s_code,
+                'date_created': (item2.date_created+timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
+                'discount': 0,
                 'rating': '3.5',
                 'size': '',
                 'season': '',
                 'department': '',
+                'category': None,
                 'in_liked': [],
-                'date_created': (item2.date_created+timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
             }
         ]
         # print(expected_data)

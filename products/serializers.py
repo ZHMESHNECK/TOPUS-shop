@@ -12,7 +12,7 @@ class ClothSerializer(ModelSerializer):
     class Meta:
         model = Clothes
         # fields = '__all__'
-        exclude = ('owner', 'date_created')
+        exclude = ('owner', 'viewed', 'is_published')
 
 
 class GamingSerializer(ModelSerializer):
@@ -23,7 +23,7 @@ class GamingSerializer(ModelSerializer):
     class Meta:
         model = Gaming
         # fields = '__all__'
-        exclude = ('owner', 'date_created')
+        exclude = ('owner', 'viewed', 'is_published')
 
 
 class HomeSerializer(ModelSerializer):
@@ -34,4 +34,4 @@ class HomeSerializer(ModelSerializer):
     class Meta:
         model = Home
         # fields = '__all__'
-        exclude = ('owner', 'date_created')
+        exclude = ('owner', 'viewed', 'is_published')

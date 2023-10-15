@@ -16,6 +16,7 @@ class MainApiTestCase(APITestCase):
             username='test', email='email1@email.email', is_staff=True)
         self.user2 = User.objects.create(
             username='test22', email='email12@email.email', is_staff=True)
+
         self.item = Clothes.objects.create(
             title='test1', price='150.00', size='S', season='SUMMER', owner=self.user, s_code='123', is_published=True)
         self.item2 = Clothes.objects.create(
@@ -30,19 +31,19 @@ class MainApiTestCase(APITestCase):
         url = reverse('clothes-list')
         response = self.client.get(url)
         items = Clothes.objects.all().annotate(price_w_dis=F(
-            'price')-F('price')/100*F('discount'), views=Count('viewed')).order_by('id')
+            'price')-F('price')/100*F('discount'), views=Count('viewed')).order_by('-date_created')
 
         serializer_data = ClothSerializer(items, many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(serializer_data, response.data)
-        self.assertEqual(serializer_data[0]['rating'], '4.0')
+        self.assertEqual(serializer_data[-1]['rating'], '4.0')
 
     def test_search(self):
         """Пошук по декількох полях
         """
         url = reverse('clothes-list')
         items = Clothes.objects.filter(id__in=[self.item.id, self.item2.id]).annotate(price_w_dis=F(
-            'price')-F('price')/100*F('discount'), views=Count('viewed')).order_by('id')
+            'price')-F('price')/100*F('discount'), views=Count('viewed')).order_by('-date_created')
         response = self.client.get(url, data={'search': 'test1'})
         serializer_data = ClothSerializer(
             items, many=True).data

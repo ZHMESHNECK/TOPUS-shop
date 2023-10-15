@@ -1,11 +1,16 @@
-from decimal import Decimal
-
 from django.conf import settings
-
+from django.db import models
 from products.models import MainModel
+from decimal import Decimal
+import json
 
 
-class Cart:
+class Cart(models.Model):
+
+    class Meta:
+        verbose_name = 'Кошик'
+        verbose_name_plural = 'Кошик'
+
     def __init__(self, request):
         """
         initialize the cart
@@ -21,25 +26,24 @@ class Cart:
         self.session.modified = True
 
     def add(self, product, quantity=1, overide_quantity=False):
+        """ Додати товар до кошика або додати кількість
         """
-        Add product to the cart or update its quantity
-        """
-        product_id = str(product["id"])
-        if product_id not in self.cart:
-            self.cart[product_id] = {
-                "quantity": 0,
-                "price": str(product["price"])
+        product = MainModel.objects.get(id=product)
+        if str(product.id) not in self.cart:
+            self.cart[str(product.id)] = {
+                "Кількість": 0,
+                "Ціна": float(product.price)
             }
         if overide_quantity:
-            self.cart[product_id]["quantity"] = quantity
+            self.cart[str(product.id)]["Кількість"] = quantity
         else:
-            self.cart[product_id]["quantity"] += quantity
+            self.cart[str(product.id)]["Кількість"] += quantity
         self.save()
 
     def remove(self, product):
         """Видалення товару з кошика
         """
-        product_id = str(product["id"])
+        product_id = str(product)
 
         if product_id in self.cart:
             del self.cart[product_id]
@@ -52,23 +56,25 @@ class Cart:
         # Отримання товару та додання їх до кошика
         products = MainModel.objects.filter(id__in=product_ids)
         for product in products:
-            self.cart[str(product.id)]['product'] = product
+            self.cart[str(product.id)]['Товар'] = product.title
 
         for item in self.cart.values():
-            item['price'] = Decimal(item['price'])
-            item['total_price'] = item['price'] * item['quantity']
+            item['Ціна'] = Decimal(item['Ціна'])
+            item['Всього'] = item['Ціна'] * item['Кількість']
             yield item
 
     def __len__(self):
+        """Кількість товару у кошику
         """
-        Count all items in the cart
-        """
-        return sum(item["quantity"] for item in self.cart.values())
+        return sum(item["Кількість"] for item in self.cart.values())
 
     def get_total_price(self):
-        return sum(Decimal(item["price"]) * item["quantity"] for item in self.cart.values())
+        return sum(Decimal(item["Ціна"]) * item["Кількість"] for item in self.cart.values())
 
     def clear(self):
         # Видалення кошика з сесії
         del self.session[settings.CART_SESSION_ID]
         self.save()
+
+    def __str__(self):
+        return f'{self.id}'

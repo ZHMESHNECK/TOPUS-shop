@@ -167,7 +167,11 @@
 {% endif %}
 
 {% if request.user.is_staff %}
-<a href="#relation_form" onclick="AddReview('{{ review.user.username }}','{{ review.id }}')">Відповісти</a>
+<form method="post">
+    {% csrf_token %}
+<textarea name="comment" id="answer_text" width="10"></textarea>
+<button id="answer_id" onclick="AddReview('{{ review.user.username }}','{{ review.id }}')">Відповісти</button>
+</form>
 {% endif %}
 {% for ans in review.relation_set.all %}
 <br>
@@ -186,9 +190,9 @@
 
 <script>
     function AddReview(name, id) {
-        document.getElementById("contactparent").value = id;
-        document.getElementById("contactparent").name = 'parent';
-        document.getElementById("contactcomment").innerText = `${name}, `
+        document.getElementById("answer_id").value = id;
+        document.getElementById("answer_id").name = 'parent';
+        document.getElementById("answer_text").innerText = `${name}, `
     }
 </script>
 {% endblock %}

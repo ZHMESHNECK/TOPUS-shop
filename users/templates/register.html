@@ -1,25 +1,32 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>register</title>
+</head>
 
-{% block content %}
-<h1>Реєстрація</h1>
-{% if request.user.is_authenticated %}
-<p>Ви вже увійшли в свій аккаунт,
-    якщо ви бажаєте зареєструвати нового користувача, вам потрібно вийти зі старого профілю<a
-        href="{% url 'logout' %}">Вихід</a></button>
-</p>
+<body>
+    <h1>Реєстрація</h1>
+    {% if request.user.is_authenticated %}
+    <p>Ви вже увійшли в свій аккаунт,
+        якщо ви бажаєте зареєструвати нового користувача, вам потрібно вийти зі старого профілю<a
+            href="{% url 'logout' %}">Вихід</a></button>
+    </p>
 
-{% else %}
+    {% else %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    {{ form.as_p }}
-    <p><input type="submit" value="Зареєструватися"></p>
-</form>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
+        <p><input type="submit" value="Зареєструватися"></p>
+    </form>
 
-<a href="{% url 'social:begin' 'google-oauth2' %}">Google</a>
-<a href="{% url 'login' %}">Вже є аккаунт?</a>
-{% endif %}
+    <a href="{% url 'social:begin' 'google-oauth2' %}">Google</a>
+    <a href="{% url 'login' %}">Вже є аккаунт?</a>
+    {% endif %}
+</body>
 
-{% endblock %}
+</html>

@@ -1,6 +1,9 @@
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from cart.serializers import CartSerializer
 from cart.models import Cart
 import json
 
@@ -13,13 +16,17 @@ class CartAPI(APIView):
     """
     Single API to handle cart operations
     """
+    permission_classes = [IsAuthenticated]
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+    authentication_classes = [SessionAuthentication]
 
     def get(self, request, format=None):
         cart = Cart(request)
 
         return Response(
-            {"data": list(cart.__iter__()),
-             "Всього:": cart.get_total_price()},
+            {"У кошику:": list(cart.__iter__()),
+             "До сплати:": cart.get_total_price()},
             status=status.HTTP_200_OK
         )
 
@@ -35,7 +42,7 @@ class CartAPI(APIView):
         else:
             product = request.data
             cart.add(
-                product=dict(product["product"]),
+                product=product["product_id"],
                 quantity=product["quantity"],
                 overide_quantity=product["overide_quantity"] if "overide_quantity" in product else False
             )
