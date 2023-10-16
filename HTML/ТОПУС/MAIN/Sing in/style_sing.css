@@ -25,6 +25,7 @@ body {
   box-sizing: border-box;
   box-shadow: 0 15px 25px rgba(0,0,0,.6);
   border-radius: 10px;
+  
 }
 
 .login-box p:first-child {
@@ -88,6 +89,7 @@ body {
   background: transparent;
   border: none;
   cursor: pointer;
+  margin-bottom: 20px;
 }
 
 .login-box form button:hover {
@@ -184,11 +186,17 @@ body {
   color: #fff;
   font-size: 14px;
 }
-p{
-    color: #fff;
+
+ .google{
+  color: #ffffff;
+ }
+
+ .noacc, .respaww, .google, .gogbnt {
+  margin: 10px 0;
+
 }
-.respaww{
-    text-decoration: none;
+.noacc, .respaww, .google {
+  margin-bottom: 15px;
 }
 
 .login-box a.a2 {
@@ -288,10 +296,52 @@ header {
 
 .gogbnt{
     text-decoration: none;
+    color: chartreuse;
+}
+.noacc{
+
+  text-decoration: none;
+  color: #fff;
+
+}
+.respaww:hover{
+
+cursor: pointer;
+
+}
+.noacc:hover{
+
+  color: brown;
 }
 
 
 
+/* GGGGOOOOOGGGGLEEE*/
+
+
+.google {
+  display: flex;
+  align-items: center;
+}
+
+.google span {
+  margin-right: 10px; 
+}
+
+.google-login-button {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  border: none;
+  border-radius: 50%;
+  background: url('link_to_google_icon.png') center/cover no-repeat; 
+  transition: transform 0.2s ease-in-out;
+}
+
+
+.google-login-button:hover {
+  transform: scale(1.1); 
+}
 
 
 
