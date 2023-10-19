@@ -1,7 +1,7 @@
 from rest_framework.routers import SimpleRouter
 from django.conf.urls.static import static
 from django.conf import settings
-from relations.utils import favourite_rel
+from relations.utils import favourite_rel, render_404
 from relations.views import main
 from products.views import ClothviewSet, GamingViewSet, HomeViewSet
 
@@ -15,7 +15,8 @@ router.register(r'for_home', HomeViewSet, basename='home')
 
 urlpatterns = [
     path('', main, name='home'),
-    path('add_to_fav/<int:pk>', favourite_rel, name='add_to_fav')
+    path('add_to_fav/<int:pk>', favourite_rel, name='add_to_fav'),
+    path('404', render_404, name='404')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

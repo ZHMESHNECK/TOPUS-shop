@@ -37,8 +37,7 @@ function AddToCart(e) {
     })
         .then(res => res.json())
         .then(data => {
-            document.getElementById('num_of_cart').innerHTML = 'Кошик - ' + data.len
-            // console.log(data.len)
+            document.getElementById('num_of_cart').innerHTML = data.len
         })
         .catch(error => {
             console.log(error)

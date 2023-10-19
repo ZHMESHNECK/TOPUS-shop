@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from relations.models import Relation
 from relations.forms import AnswerForm, RelationForm
@@ -148,3 +148,7 @@ def favourite_rel(request, pk):
             item.in_liked.add(request.user)
         return redirect(request.META.get('HTTP_REFERER', '/'))
     return redirect('login')
+
+
+def render_404(request):
+    return render(request, '404.html', status=404)

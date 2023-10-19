@@ -202,6 +202,7 @@ body {
 .google,
 .gogbnt {
     margin: 10px 0;
+
 }
 
 .noacc,
@@ -221,18 +222,89 @@ body {
     border-radius: 5px;
 }
 
-/* asd */
-.login-box .user-box input:active {
-    background: transparent;
-}
-
 .ul {
     list-style: none;
     padding: 10px;
     margin: 0px;
 }
 
+header {
+    background-color: #333;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
 
+.header-r {
+    display: flex;
+    margin-left: 100px;
+}
+
+.shadow__btn {
+    padding: 10px 20px;
+    border: none;
+    font-size: 11px;
+    color: #fff;
+    border-radius: 7px;
+    letter-spacing: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: 0.5s;
+    transition-property: box-shadow;
+    background: rgb(102, 45, 145);
+    box-shadow: 0 0 25px rgb(102, 45, 145);
+    text-decoration: none;
+}
+
+.button-spacing {
+    width: 10px;
+}
+
+.shadow__btn:hover {
+    box-shadow: 0 0 5px rgb(162, 56, 242),
+        0 0 25px rgb(162, 56, 242),
+        0 0 50px rgb(162, 56, 242),
+        0 0 100px rgb(162, 56, 242);
+    cursor: pointer;
+}
+
+
+.button-container {
+    display: flex;
+    background-color: rgba(102, 45, 145);
+    width: 250px;
+    height: 40px;
+    align-items: center;
+    justify-content: space-around;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px,
+        rgba(49, 98, 232, 0.2) 5px 10px 15px;
+}
+
+.button {
+    outline: 0 !important;
+    border: 0 !important;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transition: all ease-in-out 0.3s;
+    cursor: pointer;
+}
+
+.button:hover {
+    transform: translateY(-3px);
+}
+
+.icon {
+    font-size: 20px;
+}
 
 
 .gogbnt {
@@ -241,26 +313,31 @@ body {
 }
 
 .noacc {
-
     text-decoration: none;
     color: #fff;
 }
 
 .respaww {
     text-decoration: none;
-    color: #fff;
+    color: white;
 }
 
 .respaww:hover {
-    cursor: pointer;
     color: brown;
+    cursor: pointer;
 }
 
 .noacc:hover {
     color: brown;
 }
 
+.erorlist {
+    color: white;
+}
 
+.errorlist {
+    color: white;
+}
 
 /* GGGGOOOOOGGGGLEEE*/
 
