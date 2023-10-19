@@ -59,6 +59,7 @@ header {
               0 0 50px rgb(162, 56, 242),
               0 0 100px rgb(162, 56, 242);
     cursor:pointer;
+    color: #fff;
 }
 
 
@@ -77,7 +78,7 @@ header {
 .button {
   outline: 0 !important;
   border: 0 !important;
-  width: 40px;
+  width: 100px;
   height: 40px;
   border-radius: 50%;
   background-color: transparent;
@@ -91,6 +92,8 @@ header {
 
 .button:hover {
   transform: translateY(-3px);
+  color: #fff;
+
 }
 
 .icon {
@@ -159,7 +162,7 @@ body {
 }
 
 .buy-button {
-    background-color: #007bff;
+    background-color: #fff;
     color: #fff;
     padding: 10px 20px;
     border: none;
@@ -169,7 +172,7 @@ body {
 }
 
 .buy-button:hover {
-    background-color: #0056b3;
+    background-color: #fff;
 }
 
 
