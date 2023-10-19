@@ -1,0 +1,336 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;}
+
+
+body {
+    font-family: Arial, sans-serif;
+    
+    background-color: aliceblue;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+/*хедер*/
+
+.ul {
+    list-style: none;
+    padding: 10px;
+    margin: 0px;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 10px 20px; 
+}
+
+.header-r {
+    display: flex;
+    margin-left: 100px;
+}
+
+.shadow__btn {
+  padding: 10px 20px;
+  border: none;
+  font-size: 11px;
+  color: #fff;
+  border-radius: 7px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: 0.5s;
+  transition-property: box-shadow;
+  background: rgb(102, 45, 145);
+  box-shadow: 0 0 25px rgb(102, 45, 145);
+  text-decoration: none;
+}
+
+.button-spacing {
+  width: 10px; 
+}
+
+.shadow__btn:hover {
+  box-shadow: 0 0 5px rgb(162, 56, 242),
+              0 0 25px rgb(162, 56, 242),
+              0 0 50px rgb(162, 56, 242),
+              0 0 100px rgb(162, 56, 242);
+    cursor:pointer;
+}
+
+
+.button-container {
+  display: flex;
+  background-color: rgba(102, 45, 145);
+  width: 250px;
+  height: 40px;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px,
+        rgba(49, 98, 232, 0.2) 5px 10px 15px;
+}
+
+.button {
+  outline: 0 !important;
+  border: 0 !important;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: all ease-in-out 0.3s;
+  cursor: pointer;
+}
+
+.button:hover {
+  transform: translateY(-3px);
+}
+
+.icon {
+  font-size: 20px;
+}
+/*ЛОГО*/
+
+.logo-container {
+  display: flex;
+  align-items: center; 
+}
+.logo {
+  text-decoration: none;
+}
+
+/*хедер*/
+
+
+/* карточки */
+.products-container {
+  padding-top: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 90%; /* Ширина контейнера в 90% ширины экрана */
+  margin: 0 auto; /* Выравнивание по центру */
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.product-card {
+  width: calc(20% - 20px); /* 20% ширины с отступами */
+  height: 20rem;
+  background-color: #9254c4;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-radius: 1rem;
+  margin: 0 0 20px 0; /* Отступ снизу */
+  box-sizing: border-box; /* Учтите padding в ширине */
+}
+
+
+
+
+.product-image {
+  height: 12rem; 
+  background-image: url('4.png'); 
+  background-size: cover; /* Растянуть изображение по размеру блока */
+  background-position: center; /* Центрировать изображение */
+  border-radius: 1rem; /* Скругленные углы */
+}
+
+
+.product-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Промежуток между дочерними элементами */
+}
+
+.product-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.product-title {
+  font-size: 1.25rem; /* Размер шрифта заголовка */
+  font-weight: bold;
+}
+
+.product-id {
+  font-size: 0.9rem; /* Размер шрифта ID */
+  color: #000000; /* Цвет текста */
+}
+
+.product-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-price {
+  font-weight: bold;
+  color: #000; /* Красный цвет для цены */
+}
+
+.buttonn {
+  position: relative;
+  display: inline-block;
+  margin: 15px;
+  padding: 15px 30px;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 1px;
+  text-decoration: none;
+  color: #000;
+  background: transparent;
+  cursor: pointer;
+  transition: ease-out 0.5s;
+  border: 2px solid #a952eb;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 0 #4fc8ff;
+}
+
+.buttonn:hover {
+  color: #000;
+  box-shadow: inset 0 -100px 0 0 #725AC1;
+}
+
+.buttonn:active {
+  transform: scale(0.9);
+}
+
+/* карточки */
+
+
+/*футер*/
+.footer {
+  background-color: #333; /* Цвет фона футера */
+  color: #fff; /* Цвет текста */
+  padding: 20px; /* Добавляем отступы для создания пространства */
+  display: flex; 
+  justify-content: space-between; /* Располагаем текст справа и кнопки слева */
+}
+
+.footer-text {
+ 
+}
+
+
+.socail-media {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  gap: 20px;
+  list-style: none;
+}
+
+.socail-media li a {
+  width: 50px;
+  height: 50px;
+  background-color: #b260f0;
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  position: relative;
+  z-index: 9;
+  border: 1px solid #b260f0;
+}
+
+.socail-media li a svg {
+  width: 24px;
+  height: 24px;
+  -o-object-fit: contain;
+  object-fit: contain;
+  fill: #000; /* Измените цвет на красный */
+  filter: invert(100%) sepia(0%) saturate(7455%) hue-rotate(57deg) brightness(108%) contrast(105%);
+}
+
+.socail-media li a::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-clip-path: polygon(0 0, 100% 0, 0 0, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 0 0, 0 100%);
+  background-color: #fff;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.socail-media li a:hover::after {
+  animation: sideClip 0.5s linear;
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  opacity: 1;
+}
+
+.socail-media li a:hover svg {
+  animation: fadeInLeft 0.3s linear both;
+  filter: invert(52%) sepia(85%) saturate(2286%) hue-rotate(54deg) brightness(92%) contrast(84%);
+}
+
+@keyframes sideClip {
+  0% {
+    clip-path: polygon(0 0, 100% 0, 0 0, 0 100%);
+  }
+
+  50% {
+    clip-path: polygon(0 0, 100% 0, 0 100%, 0 100%);
+  }
+
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*футер*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
