@@ -70,8 +70,12 @@ __
 
 ## Оновлення
 
+version 0.1.2
+- Додано css для Login page
+- Оновлено front header
+
 version 0.1.1
-- Добавлено header панель
+- Додано header панель
 - Заготовлення для Login page
 
 version 0.1.0
