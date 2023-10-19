@@ -8,9 +8,9 @@ from products.views import ClothviewSet, GamingViewSet, HomeViewSet
 from django.urls import path
 
 router = SimpleRouter()
-router.register(r'cloth', ClothviewSet)
-router.register(r'gaming', GamingViewSet)
-router.register(r'for_home', HomeViewSet)
+router.register(r'cloth', ClothviewSet, basename='cloth')
+router.register(r'gaming', GamingViewSet, basename='gaming')
+router.register(r'for_home', HomeViewSet, basename='home')
 
 
 urlpatterns = [

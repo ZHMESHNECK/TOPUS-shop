@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    {% if message.extra_tags == 'cart_update' %}
+    <li class="{{ message.tags }}">
+        {{ message|safe }}
+    </li>
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
 {{ data }}
 {% if request.user.is_authenticated %}
 <p>{{ user.username }} - {{ user.id }}</p>
@@ -78,9 +89,12 @@
 </a>
 {% endif %}
 
+
+
 <div class="add_to_cart_btn">
 <button value="{{ data.id }}">Придбати</button>
 </div>
+
 
 
 <form method="post" id="relation_form">
@@ -129,8 +143,8 @@
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
+    {% if message.extra_tags == 'review_true' or message.extra_tags == 'need_choice_rate' %}
     <li class="{{ message.tags }}">
-        {% if message.extra_tags == '1' %}
         {{ message|safe }}
         <form method="post">
             {% csrf_token %}
@@ -139,10 +153,8 @@
             <button type="submit" name="confirm" value="True">✔</button>
             <a href="{{ requst.META.HTTP_REFERER }}">✖</a>
         </form>
-        {% else %}
-        {{ message|safe }}
-        {% endif %}
     </li>
+        {% endif %}
     {% endfor %}
 </ul>
 {% endif %}

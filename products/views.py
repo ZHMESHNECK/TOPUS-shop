@@ -12,7 +12,6 @@ from products.models import *
 from products.utils import serial_code_randomizer
 from relations.models import Relation
 from relations.utils import accept_post
-import json
 
 
 class ClothviewSet(ModelViewSet):

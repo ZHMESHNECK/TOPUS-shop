@@ -53,6 +53,9 @@ class MainModel(models.Model):
     def __str__(self) -> str:
         return f'Id {self.id}: {self.title}'
 
+    def get_absolute_url(self):
+        return reverse(f'{self.category.slug}-detail', args=(self.id,))
+
 
 class Clothes(MainModel):
     """Модель одягу
@@ -88,6 +91,12 @@ class Clothes(MainModel):
         verbose_name = 'Одяг'
         verbose_name_plural = 'Одяг'
 
+    def __str__(self) -> str:
+        return f'Id {self.id}: {self.title}'
+
+    def get_absolute_url(self):
+        return reverse('cloth-detail', args=(self.id,))
+
 
 class Gaming(MainModel):
     """Модель ігрової переферії
@@ -104,6 +113,9 @@ class Gaming(MainModel):
 
     def __str__(self) -> str:
         return f'Id {self.id}: {self.title}'
+
+    def get_absolute_url(self):
+        return reverse('gaming-detail', args=(self.id,))
 
 
 class Home(MainModel):
@@ -122,6 +134,9 @@ class Home(MainModel):
 
     def __str__(self) -> str:
         return f'Id {self.id}: {self.title}'
+
+    def get_absolute_url(self):
+        return reverse('home-detail', args=(self.id,))
 
 
 class Gallery_cloth(models.Model):

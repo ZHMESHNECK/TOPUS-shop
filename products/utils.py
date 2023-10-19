@@ -6,8 +6,8 @@ from django.db.models import Avg, Count
 
 
 def gen_code(x: str) -> str:
-    return x+''.join(random.choice([*
-                                    ascii_uppercase, *digits]) for _ in range(9))
+    return (x+''.join(random.choice([*
+                                    ascii_uppercase, *digits]) for _ in range(10-len(x)))).zfill(10)
 
 
 def serial_code_randomizer(args):

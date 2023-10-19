@@ -2,7 +2,6 @@ from django.conf import settings
 from django.db import models
 from products.models import MainModel
 from decimal import Decimal
-import json
 
 
 class Cart(models.Model):
@@ -52,15 +51,17 @@ class Cart(models.Model):
     def __iter__(self):
         """Перебір елементів у кошику та отримання продуктів із бази даних.
         """
-        product_ids = self.cart.keys()
         # Отримання товару та додання їх до кошика
-        products = MainModel.objects.filter(id__in=product_ids)
+        products = MainModel.objects.filter(id__in=self.cart.keys())
         for product in products:
-            self.cart[str(product.id)]['Товар'] = product.title
+            # self.cart[str(product.id)]['Товар'] = serializers.serialize(
+            #     'json', (product,))
+            self.cart[str(product.id)]['Товар'] = product
 
         for item in self.cart.values():
             item['Ціна'] = Decimal(item['Ціна'])
             item['Всього'] = item['Ціна'] * item['Кількість']
+
             yield item
 
     def __len__(self):

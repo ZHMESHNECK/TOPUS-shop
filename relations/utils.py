@@ -55,10 +55,10 @@ def accept_post(self, request, pk):
                 messages.info(request, 'Успіх')
             else:
                 messages.info(
-                    request, 'У вас вже є відгук на цей товар, якщо ви створите новий відгук - старий видалиться', extra_tags='1')
+                    request, 'У вас вже є відгук на цей товар, якщо ви створите новий відгук - старий видалиться', extra_tags='review_true')
         else:
             messages.info(
-                request, 'Вам потрібно обрати рейтинг для цього товару', extra_tags='2')
+                request, 'Вам потрібно обрати рейтинг для цього товару', extra_tags='need_choice_rate')
     if fill_the_form:
         parametrs = {
             "rate": form.cleaned_data.get('rate', None),

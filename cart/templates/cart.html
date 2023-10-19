@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li class="{{ message.tags }}">
+        {% if message.extra_tags == 'update_cart' %}
+        {{ message|safe}}
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+<p>У кошику: {{ count }} </p>
+
+{% for item in in_cart %}
+{{ item }}
+
+<p>Кількість: {{ item.Кількість }}</p>
+<p>Ціна: {{ item.Ціна|floatformat:2 }}</p>
+{% if  item.Товар.main_image %}
+<p>Photo <img src="{{ item.Товар.main_image.url }}" width="100 100"></p>
+{% endif %}
+<p>Товар: <a href="{{ item.Товар.get_absolute_url }}">{{ item.Товар.title }}</a></p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" name="remove" value="{{ item.Товар.id }}">Видалити</button>
+</form>
+<p>Всього: {{ item.Всього|floatformat:2 }}</p>
+
+{% endfor %}
+<p>До сплати: {{ to_pay|floatformat:2 }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    {% if count > 0 %}
+    <button type="submit" name="clear">Видалити все</button>
+    {% else %}
+    <button disabled type="submit" name="clear">Видалити все</button>
+    {% endif %}
+</form>
+{% endblock %}

@@ -25,7 +25,6 @@ function AddToCart(e) {
     let item = e.target.value
     let url = '/cart'
 
-
     let data = {
         product_id: Number(item),
         quantity: 1
@@ -37,8 +36,10 @@ function AddToCart(e) {
         'body': JSON.stringify(data)
     })
         .then(res => res.json())
-        .then(data =>
-            console.log(data))
+        .then(data => {
+            document.getElementById('num_of_cart').innerHTML = 'Кошик - ' + data.len
+            // console.log(data.len)
+        })
         .catch(error => {
             console.log(error)
         })

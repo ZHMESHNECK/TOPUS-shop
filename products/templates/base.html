@@ -1,4 +1,5 @@
 {% load static %}
+{% load tags %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,17 +16,22 @@
     <a href="/">EXIT</a>
     <a href="admin/">admin</a>
     {% if user.is_authenticated %}
-    <p><button><a href="/api/profile/{{user.id}}">{{ user.username }}</a></button> | </button><a
+    <p>
+        <button><a href="/api/profile/{{user.id}}">{{ user.username }}</a></button> | </button><a
             href="{% url 'logout' %}">Вихід</a></button>
-        {% else %}
-    <p><button><a href="{% url 'registration' %}">реєстрація</a></button> | </button><a
-            href="{% url 'login' %}">Вхід</a></button>
+    </p>
+    {% else %}
+    <p><button><a href="{% url 'login' %}">Вхід </a></button> | <button><a href="{% url 'registration' %}">Реєстрація</a></button></p>
 
-        {% endif %}
-        {% block content %}
-        {% endblock %}
-        <script src="https://kit.fontawesome.com/74065038c5.js" crossorigin="anonymous"></script>
-        <script src="{% static 'js/script.js' %}"></script>
+    {% endif %}
+
+    <a href="{% url 'cart' %}">
+        <p id="num_of_cart">Кошик - {% show_count_cart request %}</p>
+    </a>
+    {% block content %}
+    {% endblock %}
+    <script src="https://kit.fontawesome.com/74065038c5.js" crossorigin="anonymous"></script>
+    <script src="{% static 'js/script.js' %}"></script>
 </body>
 
 </html>

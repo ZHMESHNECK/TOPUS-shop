@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 from django.conf import settings
-from products.models import Clothes
+from products.models import Clothes, Category
 from users.models import User
 from decimal import Decimal
 import json
@@ -15,12 +15,14 @@ class CartApiTestCase(APITestCase):
         self.user2 = User.objects.create(
             username='test22', email='email12@email.email', is_staff=True)
 
+        self.cat = Category.objects.create(cat_name='1', slug='cloth')
+
         self.item = Clothes.objects.create(
-            title='test1', price='150.00', size='S', season='SUMMER', owner=self.user, s_code='123', is_published=True)
+            title='test1', price='150.00', size='S', season='SUMMER', owner=self.user, s_code='123', is_published=True, category=self.cat)
         self.item2 = Clothes.objects.create(
-            title='test2', price='100.00', size='S', season='test1', owner=self.user2, s_code='223', discount=30, is_published=True)
+            title='test2', price='100.00', size='S', season='test1', owner=self.user2, s_code='223', discount=30, is_published=True, category=self.cat)
         self.item3 = Clothes.objects.create(
-            title='test3', price='500.00', size='XL', season='SUMMER', owner=self.user, s_code='323', is_published=True)
+            title='test3', price='500.00', size='XL', season='SUMMER', owner=self.user, s_code='323', is_published=True, category=self.cat)
 
     def test_buy_1_item(self):
         """Додання 1 товару до кошика
@@ -40,7 +42,6 @@ class CartApiTestCase(APITestCase):
 
         cart = self.client.session
         self.assertEqual(status.HTTP_202_ACCEPTED, response.status_code)
-        self.assertEqual('Кошик оновлен', response.data['message'])
         self.assertEqual(cart._session, {'cart': {str(self.item.id): {
                          'Кількість': 1, 'Ціна': float(self.item.price)}}})
 
@@ -60,14 +61,14 @@ class CartApiTestCase(APITestCase):
         response = self.client.post(
             url, data=json_data, content_type='application/json')
 
+        self.assertEqual(status.HTTP_202_ACCEPTED, response.status_code)
+
         self.assertEqual(202, response.status_code)
 
-        response = self.client.get(
-            url, content_type='application/json')
+        cart = self.client.session
 
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertEqual([{'Кількість': 1, 'Ціна': Decimal(
-            self.item.price), 'Товар': self.item.title, 'Всього': Decimal('150.00')}], response.data['У кошику:'])
+        self.assertEqual({'cart': {str(self.item.id): {'Кількість': 1, 'Ціна': float(
+            self.item.price)}}}, cart._session)
 
     def test_buy_many_and_check(self):
         """Додання декількох товарів до кошика та їх отримання
@@ -94,13 +95,8 @@ class CartApiTestCase(APITestCase):
         response = self.client.post(
             url, data=json_data, content_type='application/json')
 
-        self.assertEqual(202, response.status_code)
-
-        response = self.client.get(
-            url, content_type='application/json')
-
         cart = self.client.session
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(status.HTTP_202_ACCEPTED, response.status_code)
         self.assertEqual(cart._session, {'cart': {str(self.item.id): {'Кількість': 2, 'Ціна': float(self.item.price)},
                          str(self.item2.id): {'Кількість': 3, 'Ціна': float(self.item2.price)}}})
 
@@ -133,12 +129,7 @@ class CartApiTestCase(APITestCase):
         response = self.client.post(
             url, data=json_data, content_type='application/json')
 
-        self.assertEqual(202, response.status_code)
-
-        response = self.client.get(
-            url, content_type='application/json')
-
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(status.HTTP_202_ACCEPTED, response.status_code)
 
         cart = self.client.session
         self.assertEqual(
@@ -166,13 +157,14 @@ class CartApiTestCase(APITestCase):
                          'Кількість': 1, 'Ціна': float(self.item.price)}}})
 
         data = {
-            'remove': True,
-            'product': self.item.id,
+            'remove': self.item.id,
         }
         json_data = json.dumps(data)
 
         response = self.client.post(
             url, data=json_data, content_type='application/json')
+        self.assertEqual(status.HTTP_301_MOVED_PERMANENTLY,
+                         response.status_code)
         cart = self.client.session
         self.assertEqual(cart._session, {'cart': {}})
 
@@ -202,14 +194,16 @@ class CartApiTestCase(APITestCase):
             url, data=json_data, content_type='application/json')
 
         data = {
-            'remove': True,
-            'product': self.item.id,
+            'remove': self.item.id,
         }
         json_data = json.dumps(data)
 
         response = self.client.post(
             url, data=json_data, content_type='application/json')
         cart = self.client.session
+
+        self.assertEqual(status.HTTP_301_MOVED_PERMANENTLY,
+                         response.status_code)
         self.assertEqual(
             cart._session, {'cart': {str(self.item2.id): {'Кількість': 2, 'Ціна': 100.0}}})
 
@@ -231,7 +225,6 @@ class CartApiTestCase(APITestCase):
 
         cart = self.client.session
         self.assertEqual(status.HTTP_202_ACCEPTED, response.status_code)
-        self.assertEqual('Кошик оновлен', response.data['message'])
 
         data = {
             'clear': True
@@ -242,4 +235,3 @@ class CartApiTestCase(APITestCase):
             url, data=json_data, content_type='application/json')
         cart = self.client.session
         self.assertEqual(cart._session, {})
-

@@ -35,7 +35,7 @@ class RelationTestCase(APITestCase):
     def test_check_unique(self):
         """Тест на створення відгуку
         """
-        url = reverse('clothes-detail', args=(self.item.id,))
+        url = reverse('cloth-detail', args=(self.item.id,))
         relations = Relation.objects.filter(item_id=self.item)
         self.assertEqual(1, len(relations))
 
@@ -52,7 +52,7 @@ class RelationTestCase(APITestCase):
     def test_rate(self):
         """Змінення рейтингу
         """
-        url = reverse('clothes-detail', args=(self.item.id,))
+        url = reverse('cloth-detail', args=(self.item.id,))
 
         relations = Relation.objects.filter(item=self.item)
 
@@ -72,7 +72,7 @@ class RelationTestCase(APITestCase):
     def test_rate_wrong(self):
         """Ставлення невірного рейтингу
         """
-        url = reverse('clothes-detail', args=(self.item.id,))
+        url = reverse('cloth-detail', args=(self.item.id,))
 
         data = {
             'rate': 6,
@@ -89,7 +89,7 @@ class RelationTestCase(APITestCase):
     def test_staff_make_rel(self):
         """ staff дає відповідь на відгук
         """
-        url = reverse('clothes-detail', args=(self.item.id,))
+        url = reverse('cloth-detail', args=(self.item.id,))
         review = Relation.objects.get(
             user=self.user2, item=self.item2)
 
@@ -110,7 +110,7 @@ class RelationTestCase(APITestCase):
     def test_user_make_rel_without_permiss(self):
         """ Юзер без прав дає відповідь на відгук
         """
-        url = reverse('clothes-detail', args=(self.item.id,))
+        url = reverse('cloth-detail', args=(self.item.id,))
         review = Relation.objects.get(
             user=self.user, item=self.item)
 
@@ -132,7 +132,7 @@ class RelationTestCase(APITestCase):
         """Видалення юзером свого відгуку
         """
 
-        url = reverse('clothes-detail', args=(self.item.id,))
+        url = reverse('cloth-detail', args=(self.item.id,))
 
         review = Relation.objects.filter(item_id=self.item.id)
         self.assertEqual(1, len(review))
@@ -153,7 +153,7 @@ class RelationTestCase(APITestCase):
         """Видалення staff`oм своєї відповіді
         """
 
-        url = reverse('clothes-detail', args=(self.item2.id,))
+        url = reverse('cloth-detail', args=(self.item2.id,))
 
         answer = Relation.objects.create(
             item=self.item2, user=self.user, comment='Дякуємо', parent_id=self.rel2.id
@@ -179,7 +179,7 @@ class RelationTestCase(APITestCase):
            видалення каскадне
         """
 
-        url = reverse('clothes-detail', args=(self.item2.id,))
+        url = reverse('cloth-detail', args=(self.item2.id,))
 
         Relation.objects.create(
             item=self.item2, user=self.user, comment='Дякуємо', parent_id=self.rel2.id
@@ -206,7 +206,7 @@ class RelationTestCase(APITestCase):
         """Перевірка оновлення рейтингу після видалення відгуку с рейтингом 1
         """
 
-        url = reverse('clothes-detail', args=(self.item2.id,))
+        url = reverse('cloth-detail', args=(self.item2.id,))
 
         review = Clothes.objects.get(pk=self.item2.id)
         self.assertEqual(5, review.rating)

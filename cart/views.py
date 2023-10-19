@@ -2,10 +2,9 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
-from cart.serializers import CartSerializer
+from rest_framework import status, renderers
+from django.shortcuts import redirect
 from cart.models import Cart
-import json
 
 # https://pocoz.gitbooks.io/django-v-primerah/content/glava-7-sozdanie-internet-magazina/sozdanie-korzini/ispolzovanie-sessii-django.html
 # https://dev.to/nick_langat/building-a-shopping-cart-using-django-rest-framework-54i0
@@ -17,23 +16,18 @@ class CartAPI(APIView):
     Single API to handle cart operations
     """
     permission_classes = [IsAuthenticated]
-    queryset = Cart.objects.all()
-    serializer_class = CartSerializer
     authentication_classes = [SessionAuthentication]
+    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
 
-    def get(self, request, format=None):
+    def get(self, request):
         cart = Cart(request)
-
-        return Response(
-            {"У кошику:": list(cart.__iter__()),
-             "До сплати:": cart.get_total_price()},
-            status=status.HTTP_200_OK
-        )
+        return Response(data={'in_cart': list(cart.__iter__()), 'to_pay': cart.get_total_price(), 'count': cart.__len__()},
+                        status=status.HTTP_200_OK, template_name='cart.html')
 
     def post(self, request, **kwargs):
         cart = Cart(request)
         if "remove" in request.data:
-            product = request.data["product"]
+            product = request.data["remove"]
             cart.remove(product)
 
         elif "clear" in request.data:
@@ -46,7 +40,6 @@ class CartAPI(APIView):
                 quantity=product["quantity"],
                 overide_quantity=product["overide_quantity"] if "overide_quantity" in product else False
             )
+            return Response(data={'len': cart.__len__()}, status=status.HTTP_202_ACCEPTED,)
 
-        return Response(
-            {"message": "Кошик оновлен"},
-            status=status.HTTP_202_ACCEPTED)
+        return redirect('cart', permanent=True)
