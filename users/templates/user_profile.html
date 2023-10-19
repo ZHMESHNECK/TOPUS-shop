@@ -1,9 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
-<p>{{data}}</p>
-{% if relation is not None %}
-<p>{{relation}}</p>
-{%else%}
-<p>Ваш список обраного пустий</p>
-{%endif%}
+
+<link rel="stylesheet" href="../../static/css/user_profile.css">  
+<div class="profile_container">
+    <div class="profile">
+        <div class="imgphoto"></div>
+        <div class="name_user"></div>
+        <div class="parametrs_user">
+            <ul>
+                <li>История покупок</li>
+                <li>Избранное</li>
+                <li>Способы оплаты</li>
+            </ul>
+        </div>
+    </div>
+    <div class="menu_profile"></div>
+</div>
+
+
+
+
 {% endblock %}
