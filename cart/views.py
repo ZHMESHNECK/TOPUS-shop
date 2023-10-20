@@ -40,6 +40,6 @@ class CartAPI(APIView):
                 quantity=product["quantity"],
                 overide_quantity=product["overide_quantity"] if "overide_quantity" in product else False
             )
-            return Response(data={'len': cart.__len__()}, status=status.HTTP_202_ACCEPTED,)
+            return Response(data={'len': cart.__len__()}, status=status.HTTP_202_ACCEPTED)
 
         return redirect('cart', permanent=True)
