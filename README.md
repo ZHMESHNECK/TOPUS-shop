@@ -57,14 +57,14 @@ __
 
 ## Дякую
 
-- [ImDeath](hiphoplands@gmail.com) - Front-end
-- [vladfraer1](vladfraer1@gmail.com) - images | logo 
+- [ImDeath](mailto:hiphoplands@gmail.com) - Front-end
+- [vladfraer1](mailto:vladfraer1@gmail.com) - images | logo 
 
 
 ## Оновлення
 
 version 0.1.3
-- Перероблена фунція додання до бажаного ( реалізовано через js )
+- Перероблена функція додання до бажаного ( реалізовано через js )
     - функція перероблена в модель APIView
     - перенесена в Relation.views
 
