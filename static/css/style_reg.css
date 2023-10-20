@@ -26,9 +26,6 @@ body {
     background-size: cover;
 }
 
-
-
-
 .form-box {
     max-width: 300px;
     background: #252426;
@@ -53,25 +50,6 @@ body {
     color: white;
 }
 
-
-.subtitle {
-    font-size: 1rem;
-    color: white;
-}
-
-.login-link {
-    color: red;
-    text-decoration: none;
-}
-
-
-
-
-
-
-
-
-
 /*Inputs box*/
 .form-container {
     overflow: hidden;
@@ -92,25 +70,6 @@ body {
     padding: 8px 15px;
 }
 
-.form-section {
-    padding: 16px;
-    font-size: .85rem;
-    background-color: #252426;
-    box-shadow: rgb(0 0 0 / 8%) 0 -1px;
-}
-
-.form-section a {
-    font-weight: bold;
-    color: #662D91;
-    transition: color .3s ease;
-    text-decoration: none;
-}
-
-.form-section a:hover {
-    color: #662D91;
-    text-decoration: underline;
-
-}
 
 /*Button*/
 .form button {
@@ -127,126 +86,6 @@ body {
 
 .form button:hover {
     background-color: #421c5e;
-}
-
-.ul {
-    list-style: none;
-    padding: 10px;
-    margin: 0px;
-}
-
-header {
-    background-color: #333;
-    color: #fff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-}
-
-.header-r {
-    display: flex;
-    margin-left: 100px;
-}
-
-.shadow__btn {
-    padding: 10px 20px;
-    border: none;
-    font-size: 11px;
-    color: #fff;
-    border-radius: 7px;
-    letter-spacing: 4px;
-    font-weight: 700;
-    text-transform: uppercase;
-    transition: 0.5s;
-    transition-property: box-shadow;
-    background: rgb(102, 45, 145);
-    box-shadow: 0 0 25px rgb(102, 45, 145);
-    text-decoration: none;
-}
-
-.button-spacing {
-    width: 10px;
-}
-
-.shadow__btn:hover {
-    box-shadow: 0 0 5px rgb(162, 56, 242),
-        0 0 25px rgb(162, 56, 242),
-        0 0 50px rgb(162, 56, 242),
-        0 0 100px rgb(162, 56, 242);
-    cursor: pointer;
-}
-
-
-
-.icon {
-    font-size: 20px;
-}
-
-
-
-
-.noacc,
-.respaww,
-.google,
-.gogbnt {
-    margin: 10px 0;
-}
-
-.noacc,
-.respaww,
-.google {
-    margin-bottom: 15px;
-}
-
-.login-box a.a2 {
-    color: #fff;
-    text-decoration: none;
-}
-
-.login-box a.a2:hover {
-    background: transparent;
-    color: #aaa;
-    border-radius: 5px;
-}
-
-/* asd */
-.login-box .user-box input:active {
-    background: transparent;
-}
-
-.ul {
-    list-style: none;
-    padding: 10px;
-    margin: 0px;
-}
-
-
-
-
-.gogbnt {
-    text-decoration: none;
-    color: chartreuse;
-}
-
-.noacc {
-
-    text-decoration: none;
-    color: #fff;
-}
-
-.respaww {
-    text-decoration: none;
-    color: #fff;
-}
-
-.respaww:hover {
-    cursor: pointer;
-    color: brown;
-}
-
-.noacc:hover {
-    color: brown;
 }
 
 
