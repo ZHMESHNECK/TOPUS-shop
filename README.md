@@ -20,38 +20,32 @@
 
 __
 
-<a name="ідея"></a>
 
 ## Ідея
 
 __
 
-<a name="функціонал"></a>
 
 ## Функціонал
 
 __
 
-<a name="вимоги"></a>
 
 ## Вимоги
 - Python >= 3.9
 - PostgreSQL 14+
 
 
-<a name="Встановлення"></a>
 
 ## Встановлення
 
 __
 
-<a name="що у планах"></a>
 
 ## Що_у_планах
 
 __
 
-<a name="джерела"></a>
 
 ## Джерела
 
@@ -60,15 +54,19 @@ __
 - https://www.youtube.com/@geekyshows
 
 
-<a name="дякую"></a>
 
 ## Дякую
 
-__
+- [ImDeath](mailto:hiphoplands@gmail.com) - Front-end
+- [vladfraer1](mailto:vladfraer1@gmail.com) - images | logo 
 
-<a name="оновлення"></a>
 
 ## Оновлення
+
+version 0.1.3
+- Перероблена функція додання до бажаного ( реалізовано через js )
+    - функція перероблена в модель APIView
+    - перенесена в Relation.views
 
 version 0.1.2
 - Додано css для Login page

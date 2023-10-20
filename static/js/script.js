@@ -15,9 +15,14 @@ function getCookie(name) {
 }
 const csrftoken = getCookie('csrftoken');
 
-let btns = document.querySelectorAll('.add_to_cart_btn button')
+let ad_cart = document.querySelectorAll('.add_to_cart_btn button')
+let ad_fav = document.querySelectorAll('.add_to_fav button')
 
-btns.forEach(btn => {
+ad_fav.forEach(btn => {
+    btn.addEventListener('click', AddToFav)
+})
+
+ad_cart.forEach(btn => {
     btn.addEventListener('click', AddToCart)
 })
 
@@ -43,4 +48,29 @@ function AddToCart(e) {
         .catch(error => {
             console.log(error)
         })
+}
+
+function AddToFav(e) {
+    let item = e.target.value
+    let url = '/add_to_fav/' + item.toString()
+    console.log(url)
+
+    fetch(url, {
+        'method': 'POST',
+        'headers': { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken }
+    })
+        .then(res => res.json())
+        .then(data => {
+            // console.log(data.data)
+            if (data.data) {
+                document.getElementById('to_fav').className = 'fa-solid fa-heart fa-lg'
+            }
+            else {
+                document.getElementById('to_fav').className = 'fa-regular fa-heart fa-lg';
+            }
+        })
+        .catch(error => {
+            console.log(error.data)
+        })
+
 }

@@ -1,13 +1,11 @@
-from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from relations.models import Relation
 from relations.forms import AnswerForm, RelationForm
-from products.models import MainModel
 from products.utils import set_rating
 
 
 def accept_post(self, request, pk):
-    """ Приймає post запит та обробляє його
+    """ Приймає post запит відгука та обробляє його 
 
     Args:
         request (_type_): запит
@@ -127,24 +125,3 @@ def relation_delete(self, request, pk):
         return True
     except:
         return False
-
-
-def favourite_rel(request, pk):
-    """ Додає товар до улюбленого чи видаляє з нього якщо товар вже був доданий
-
-    Args:
-        request (_type_): запит
-        pk (_type_): id користувача
-
-    Returns:
-        redirect: login  ( якщо користувач не залогінен )
-        redirect: На ту ж сторінку при успішному додаванні
-    """
-    if request.user.is_authenticated:
-        item = get_object_or_404(MainModel, pk=pk)
-        if item.in_liked.filter(pk=request.user.id).exists():
-            item.in_liked.remove(request.user)
-        else:
-            item.in_liked.add(request.user)
-        return redirect(request.META.get('HTTP_REFERER', '/'))
-    return redirect('login')
