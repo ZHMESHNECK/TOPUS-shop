@@ -229,23 +229,42 @@ class RelationTestCase(APITestCase):
         review.refresh_from_db()
         self.assertEqual('5.0', str(review.rating))
 
-    def test_in_liked(self):
-        """Ставлення та перевірка лайка
+    def test_in_fav(self):
+        """Додання до улюбленого та перевірка
         """
         url = reverse('add_to_fav', args=(self.item.id,))
         item = self.item
         self.assertFalse(item.in_liked.filter(pk=self.user.id).exists())
         self.client.force_login(self.user)
+
         response = self.client.post(
             url, content_type='application/json')
 
         item.refresh_from_db()
-
+        self.assertTrue(response.data['data'])
         self.assertTrue(item.in_liked.filter(pk=self.user.id).exists())
 
+    def test_delete_from_fav(self):
+        """Видалення з улюбленого та перевірка
+        """
+        url = reverse('add_to_fav', args=(self.item.id,))
+        item = self.item
+        self.assertFalse(item.in_liked.filter(pk=self.user.id).exists())
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            url, content_type='application/json')
+        self.assertTrue(response.data['data'])
+        self.assertTrue(item.in_liked.filter(pk=self.user.id).exists())
+        response = self.client.post(
+            url, content_type='application/json')
+
+        item.refresh_from_db()
+        self.assertFalse(response.data['data'])
+        self.assertFalse(item.in_liked.filter(pk=self.user.id).exists())
 
     def test_in_liked_not_authenticate(self):
-        """Ставлення та перевірка лайка
+        """Ставлення та перевірка лайка неавторизованого юзера
         """
         url = reverse('add_to_fav', args=(self.item.id,))
         item = self.item
@@ -255,6 +274,6 @@ class RelationTestCase(APITestCase):
             url, content_type='application/json')
 
         item.refresh_from_db()
-        self.assertEqual(response.url, '/api/login/')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         self.assertFalse(item.in_liked.filter(pk=self.user.id).exists())
