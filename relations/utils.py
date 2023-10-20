@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.contrib import messages
 from relations.models import Relation
 from relations.forms import AnswerForm, RelationForm
@@ -125,3 +126,6 @@ def relation_delete(self, request, pk):
         return True
     except:
         return False
+
+def render_404(request):
+    return render(request, '404.html', status=404)

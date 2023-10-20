@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'social_django',
     'debug_toolbar',
     'rest_framework_simplejwt',
-    'crispy_forms',
     'phonenumber_field',
 
     'products',
@@ -241,8 +240,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = env('EMAIL_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_PASS')
 EMAIL_USE_TLS = True
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'

@@ -8,7 +8,6 @@ body {
 
 body {
     font-family: Arial, sans-serif;
-
     background: linear-gradient(to bottom, #ffffff, #000000);
     background-repeat: no-repeat;
     background-size: cover;
@@ -193,23 +192,6 @@ body {
     font-size: 14px;
 }
 
-.google {
-    color: #ffffff;
-}
-
-.noacc,
-.respaww,
-.google,
-.gogbnt {
-    margin: 10px 0;
-}
-
-.noacc,
-.respaww,
-.google {
-    margin-bottom: 15px;
-}
-
 .login-box a.a2 {
     color: #fff;
     text-decoration: none;
@@ -221,46 +203,43 @@ body {
     border-radius: 5px;
 }
 
-/* asd */
-.login-box .user-box input:active {
-    background: transparent;
+.google {
+    color: #ffffff;
 }
 
-.ul {
-    list-style: none;
-    padding: 10px;
-    margin: 0px;
-}
-
-
-
-
-.gogbnt {
-    text-decoration: none;
-    color: chartreuse;
+.noacc,
+.respaww,
+.google {
+    margin-bottom: 15px;
+    margin: 10px 0;
 }
 
 .noacc {
-
     text-decoration: none;
     color: #fff;
 }
 
 .respaww {
     text-decoration: none;
-    color: #fff;
+    color: white;
 }
 
 .respaww:hover {
-    cursor: pointer;
     color: brown;
+    cursor: pointer;
 }
 
 .noacc:hover {
     color: brown;
 }
 
+.erorlist {
+    color: white;
+}
 
+.errorlist {
+    color: white;
+}
 
 /* GGGGOOOOOGGGGLEEE*/
 

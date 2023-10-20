@@ -1,0 +1,123 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.mains {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+    /* padding: 40px; */
+    margin: 20px auto;
+    transform: translate(-50%, -55%);
+    /* background: rgba(0, 0, 0, .9); */
+    box-sizing: border-box;
+    /* box-shadow: 0 15px 25px rgba(0, 0, 0, .6); */
+    /* border-radius: 10px; */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #ffffff, #000000);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.form-box {
+    max-width: 300px;
+    background: #252426;
+    overflow: hidden;
+    border-radius: 16px;
+    color: #fff;
+}
+
+.form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 24px 24px;
+    gap: 16px;
+    text-align: center;
+}
+
+/*Form text*/
+.title {
+    font-weight: bold;
+    font-size: 1.6rem;
+    color: white;
+}
+
+/*Inputs box*/
+.form-container {
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #252426;
+    margin: 1rem 0 .5rem;
+    width: 100%;
+}
+
+.input {
+    background: white;
+    border: 0;
+    outline: 0;
+    height: 40px;
+    width: 100%;
+    border-bottom: 1px solid #eee;
+    font-size: .9rem;
+    padding: 8px 15px;
+}
+
+
+/*Button*/
+.form button {
+    background-color: #662D91;
+    color: #fff;
+    border: 0;
+    border-radius: 24px;
+    padding: 10px 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color .3s ease;
+}
+
+.form button:hover {
+    background-color: #421c5e;
+}
+
+
+.errorlist {
+    color: white;
+}
+
+
+/* GGGGOOOOOGGGGLEEE*/
+
+
+.google {
+    display: flex;
+    align-items: center;
+}
+
+.google span {
+    margin-right: 10px;
+    margin-left: 24px;
+}
+
+.google-login-button {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    border: none;
+    border-radius: 50%;
+    background: url('link_to_google_icon.png') center/cover no-repeat;
+    transition: transform 0.2s ease-in-out;
+}
+
+
+.google-login-button:hover {
+    transform: scale(1.1);
+}

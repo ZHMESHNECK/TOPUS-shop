@@ -1,32 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/style_reg.css' %}">
+
+
+{% if request.user.is_authenticated %}
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>register</title>
+    <meta http-equiv="refresh" content="0;URL={% url '404' %}" />
 </head>
+{% else %}
 
-<body>
-    <h1>Реєстрація</h1>
-    {% if request.user.is_authenticated %}
-    <p>Ви вже увійшли в свій аккаунт,
-        якщо ви бажаєте зареєструвати нового користувача, вам потрібно вийти зі старого профілю<a
-            href="{% url 'logout' %}">Вихід</a></button>
-    </p>
 
-    {% else %}
+<div class="mains">
+    <div class="form-box">
+        <form method="post" class="form">
+            {% csrf_token %}
+            <span class="title">Реєстрація</span>
+            {{ form.non_field_errors }}
+            <div class="form-container">
+                {{ form }}
+            </div>
+            <button type="submit">Зареєструватися</button>
+        </form>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        {{ form.as_p }}
-        <p><input type="submit" value="Зареєструватися"></p>
-    </form>
+        <div class="google">
+            <span>Вхід через: </span>
+            <a href="{% url 'social:begin' 'google-oauth2' %}"><input type="image"
+                    src="{% static 'images/google_sing.png' %}" alt="Login with Google" class="google-login-button"></a>
+        </div>
+    </div>
+</div>
 
-    <a href="{% url 'social:begin' 'google-oauth2' %}">Google</a>
-    <a href="{% url 'login' %}">Вже є аккаунт?</a>
-    {% endif %}
-</body>
-
-</html>
+{% endif %}
+{% endblock %}

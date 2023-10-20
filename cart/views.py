@@ -15,7 +15,6 @@ class CartAPI(APIView):
     """
     Single API to handle cart operations
     """
-    permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication]
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
 

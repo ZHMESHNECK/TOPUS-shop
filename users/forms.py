@@ -7,10 +7,14 @@ import json
 class UserRegistrationForm(forms.ModelForm):
     """Форма реєстрації
     """
-    username = forms.CharField(label='Логін')
-    password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
+    email = forms.EmailField(label='', widget=forms.EmailInput(
+        attrs={'class': 'input', 'placeholder': 'Пошта'}))
+    username = forms.CharField(label='', widget=forms.TextInput(
+        attrs={'class': 'input', 'placeholder': 'Логін'}))
+    password = forms.CharField(label='', widget=forms.PasswordInput(
+        attrs={'class': 'input', 'placeholder': 'Пароль'}))
     re_password = forms.CharField(
-        label='Повторний пароль', widget=forms.PasswordInput)
+        label='', widget=forms.PasswordInput(attrs={'class': 'input', 'placeholder': 'Повторний пароль'}))
 
     class Meta:
         model = User
@@ -39,7 +43,7 @@ class LoginUserForm(AuthenticationForm):
     username = forms.CharField(
         label='Пошта / Логін')
     password = forms.CharField(
-        label='Пароль',widget=forms.PasswordInput)
+        label='Пароль', widget=forms.PasswordInput)
 
 
 class ForgotPasswordForm(forms.ModelForm):
