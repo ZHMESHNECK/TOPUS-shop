@@ -26,9 +26,6 @@ body {
     background-size: cover;
 }
 
-
-
-
 .form-box {
     max-width: 300px;
     background: #252426;
@@ -53,25 +50,6 @@ body {
     color: white;
 }
 
-
-.subtitle {
-    font-size: 1rem;
-    color: white;
-}
-
-.login-link {
-    color: red;
-    text-decoration: none;
-}
-
-
-
-
-
-
-
-
-
 /*Inputs box*/
 .form-container {
     overflow: hidden;
@@ -92,25 +70,6 @@ body {
     padding: 8px 15px;
 }
 
-.form-section {
-    padding: 16px;
-    font-size: .85rem;
-    background-color: #252426;
-    box-shadow: rgb(0 0 0 / 8%) 0 -1px;
-}
-
-.form-section a {
-    font-weight: bold;
-    color: #662D91;
-    transition: color .3s ease;
-    text-decoration: none;
-}
-
-.form-section a:hover {
-    color: #662D91;
-    text-decoration: underline;
-
-}
 
 /*Button*/
 .form button {
@@ -129,158 +88,6 @@ body {
     background-color: #421c5e;
 }
 
-.ul {
-    list-style: none;
-    padding: 10px;
-    margin: 0px;
-}
-
-header {
-    background-color: #333;
-    color: #fff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-}
-
-.header-r {
-    display: flex;
-    margin-left: 100px;
-}
-
-.shadow__btn {
-    padding: 10px 20px;
-    border: none;
-    font-size: 11px;
-    color: #fff;
-    border-radius: 7px;
-    letter-spacing: 4px;
-    font-weight: 700;
-    text-transform: uppercase;
-    transition: 0.5s;
-    transition-property: box-shadow;
-    background: rgb(102, 45, 145);
-    box-shadow: 0 0 25px rgb(102, 45, 145);
-    text-decoration: none;
-}
-
-.button-spacing {
-    width: 10px;
-}
-
-.shadow__btn:hover {
-    box-shadow: 0 0 5px rgb(162, 56, 242),
-        0 0 25px rgb(162, 56, 242),
-        0 0 50px rgb(162, 56, 242),
-        0 0 100px rgb(162, 56, 242);
-    cursor: pointer;
-}
-
-
-.button-container {
-    display: flex;
-    background-color: rgba(102, 45, 145);
-    width: 250px;
-    height: 40px;
-    align-items: center;
-    justify-content: space-around;
-    border-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px,
-        rgba(49, 98, 232, 0.2) 5px 10px 15px;
-}
-
-.button {
-    outline: 0 !important;
-    border: 0 !important;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    transition: all ease-in-out 0.3s;
-    cursor: pointer;
-}
-
-.button:hover {
-    transform: translateY(-3px);
-}
-
-.icon {
-    font-size: 20px;
-}
-
-
-.google {
-    color: #ffffff;
-}
-
-.noacc,
-.respaww,
-.google,
-.gogbnt {
-    margin: 10px 0;
-}
-
-.noacc,
-.respaww,
-.google {
-    margin-bottom: 15px;
-}
-
-.login-box a.a2 {
-    color: #fff;
-    text-decoration: none;
-}
-
-.login-box a.a2:hover {
-    background: transparent;
-    color: #aaa;
-    border-radius: 5px;
-}
-
-/* asd */
-.login-box .user-box input:active {
-    background: transparent;
-}
-
-.ul {
-    list-style: none;
-    padding: 10px;
-    margin: 0px;
-}
-
-
-
-
-.gogbnt {
-    text-decoration: none;
-    color: chartreuse;
-}
-
-.noacc {
-
-    text-decoration: none;
-    color: #fff;
-}
-
-.respaww {
-    text-decoration: none;
-    color: #fff;
-}
-
-.respaww:hover {
-    cursor: pointer;
-    color: brown;
-}
-
-.noacc:hover {
-    color: brown;
-}
-
 
 .errorlist {
     color: white;
@@ -293,24 +100,123 @@ header {
 .google {
     display: flex;
     align-items: center;
+    flex-direction: column;
+    padding-bottom: 24px;
 }
 
 .google span {
     margin-right: 10px;
-    margin-left: 24px;
 }
 
-.google-login-button {
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
+.gsi-material-button {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-appearance: none;
+    background-color: #f2f2f2;
+    background-image: none;
     border: none;
-    border-radius: 50%;
-    background: url('link_to_google_icon.png') center/cover no-repeat;
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #1f1f1f;
+    cursor: pointer;
+    font-family: 'Roboto', arial, sans-serif;
+    font-size: 14px;
+    height: 40px;
+    letter-spacing: 0.25px;
+    outline: none;
+    overflow: hidden;
+    padding: 0 12px;
+    position: relative;
+    text-align: center;
+    -webkit-transition: background-color .218s, border-color .218s, box-shadow .218s;
+    transition: background-color .218s, border-color .218s, box-shadow .218s;
+    vertical-align: middle;
+    white-space: nowrap;
+    width: auto;
+    max-width: 400px;
+    min-width: min-content;
     transition: transform 0.2s ease-in-out;
 }
 
-
-.google-login-button:hover {
+.gsi-material-button:hover {
     transform: scale(1.1);
+    color: #1f1f1f;
+}
+
+.gsi-material-button .gsi-material-button-icon {
+    height: 20px;
+    margin-right: 12px;
+    min-width: 20px;
+    width: 20px;
+}
+
+.gsi-material-button .gsi-material-button-content-wrapper {
+    -webkit-align-items: center;
+    align-items: center;
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    height: 100%;
+    justify-content: space-between;
+    position: relative;
+    width: 100%;
+}
+
+.gsi-material-button .gsi-material-button-contents {
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    font-family: 'Roboto', arial, sans-serif;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
+}
+
+.gsi-material-button .gsi-material-button-state {
+    -webkit-transition: opacity .218s;
+    transition: opacity .218s;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.gsi-material-button:disabled {
+    cursor: default;
+    background-color: #ffffff61;
+}
+
+.gsi-material-button:disabled .gsi-material-button-state {
+    background-color: #1f1f1f1f;
+}
+
+.gsi-material-button:disabled .gsi-material-button-contents {
+    opacity: 38%;
+}
+
+.gsi-material-button:disabled .gsi-material-button-icon {
+    opacity: 38%;
+}
+
+.gsi-material-button:not(:disabled):active .gsi-material-button-state,
+.gsi-material-button:not(:disabled):focus .gsi-material-button-state {
+    background-color: #001d35;
+    opacity: 12%;
+}
+
+.gsi-material-button:not(:disabled):hover {
+    -webkit-box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+}
+
+.gsi-material-button:not(:disabled):hover .gsi-material-button-state {
+    background-color: #001d35;
+    opacity: 8%;
 }

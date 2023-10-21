@@ -1,27 +1,46 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 
-<ul>
+<head>
+    <link rel="stylesheet" href="{% static 'css/style_list_cate_item.css' %}">
+</head>
+<div class="list-container">
     {% for item in data %}
-    {% if item.main_image %}
-    <p><img src="{{ item.main_image }}" width="300 300"></p>
-    {% endif %}
-    <a href="{{ item.id }}">
-        <p>{{ item.title }}</p>
-    </a>
-    <ul>Ціна: {{ item.price }}</ul>
-    {% if item.discount is not 0 %}
-    <ul>Знижка: {{ item.discount }}%</ul>
-    <ul>Ціна зі знижкою: {{ item.price_w_dis }}</ul>
-    {% endif %}
-
-    <ul>Рейтинг {{item.rating}}</ul>
-
+    <div class="product-card">
+        {% if item.main_image %}
+        <a href="{{ item.id }}"><img src="{{ item.main_image }}" alt="Товар" class="product-image"></a>
+        {% endif %}
+        <a href="{{ item.id }}">
+            <h2 class="product-title">{{ item.title }}</h2>
+        </a>
+        {% if item.brand %}
+        <p class="product-description">Бренд: {{ item.brand }}</p>
+        {% endif %}
+        {% if item.discount is not 0 %}
+        <p class="product-original-price"><del>{{ item.price }} грн</del></p>
+        <p class="product-discount">Знижка: {{ item.discount }} %</p>
+        <p class="product-discounted-price">{{ item.price_w_dis }} грн</p>
+        {% else %}
+        <p class="product-discounted-price">{{ item.price }} грн</p>
+        {% endif %}
+        <div class="container_rat">
+            <div class="rating">
+                <div class="rating__body">
+                    <div class="rating__active"></div>
+                    <div class="rating__items">
+                        <input type="radio" name="rating" class="rating__item" value="1">
+                        <input type="radio" name="rating" class="rating__item" value="2">
+                        <input type="radio" name="rating" class="rating__item" value="3">
+                        <input type="radio" name="rating" class="rating__item" value="4">
+                        <input type="radio" name="rating" class="rating__item" value="5">
+                    </div>
+                </div>
+                <div hidden class="rating__value">{{ item.rating }}</div>
+                <p>відгуків: {{ item.views }}</p>
+            </div>
+        </div>
+    </div>
     {% endfor %}
-    {% for image in data.gallery_cloth_set %}
-    <p>image</p>
-    {% endfor %}
-
-</ul>
+</div>
 {% endblock %}

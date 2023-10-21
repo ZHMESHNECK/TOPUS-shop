@@ -1,3 +1,15 @@
 {% for c in cats %}
-    <li><a href="{{ c.slug }}">{{c.cat_name}}</a></li>
+<div class="container">
+    <div class="products-container">
+
+        <div class="card">
+            <div class="card-details">
+                <p class="text-title">{{c.cat_name}}</p>
+                <img src="{{ c.main_image.url }}" class="img">
+            </div>
+            <a class="card-button" href="{{ c.slug }}">Перейти</a>
+        </div>
+
+    </div>
+</div>
 {% endfor %}

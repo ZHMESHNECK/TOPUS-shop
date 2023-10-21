@@ -1,13 +1,11 @@
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status, renderers
 from django.shortcuts import redirect
 from cart.models import Cart
 
-# https://pocoz.gitbooks.io/django-v-primerah/content/glava-7-sozdanie-internet-magazina/sozdanie-korzini/ispolzovanie-sessii-django.html
-# https://dev.to/nick_langat/building-a-shopping-cart-using-django-rest-framework-54i0
+
 # https://www.youtube.com/watch?v=PgCMKeT2JyY&list=PL4FE-nQjkZLyw4pJ7s3kl_fThbTmPdZKd&index=1
 
 
@@ -39,6 +37,6 @@ class CartAPI(APIView):
                 quantity=product["quantity"],
                 overide_quantity=product["overide_quantity"] if "overide_quantity" in product else False
             )
-            return Response(data={'len': cart.__len__()}, status=status.HTTP_202_ACCEPTED,)
+            return Response(data={'len': cart.__len__()}, status=status.HTTP_202_ACCEPTED)
 
         return redirect('cart', permanent=True)
