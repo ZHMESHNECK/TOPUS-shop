@@ -3,10 +3,11 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
+
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Comfortaa', sans-serif;
     background-color: aliceblue;
     background-repeat: no-repeat;
     background-size: cover;

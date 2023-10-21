@@ -10,6 +10,8 @@ class Category(models.Model):
     cat_name = models.CharField('Назва', max_length=100)
     slug = models.SlugField('URL', max_length=100, unique=True,
                             db_index=True)
+    main_image = models.ImageField('фото',
+                                   upload_to='category_photo', default='category_photo/no-image-icon.png')
 
     def __str__(self):
         return self.cat_name
@@ -30,7 +32,7 @@ class MainModel(models.Model):
     price = models.DecimalField('Вартість', max_digits=7, decimal_places=2)
     brand = models.CharField('Бренд', max_length=50, blank=True)
     main_image = models.ImageField('Головне фото',
-                                   upload_to='main_photo', blank=True, null=True)
+                                   upload_to='main_photo', default='category_photo/no-image-icon.png')
     category = models.ForeignKey(
         'Category', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Категорія')
     s_code = models.CharField(

@@ -6,7 +6,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import renderers
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.messages import get_messages
-from django.db.models import F, Count
+from django.db.models import F, Count, Q
 from products.serializers import *
 from products.models import *
 from products.utils import serial_code_randomizer
@@ -16,7 +16,7 @@ from relations.utils import accept_post
 
 class ClothviewSet(ModelViewSet):
     queryset = Clothes.objects.filter(is_published=True).annotate(price_w_dis=F('price')-F('price') /
-                                                                  100*F('discount'), views=Count('viewed')).order_by('id')
+                                                                  100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('id')
     serializer_class = ClothSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']

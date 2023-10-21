@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load tags %}
-
+{% load static %}
 {% block content %}
+<head>
+    <link rel="stylesheet" href="{% static 'css/style_category.css' %}">
+</head>
 {% show_categories %}
 {% endblock %}
