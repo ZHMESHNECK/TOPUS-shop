@@ -37,10 +37,12 @@
                     </div>
                 </div>
                 <div hidden class="rating__value">{{ item.rating }}</div>
-                <p>відгуків: {{ item.views }}</p>
             </div>
+        </div>
+        <div claas="P_otziv">Відгуків: <div class="otziv">{{ item.views }}</div>
         </div>
     </div>
     {% endfor %}
+    <script src="{% static 'js/list_item.js' %}"></script>
 </div>
 {% endblock %}

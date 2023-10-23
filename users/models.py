@@ -20,9 +20,15 @@ class Profile(models.Model):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, verbose_name='Користувач')
     phone_number = PhoneNumberField(
-        default=None, null=True, blank=True, verbose_name='Номер')
+        default='', blank=True, verbose_name='Номер')
     department = models.CharField(
         'Стать', choices=DEPART, blank=True, null=True)
+    city = models.CharField('Місто', blank=True,  max_length=100)
+    first_name = models.CharField('Ім\'я', max_length=150, blank=True)
+    last_name = models.CharField('Прізвище', max_length=150, blank=True)
+    adress = models.CharField('Адресса', blank=True, max_length=100)
+    surname = models.CharField(
+        "По батькові",  blank=True, max_length=50)
 
     def __str__(self):
         return f'{self.user.username} Profile'

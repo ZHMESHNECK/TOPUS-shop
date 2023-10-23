@@ -155,8 +155,8 @@ class ProfileViewSet(ModelViewSet):
     authentication_classes = [SessionAuthentication]
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
 
-    def list(self, request):
-        return Response(template_name='404.html')
+    # def list(self, request):
+    #     return Response(template_name='404.html')
 
     def retrieve(self, request, pk=None):
         try:

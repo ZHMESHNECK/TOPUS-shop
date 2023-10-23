@@ -16,7 +16,8 @@ class ProfileFormAdmin(forms.ModelForm):
 class UserProfileAdmin(admin.ModelAdmin):
     form = ProfileFormAdmin
     list_display = ('user', 'phone_number')
-    fields = ('user', 'phone_number', 'department')
+    fields = ('user', 'first_name', 'last_name', 'surname',
+              'phone_number', 'department', 'city', 'adress')
 
 
 @admin.register(User)

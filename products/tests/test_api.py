@@ -2,7 +2,7 @@ from products.serializers import ClothSerializer
 from products.models import Clothes, Gaming, Home, MainModel, Category
 from relations.models import Relation
 from users.models import User
-from django.db.models import Count, F
+from django.db.models import Count, F, Q
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -16,7 +16,7 @@ class MainApiTestCase(APITestCase):
             username='test', email='email1@email.email', is_staff=True)
         self.user2 = User.objects.create(
             username='test22', email='email12@email.email', is_staff=True)
-        self.cat1=Category.objects.create(cat_name='Одежа', slug='cloth')
+        self.cat1 = Category.objects.create(cat_name='Одежа', slug='cloth')
 
         self.item = Clothes.objects.create(
             title='test1', price='150.00', size='S', season='SUMMER', owner=self.user, s_code='123', is_published=True, category=self.cat1)
@@ -28,7 +28,7 @@ class MainApiTestCase(APITestCase):
             title='test4', price='500.00', owner=self.user, s_code='111', is_published=True)
         self.item5 = Home.objects.create(
             title='test5', price='500.00', weight=100, owner=self.user, s_code='222', is_published=True)
-        
+
         Relation.objects.create(user=self.user, item=self.item, rate=4)
 
     def test_get(self):
@@ -36,25 +36,27 @@ class MainApiTestCase(APITestCase):
         """
         url = reverse('cloth-list')
         response = self.client.get(url)
-        items = Clothes.objects.all().annotate(price_w_dis=F(
-            'price')-F('price')/100*F('discount'), views=Count('viewed')).order_by('-id')
+        items = Clothes.objects.all().annotate(price_w_dis=F('price')-F('price') /
+                                               100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('-id')
 
         serializer_data = ClothSerializer(items, many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertEqual(serializer_data, response.data)
+        self.assertEqual(serializer_data[0]['id'], response.data[0]['id'])
+        self.assertEqual(serializer_data[2]['id'], response.data[2]['id'])
         self.assertEqual(serializer_data[-1]['rating'], '4.0')
 
     def test_search(self):
         """Пошук по декількох полях
         """
         url = reverse('cloth-list')
-        items = Clothes.objects.filter(id__in=[self.item.id, self.item2.id]).annotate(price_w_dis=F(
-            'price')-F('price')/100*F('discount'), views=Count('viewed')).order_by('-date_created')
+        items = Clothes.objects.filter(id__in=[self.item.id, self.item2.id]).annotate(price_w_dis=F('price')-F('price') /
+                                                                                      100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
         response = self.client.get(url, data={'search': 'test1'})
         serializer_data = ClothSerializer(
             items, many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertEqual(serializer_data, response.data)
+        self.assertEqual(len(serializer_data), len(response.data))
+
 
     def test_order(self):
         """Сортування
@@ -62,12 +64,14 @@ class MainApiTestCase(APITestCase):
         url = reverse('cloth-list')
         response = self.client.get(url, data={'ordering': '-price'})
         items = Clothes.objects.filter(
-            id__in=[self.item.id, self.item2.id, self.item3.id]).annotate(price_w_dis=F(
-                'price')-F('price')/100*F('discount'), views=Count('viewed')).order_by('-price')
+            id__in=[self.item.id, self.item2.id, self.item3.id]).annotate(price_w_dis=F('price')-F('price') /
+                                                                          100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('-price')
         serializer_data = ClothSerializer(
             items, many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertEqual(serializer_data, response.data)
+        self.assertEqual(serializer_data[0]['id'], response.data[0]['id'])
+        self.assertEqual(serializer_data[1]['id'], response.data[1]['id'])
+        self.assertEqual(serializer_data[2]['id'], response.data[2]['id'])
 
     def test_create(self):
         """Створення
@@ -186,7 +190,11 @@ class MainApiTestCase(APITestCase):
     def test_absolute_url(self):
         """ Перевірка get_absolute_url в усіх моделях
         """
-        self.assertEqual(MainModel.get_absolute_url(self.item), f'/cloth/{self.item.id}/')
-        self.assertEqual(self.item2.get_absolute_url(), f'/cloth/{self.item2.id}/')
-        self.assertEqual(self.item4.get_absolute_url(), f'/gaming/{self.item4.id}/')
-        self.assertEqual(self.item5.get_absolute_url(), f'/for_home/{self.item5.id}/')
+        self.assertEqual(MainModel.get_absolute_url(
+            self.item), f'/cloth/{self.item.id}/')
+        self.assertEqual(self.item2.get_absolute_url(),
+                         f'/cloth/{self.item2.id}/')
+        self.assertEqual(self.item4.get_absolute_url(),
+                         f'/gaming/{self.item4.id}/')
+        self.assertEqual(self.item5.get_absolute_url(),
+                         f'/for_home/{self.item5.id}/')

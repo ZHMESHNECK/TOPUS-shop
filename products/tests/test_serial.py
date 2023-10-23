@@ -2,7 +2,7 @@ from products.serializers import ClothSerializer
 from products.models import Clothes
 from relations.models import Relation
 from users.models import User
-from django.db.models import F, Count
+from django.db.models import F, Count, Q
 from django.test import TestCase
 from datetime import timedelta
 
@@ -33,10 +33,10 @@ class ClothSerializerTestCase(TestCase):
         Relation.objects.update_or_create(user=user1, item=item2, rate=3)
         Relation.objects.update_or_create(user=user2, item=item2, rate=4)
 
-        items = Clothes.objects.all().annotate(price_w_dis=F(
-            'price')-F('price')/100*F('discount'), views=Count('viewed')).order_by('id')
+        items = Clothes.objects.all().annotate(price_w_dis=F('price')-F('price') /
+                                               100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('id')
         data = ClothSerializer(items, many=True).data
-        # print(data)
+        # print(f'data {data}')
         # що чекаемо отримати, та що отримали
         expected_data = [
             {
@@ -47,7 +47,7 @@ class ClothSerializerTestCase(TestCase):
                 'description': '',
                 'price': '250.00',
                 'brand': '',
-                'main_image': None,
+                'main_image': '/media/category_photo/no-image-icon.png',
                 's_code': item.s_code,
                 'date_created': (item.date_created+timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
                 'discount': 20,
@@ -66,7 +66,7 @@ class ClothSerializerTestCase(TestCase):
                 'description': '',
                 'price': '550.00',
                 'brand': '',
-                'main_image': None,
+                'main_image': '/media/category_photo/no-image-icon.png',
                 's_code': item2.s_code,
                 'date_created': (item2.date_created+timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
                 'discount': 0,
@@ -78,5 +78,5 @@ class ClothSerializerTestCase(TestCase):
                 'in_liked': [],
             }
         ]
-        # print(expected_data)
+        # print(f'serial {expected_data}')
         self.assertEqual(expected_data, data)

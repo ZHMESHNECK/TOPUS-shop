@@ -1,10 +1,16 @@
 from django.conf import settings
 from django.db import models
 from products.models import MainModel
+from users.models import Profile
 from decimal import Decimal
 
 
 class Cart(models.Model):
+    user = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, verbose_name='Користувач')
+    product = models.ForeignKey(
+        MainModel, on_delete=models.CASCADE, verbose_name='Товар')
+    quantity = models.PositiveSmallIntegerField(name='Кількість')
 
     class Meta:
         verbose_name = 'Кошик'
@@ -54,8 +60,6 @@ class Cart(models.Model):
         # Отримання товару та додання їх до кошика
         products = MainModel.objects.filter(id__in=self.cart.keys())
         for product in products:
-            # self.cart[str(product.id)]['Товар'] = serializers.serialize(
-            #     'json', (product,))
             self.cart[str(product.id)]['Товар'] = product
 
         for item in self.cart.values():
@@ -79,3 +83,23 @@ class Cart(models.Model):
 
     def __str__(self):
         return f'{self.id}'
+
+
+class Order(models.Model):
+
+    STATUS_ORDER = (
+        ('Прийнято', 'Прийнято'),
+        ('Збирається', 'Збирається'),
+        ('Відправлено', 'Відправлено'),
+        ('Готове до видачі', 'Готове до видачі'),
+        ('Відмінено', 'Відмінено')
+    )
+
+    profile = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, verbose_name='Користувач')
+    product = models.ForeignKey(
+        MainModel, on_delete=models.CASCADE, verbose_name='Товар')
+    quantity = models.PositiveSmallIntegerField(default=1)
+    ordered_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=50, choices=STATUS_ORDER, default='Прийнято')

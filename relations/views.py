@@ -20,7 +20,7 @@ class UserRelationViewSet(APIView):
     authentication_classes = [SessionAuthentication]
 
     def get(self, request, pk):
-        return render(request, 'products/templates/404.html', status=404)
+        return render(request, '404.html', status=404)
 
     def get_object(self):
         obj, _ = Relation.objects.get_or_create(

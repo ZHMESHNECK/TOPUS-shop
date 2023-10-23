@@ -1,6 +1,7 @@
 {% extends "base.html" %}
-
 {% block content %}
+{% load static %}
+
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
@@ -204,4 +205,5 @@
         document.getElementById("answer_text").innerText = `${name}, `
     }
 </script>
+<script src="{% static 'js/item_view.js' %}"></script>
 {% endblock %}
