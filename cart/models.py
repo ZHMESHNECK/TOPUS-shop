@@ -1,20 +1,13 @@
 from django.conf import settings
 from django.db import models
 from products.models import MainModel
-from users.models import Profile
+from users.models import Customer
 from decimal import Decimal
 
 
 class Cart(models.Model):
-    user = models.ForeignKey(
-        Profile, on_delete=models.CASCADE, verbose_name='Користувач')
-    product = models.ForeignKey(
-        MainModel, on_delete=models.CASCADE, verbose_name='Товар')
-    quantity = models.PositiveSmallIntegerField(name='Кількість')
-
-    class Meta:
-        verbose_name = 'Кошик'
-        verbose_name_plural = 'Кошик'
+    """Модель кошика
+    """ 
 
     def __init__(self, request):
         """
@@ -84,8 +77,14 @@ class Cart(models.Model):
     def __str__(self):
         return f'{self.id}'
 
+    class Meta:
+        verbose_name = 'Кошик'
+        verbose_name_plural = 'Кошик'
+
 
 class Order(models.Model):
+    """Модель замовлення
+    """
 
     STATUS_ORDER = (
         ('Прийнято', 'Прийнято'),
@@ -94,12 +93,29 @@ class Order(models.Model):
         ('Готове до видачі', 'Готове до видачі'),
         ('Відмінено', 'Відмінено')
     )
+    PAY = (
+        ('-', '-'),
+        ('При_отриманні', 'При_отриманні'),
+        ('На_сайті', 'На_сайті'),
+    )
 
-    profile = models.ForeignKey(
-        Profile, on_delete=models.CASCADE, verbose_name='Користувач')
+    customer = models.ForeignKey(
+        Customer, on_delete=models.CASCADE, verbose_name='Користувач')
     product = models.ForeignKey(
         MainModel, on_delete=models.CASCADE, verbose_name='Товар')
-    quantity = models.PositiveSmallIntegerField(default=1)
-    ordered_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(
-        max_length=50, choices=STATUS_ORDER, default='Прийнято')
+    pickup = models.CharField('Спосіб доставки', default='-', max_length=50)
+    city = models.CharField('Місто', blank=True,
+                            max_length=100, default='Не вказано')
+    adress = models.TextField('Адресса', blank=True, max_length=100)
+    quantity = models.PositiveSmallIntegerField("Кількість", default=1)
+    ordered_date = models.DateTimeField('Дата', auto_now_add=True)
+    pay = models.CharField('Оплата', max_length=50, choices=PAY, default='-')
+    status = models.CharField('Статус',
+                              max_length=50, choices=STATUS_ORDER, default='Прийнято')
+
+    def __str__(self):
+        return f'Замовлення: №{self.id}'
+
+    class Meta:
+        verbose_name = 'Замовлення'
+        verbose_name_plural = 'Замовлення'

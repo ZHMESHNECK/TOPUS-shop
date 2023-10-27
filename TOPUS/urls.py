@@ -28,7 +28,7 @@ from django.urls import path
 urlpatterns = [
     path('', include('products.urls')),
     path('api/', include('users.urls')),
-    path('cart', include('cart.urls')),
+    path('cart/', include('cart.urls')),
     path('admin/', admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),
 

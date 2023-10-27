@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<!-- инфа для меня -->
+{{ data|json_script:"hello-data" }}
+<br>
+{{data}}
+<form action="{% url 'accept_order' %}" id="order" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="data" value="" id="send_data">
+</form>
+<!--  -->
+<br>
+
+<p>Отримувач замовлення</p>
+{{ data.client_info.first_name}} {{ data.client_info.last_name }} {{ data.client_info.surname }} <br>
+{{ data.client_info.phone_number }}
+
+<!-- циклом выводит название продукта и его количество -->
+{% for item in products %}
+<br>
+{{ item }}
+<br>
+{{ item.Товар.title }} x {{ item.Кількість }}
+<br>
+Всього: {{ item.Всього }} грн
+{% endfor %}
+<!--  -->
+<br>
+<!-- если доставка куръером -->
+{% if "До_замовника" in data.delivery %}
+До сплати: <span id="full_cart_price">{{ to_pay }}</span> грн (100 грн за доставлення вже врахованні)
+<!-- если нет, то -->
+{% else %}
+До сплати: <span id="full_cart_price">{{ to_pay }}</span> грн
+{% endif %}
+<!--  -->
+
+{% if data.pay == "На_сайті" %}
+<!-- кнопка гугл если оплата на сайте -->
+<div id="container"></div>
+{% else %} 
+<br>
+<button onclick="send_order()">Замовлення Підтверджую</button>
+{% endif %}
+
+<script src="{% static 'js/check-pay.js' %}"></script>
+<script async src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>
+{% endblock %}

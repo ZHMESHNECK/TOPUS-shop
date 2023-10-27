@@ -1,9 +1,9 @@
+from django.shortcuts import render, redirect
 from django.contrib.auth.views import *
-from django.contrib.auth import logout, login
+from django.contrib.auth import logout
 from django.contrib import messages
 from django.views.generic.edit import FormView
 from django.views.generic import CreateView, TemplateView
-from django.shortcuts import render, redirect
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import GenericAPIView
 from rest_framework.viewsets import ModelViewSet
@@ -28,8 +28,9 @@ class ActivateUser(GenericAPIView):
         response = requests.post(url, json=payload)
 
         if response.status_code in (204, 301, 302):
-            login(request)
-            return redirect('/')
+            messages.success(
+                request, 'Профіль створено, тепер потрібно увійти')
+            return redirect('/', permanent=True)
         else:
             return render(request, '404.html')
 
@@ -71,16 +72,18 @@ class ForgotPassword(PasswordResetView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Змінити пароль'
         return context
-
+    
+##########################
     def post(self, request, *args, **kwargs):
         form = ForgotPasswordForm(request.POST)
-
-        data = {"email": request.POST['email']}
-        url = 'http://localhost:8000/api/auth/users/reset_password/'
-        response = requests.post(url, data=data)
-        if response.status_code != 204:
-            return render(request,  '404.html')
-        return render(request, 'success_send.html', context={'info': 'щоб змінити пароль'})
+        if form.is_valid():  # ?
+            data = {"email": request.POST['email']}
+            url = 'http://localhost:8000/api/auth/users/reset_password/'
+            response = requests.post(url, data=data)
+            if response.status_code != 204:
+                return render(request,  '404.html')
+            return render(request, 'success_send.html', context={'info': 'щоб змінити пароль'})
+        # response +-
 
 
 class RegisterView(CreateView):
@@ -155,8 +158,8 @@ class ProfileViewSet(ModelViewSet):
     authentication_classes = [SessionAuthentication]
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
 
-    # def list(self, request):
-    #     return Response(template_name='404.html')
+    def list(self, request):
+        return Response(template_name='404.html')
 
     def retrieve(self, request, pk=None):
         try:

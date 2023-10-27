@@ -25,3 +25,12 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'email', 'is_active', 'is_staff')
     list_filter = ('is_staff',)
     search_fields = ('email', 'username')
+
+
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ('profile', 'first_name', 'last_name',
+                    'surname', 'phone_number', 'email')
+    readonly_fields = ('profile', 'first_name', 'last_name',
+                       'surname', 'phone_number', 'email')
+    search_fields = ('phone_number', 'email')

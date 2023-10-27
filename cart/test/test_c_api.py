@@ -1,10 +1,8 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
-from django.conf import settings
 from products.models import Clothes, Category
 from users.models import User
-from decimal import Decimal
 import json
 
 

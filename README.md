@@ -57,11 +57,17 @@ __
 
 ## Дякую
 
-- [ImDeath](mailto:hiphoplands@gmail.com) - Front-end
+- [ImDeath](mailto:hiphoplands@gmail.com) - Front-end (css | html)
 - [vladfraer1](mailto:vladfraer1@gmail.com) - images | logo 
 
 
 ## Оновлення
+
+version 0.1.6
+- Нові моделі Order / Customer
+- Готовий функціонал кошика з підтвердженням обраного
+- Оплата через гугл / при отриманні
+
 
 version 0.1.5
 - Додані нові поля для Profile

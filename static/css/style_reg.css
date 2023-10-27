@@ -10,17 +10,16 @@ body {
     top: 50%;
     left: 50%;
     width: 400px;
-    /* padding: 40px; */
+    padding: 40px;
     margin: 20px auto;
     transform: translate(-50%, -55%);
-    /* background: rgba(0, 0, 0, .9); */
+    background: rgba(0, 0, 0, .9);
     box-sizing: border-box;
-    /* box-shadow: 0 15px 25px rgba(0, 0, 0, .6); */
-    /* border-radius: 10px; */
+    box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
+    border-radius: 10px;
 }
 
 body {
-    font-family: Arial, sans-serif;
     background: linear-gradient(to bottom, #ffffff, #000000);
     background-repeat: no-repeat;
     background-size: cover;

@@ -26,7 +26,7 @@ ad_cart.forEach(btn => {
 
 function AddToCart(e) {
     let item = e.target.value
-    let url = '/cart'
+    let url = '/cart/'
 
     let data = {
         product_id: Number(item),

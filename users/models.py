@@ -23,12 +23,12 @@ class Profile(models.Model):
         default='', blank=True, verbose_name='Номер')
     department = models.CharField(
         'Стать', choices=DEPART, blank=True, null=True)
-    city = models.CharField('Місто', blank=True,  max_length=100)
     first_name = models.CharField('Ім\'я', max_length=150, blank=True)
     last_name = models.CharField('Прізвище', max_length=150, blank=True)
-    adress = models.CharField('Адресса', blank=True, max_length=100)
     surname = models.CharField(
         "По батькові",  blank=True, max_length=50)
+    city = models.CharField('Місто', blank=True,  max_length=100)
+    adress = models.CharField('Адресса', blank=True, max_length=100)
 
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -36,6 +36,26 @@ class Profile(models.Model):
     class Meta:
         verbose_name = 'Профіль'
         verbose_name_plural = 'Профіль'
+
+
+class Customer(models.Model):
+    """Модель покупця замовленого товару
+    """
+    profile = models.ForeignKey(
+        Profile, models.SET_NULL, verbose_name='Покупець', null=True, blank=True)
+    first_name = models.CharField('Ім\'я', max_length=150, blank=True)
+    last_name = models.CharField('Прізвище', max_length=150, blank=True)
+    surname = models.CharField(
+        "По батькові",  blank=True, max_length=50)
+    phone_number = PhoneNumberField(blank=True, verbose_name='Номер')
+    email = models.EmailField('Пошта')
+
+    def __str__(self):
+        return f'Замовник: № {self.id}'
+
+    class Meta:
+        verbose_name = 'Замовник'
+        verbose_name_plural = 'Замовники'
 
 
 @receiver(post_save, sender=User)
