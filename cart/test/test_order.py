@@ -35,7 +35,7 @@ class OrderTestCase(APITestCase):
         self.assertEqual(0, Customer.objects.all().count())
         url = reverse('accept_order')
 
-        data = {
+        data = {'data': {
             'client_info': {
                 'email': "admin@admin.admin",
                 'first_name': "admin",
@@ -51,12 +51,12 @@ class OrderTestCase(APITestCase):
                 str(self.item.id): '2',
                 str(self.item3.id): '1'
             },
-            'pay': 'При отриманні'
-        }
+            'pay': 'При_отриманні'
+        }}
         json_data = json.dumps(data)
         response = self.client.post(
             url, data=json_data, content_type='application/json')
-        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(status.HTTP_301_MOVED_PERMANENTLY, response.status_code)
         self.assertEqual(1, Customer.objects.all().count())
 
     def test_create_customer(self):
@@ -66,7 +66,7 @@ class OrderTestCase(APITestCase):
         self.assertEqual(0, Customer.objects.all().count())
         url = reverse('accept_order')
 
-        data = {
+        data = {'data': {
             'client_info': {
                 'email': "admin@admin.admin",
                 'first_name': "admin",
@@ -82,12 +82,12 @@ class OrderTestCase(APITestCase):
                 str(self.item.id): '2',
                 str(self.item3.id): '1'
             },
-            'pay': 'При отриманні'
-        }
+            'pay': 'При_отриманні'
+        }}
         json_data = json.dumps(data)
         response = self.client.post(
             url, data=json_data, content_type='application/json')
-        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(status.HTTP_301_MOVED_PERMANENTLY, response.status_code)
         self.assertEqual(1, Customer.objects.all().count())
 
     def test_create_bad_customer(self):
@@ -97,7 +97,7 @@ class OrderTestCase(APITestCase):
         self.assertEqual(0, Customer.objects.all().count())
         url = reverse('accept_order')
 
-        data = {
+        data = {'data': {
             'client_info': {
                 'email': "",
                 'first_name': "",
@@ -113,8 +113,8 @@ class OrderTestCase(APITestCase):
                 str(self.item.id): '2',
                 str(self.item3.id): '1'
             },
-            'pay': 'При отриманні'
-        }
+            'pay': 'При_отриманні'
+        }}
         json_data = json.dumps(data)
         response = self.client.post(
             url, data=json_data, content_type='application/json')
@@ -128,7 +128,7 @@ class OrderTestCase(APITestCase):
         self.assertEqual(0, Order.objects.all().count())
         url = reverse('accept_order')
 
-        data = {
+        data = {'data': {
             'client_info': {
                 'email': "admin@admin.admin",
                 'first_name': "admin",
@@ -144,24 +144,24 @@ class OrderTestCase(APITestCase):
                 str(self.item.id): '2',
                 str(self.item3.id): '1'
             },
-            'pay': 'При отриманні'
-        }
+            'pay': 'При_отриманні'
+        }}
 
         json_data = json.dumps(data)
         response = self.client.post(
             url, data=json_data, content_type='application/json')
-        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(status.HTTP_301_MOVED_PERMANENTLY, response.status_code)
         self.assertEqual(2, Order.objects.all().count())
         self.assertEqual('Самовивіз', Order.objects.filter(
             Q(customer=Customer.objects.get(profile=self.profile)) & Q(product=self.item))[0].pickup)
 
     def test_order_courier(self):
-        """ Замовлення - ку`єр
+        """ Замовлення - кур`єр
         """
         self.assertEqual(0, Order.objects.all().count())
         url = reverse('accept_order')
 
-        data = {
+        data = {'data': {
             'client_info': {
                 'email': "admin@admin.admin",
                 'first_name': "admin",
@@ -171,17 +171,17 @@ class OrderTestCase(APITestCase):
                 'surname': "Володимирович"
             },
             'delivery': {'До_замовника':
-                         {'city': 'city', 'street': 'street', 'building': 'build', 'apartment': '54', 'floor': '-', 'elivator': '-'}},
+                         {'Місто': 'city', 'Вулиця': 'street', 'Будинок': 'build', 'Квартира': '54', 'Поверх': '-', 'Ліфт': '-'}},
             'product': {
                 str(self.item.id): '2',
                 str(self.item3.id): '1'
             },
-            'pay': 'При отриманні'
-        }
+            'pay': 'При_отриманні'
+        }}
         json_data = json.dumps(data)
         response = self.client.post(
             url, data=json_data, content_type='application/json')
-        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(status.HTTP_301_MOVED_PERMANENTLY, response.status_code)
         self.assertEqual(2, Order.objects.all().count())
-        self.assertEqual('city: city\nstreet: street\nbuilding: build\napartment: 54\nfloor: -\nelivator: -\n', Order.objects.filter(
+        self.assertEqual('Місто: city\nВулиця: street\nБудинок: build\nКвартира: 54\nПоверх: -\nЛіфт: -\n', Order.objects.filter(
             Q(customer=Customer.objects.get(profile=self.profile)) & Q(product=self.item))[0].adress)

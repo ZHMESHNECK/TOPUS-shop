@@ -234,7 +234,6 @@ function processPayment(paymentData) {
     // @todo pass payment token to your gateway to process payment
     paymentToken = paymentData.paymentMethodData.tokenizationData.token;
     // send order to server
-    alert('Дякуємо за покупку !')
     send_order();
 };
 

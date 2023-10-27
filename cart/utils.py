@@ -14,7 +14,9 @@ def create_customer_and_order(request):
         Bool: True / False
     """
     try:
-        data = json.loads(request.data['data'])
+        data = request.data['data']
+        if isinstance(data, str):
+            data = json.loads(data)
         customer = Customer()
 
         if Profile.objects.filter(id=data['client_info'].get('profile')).exists():
@@ -29,7 +31,7 @@ def create_customer_and_order(request):
         customer.save()
 
     except:
-        print(traceback.format_exc())
+        # print(traceback.format_exc())
         return False
 
     # Створення замовлення
@@ -53,7 +55,7 @@ def create_customer_and_order(request):
             order.pay = data['pay']
             order.save()
     except:
-        print(traceback.format_exc())
+        # print(traceback.format_exc())
         return False
 
     return True

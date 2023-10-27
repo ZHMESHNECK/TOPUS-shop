@@ -95,5 +95,5 @@ class AcceptCartAPI(APIView):
         if create_customer_and_order(request):
             cart = Cart(request)
             cart.clear()
-            return redirect('/')
+            return redirect('/', permanent=True)
         return render(request, '404.html', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
