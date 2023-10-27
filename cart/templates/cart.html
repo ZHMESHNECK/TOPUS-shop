@@ -18,11 +18,46 @@
 </ul>
 {% endif %}
 <p>У кошику: {{ count }} </p>
-
+<div id="empty_cart" style="display: none;">
+    <p>У кошику нічого немає :&#40;</p>
+</div>
 {% for item in in_cart %}
+<div class="product">
+    <input type="hidden" name="id" value="{{ item.Товар.id }}">
+    <input type="hidden" name="quantity" value="{{ item.Кількість }}">
+    <input type="hidden" name="price" id="price_{{ item.Товар.id }}" value="{{ item.Ціна }}">
+</div>
 {{ item }}
 
-<p>Кількість: {{ item.Кількість }}</p>
+<!--  Зміна кількості товару -->
+<div class="container">
+    <div class="input-row">
+        <div class="title">
+            <h2 class="label">Кількість</h2>
+        </div>
+        <div class="input">
+
+            <button class="minus" aria-label="Decrease by one" 
+            {% if item.Кількість == 1 %} disabled {% endif %}>
+                <svg width="16" height="2" viewBox="0 0 16 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line y1="1" x2="16" y2="1" stroke="#0064FE" stroke-width="2" class="icon" />
+                </svg>
+            </button>
+            <div class="number dim" id="{{ item.Товар.id }}">{{ item.Кількість }}</div>
+            <button class="plus" aria-label="Increase by one" 
+            {% if item.Кількість >= 10 %} disabled {% endif %}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    class="icon">
+                    <line x1="8" y1="4.37114e-08" x2="8" y2="16" stroke="#0064FE" stroke-width="2" />
+                    <line y1="8" x2="16" y2="8" stroke="#0064FE" stroke-width="2" />
+                </svg>
+
+            </button>
+        </div>
+    </div>
+</div>
+<!--  -->
+
 <p>Ціна: {{ item.Ціна }} грн</p>
 {% if item.Товар.main_image %}
 <p>Photo <img src="{{ item.Товар.main_image.url }}" width="100 100"></p>
@@ -32,11 +67,11 @@
     {% csrf_token %}
     <button type="submit" name="remove" value="{{ item.Товар.id }}">Видалити</button>
 </form>
-<p>Всього: {{ item.Всього }} грн</p>
+Всього:<span id="span_{{item.Товар.id}}">{{ item.Всього }}</span> грн
 
 {% endfor %}
-<p><input id="full_cart_price" onclick="" value="{{ to_pay }}" type="hidden">До сплати: {{ to_pay }} грн
-</p>
+<div>До сплати: <p id="full_cart_price">{{ to_pay }}</p> грн</div>
+
 
 <form method="post">
     {% csrf_token %}
@@ -46,15 +81,20 @@
     <button disabled type="submit" name="clear">Видалити все</button>
     {% endif %}
 </form>
+
 <div class="delivery-contact">
     <hr>
     <form id="personal_data">
         {% csrf_token %}
-        <div id="error_pers" style="display: none;">
-            <p id="p_eror">Потрібно заповнити всю форму</p>
+        <div id="message_pers" style="display: none;">
+            <p id="p_message">Потрібно заповнити всю форму</p>
         </div>
         <p>Персональні данні</p>
         {% if profile %}
+        <input type="hidden" name="profile" value="{{ profile.id }}">
+        {% else %}
+        <input type="hidden" name="profile" value="0">
+        {% endif %}
         <label>Ім'я</label>
         <input type="text" name="first_name" value="{{ profile.first_name }}" required>
         <label>Прізвище</label>
@@ -63,23 +103,10 @@
         <input type="text" name="surname" value="{{ profile.surname }}" required>
         <br>
         <label>Номер телефону</label>
-        <input type="tel" name="phone_number" minlength="10" maxlength="14" value="{{ profile.phone_number }}" required>
+        <input type="tel" name="phone_number" minlength="10" maxlength="10" value="{{ profile.phone_number }}" required>
         <label>Пошта</label>
         <input type="email" name="email" value="{{ profile.user.email }}" required>
 
-        {% else %}
-        <label>Ім'я</label>
-        <input type="text" name="first_name" value="" required>
-        <label>Прізвище</label>
-        <input type="text" name="last_name" value="" required>
-        <label>По батькові</label>
-        <input type="text" name="surname" value="" required>
-        <br>
-        <label>Номер телефону</label>
-        <input type="tel" name="phone_number" value="" minlength="10" maxlength="14" required>
-        <label>Пошта</label>
-        <input type="email" name="email" value="" required>
-        {% endif %}
         {% if request.user.is_authenticated %}
         <p><button type="submit">Зберегти</button></p>
         {% else %}
@@ -87,92 +114,103 @@
         {% endif %}
     </form>
 </div>
-<form action="{% url 'accept_order' %}" id="order" onsubmit="return check2()" method="post">
-    <div class="delivery-block">
-        <hr>
-        <div id="eror_delivery" style="display: none;">
-            <p>Вам потрібно обрати спосіб доставки</p>
-        </div>
-        <p>Доставка</p>
-        <div id="self-pickup">
-            <label><input name="delivery" type="radio" id="option" value="1" onclick="check()">
-                Самовивіз з точок видачі TOPUS</label> (Безкоштовно)
-            <div class="option">
-                <select name="select">
-                    <option value="1">Відділення №1 (ст.м. "Палац Україна" )</option>
-                    <option value="2">Відділення №2 (ст.м. "Пл. Українських героїв" )</option>
-                    <option value="3">Відділення №3 (ст.м. "Осокорки" )</option>
-                    <option value="4">Відділення №4 (тц. "Район" )</option>
-                </select>
-            </div>
-        </div>
-        <div id="del_to_custumer">
-            <label><input name="delivery" type="radio" id="option2" value="2" onclick="check()">
-                Кур'єр на вашу адресу</label> (100 грн)
-            <div class="option2">
-                <input type="text" placeholder="Вулиця">
-                <input type="text" placeholder="Будинок">
-                <input type="text" placeholder="Квартира">
-                <br>
-                <label>Поверх</label>
-                <select name="floor">
-                    <option value="none">-</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="more 10"> > 10</option>
-                </select>
-                <select name="elivator">
-                    <option value="none">-</option>
-                    <option value="True">Ліфт присутній</option>
-                    <option value="False">Ліфта немає</option>
-                </select> 100 грн
-            </div>
-        </div>
-        <div id="self_f_nova">
-            <label><input name="delivery" type="radio" id="option3" value="3" onclick="check()">
-                Самовивіз з відділення Нової пошти</label> (80 грн)
-            <div class="option3">
-                <label>Вкажіть номер відділення</label><br>
-                <input name="delivery" type="text" id="option3">
-            </div>
-        </div>
-        <div id="self_f_ukr">
-            <label><input name="delivery" type="radio" id="option4" value="4" onclick="check()">
-                Самовивіз з відділення Укр пошти</label> (40 грн)
-            <div class="option4">
-                <label>Вкажіть номер відділення</label><br>
-                <input name="delivery" type="text" id="option4">
-            </div>
-        </div>
-    </div>
+
+<div class="delivery-block">
     <hr>
-    <div class="pay-block">
-        <div id="eror_pay" style="display: none;">
-            <p>Вам потрібно обрати спосіб оплати</p>
-        </div>
-        <p>Оплата</p>
-        <div class="pay_later">
-            <label><input name="pay" type="radio" value="5" onclick="check()">
-                Оплата під час отримання товару</label>
-        </div>
-        <div class="pay_now">
-            <label><input name="pay" type="radio" id="how_to_pay" value="6" onclick="check()">
-                Оплатити зараз через google pay</label>
-            <div class="how_to_pay">
-                <div id="buy-btn-container"></div>
-            </div>
+    <div id="eror_delivery" style="display: none;">
+        <p>Вам потрібно обрати спосіб доставки</p>
+    </div>
+    <p>Доставка</p>
+    <div id="self-pickup">
+        <label><input name="delivery" type="radio" id="option" value="Самовивіз" onclick="show()">
+            Самовивіз з точок видачі TOPUS</label> (Безкоштовно)
+        <div class="option">
+            <select name="self_pickup_choice">
+                <option value="№1 - (ст.м. 'Палац Україна' )">Відділення №1 (ст.м. "Палац Україна" )</option>
+                <option value="№2 - (ст.м. 'Пл. Українських героїв' )">Відділення №2 (ст.м. "Пл. Українських
+                    героїв")</option>
+                <option value="№3 - (ст.м. 'Осокорки' )">Відділення №3 (ст.м. "Осокорки" )</option>
+                <option value="№4 - (тц. 'Район' )">Відділення №4 (тц. "Район" )</option>
+            </select>
         </div>
     </div>
-    <button type="submit">Замовлення підтверджую</button>
+    <div id="del_to_custumer">
+        <label><input name="delivery" type="radio" id="option2" value="Кур'єр" onclick="show()">
+            Кур'єр на вашу адресу</label> (100 грн)
+        <div class="option2">
+            <div id="eror_adress_del" style="display: none;">
+                <p>Вам потрібно заповнити адрес доставки</p>
+            </div>
+            <input type="text" name="city" value="" placeholder="Місто" maxlength="50">
+            <input type="text" name="street" value="" placeholder="Вулиця" maxlength="50">
+            <input type="text" name="building" value="" placeholder="Будинок" maxlength="6">
+            <input type="number" name="apartment" value="" placeholder="Квартира" maxlength="4">
+            <br>
+            <label>Поверх</label>
+            <select id="floor">
+                <option value="Не вказано">Не вказано</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="more 10"> > 10</option>
+            </select>
+            <label>Ліфт</label>
+            <select id="elivator">
+                <option value="Не вказано">Не вказано</option>
+                <option value="присутній">присутній</option>
+                <option value="немає">немає</option>
+            </select>
+        </div>
+    </div>
+    <div id="self_f_nova">
+        <label><input name="delivery" type="radio" id="option3" value="Нова пошта" onclick="show()">
+            Самовивіз з відділення Нової пошти</label>
+        <div class="option3">
+            <div id="eror_nova_del" style="display: none;">
+                <p>Вам потрібно вказати відділення нової пошти</p>
+            </div>
+            <label>Вкажіть номер відділення</label><br>
+            <input name="delivery" type="text" id="option3" value="">
+        </div>
+    </div>
+    <div id="self_f_ukr">
+        <label><input name="delivery" type="radio" id="option4" value="Укр пошта" onclick="show()">
+            Самовивіз з відділення Укр пошти</label>
+        <div class="option4">
+            <div id="eror_ukr_del" style="display: none;">
+                <p>Вам потрібно вказати відділення укр пошти</p>
+            </div>
+            <label>Вкажіть номер відділення</label><br>
+            <input name="delivery" type="text" id="option4" value="">
+        </div>
+    </div>
+</div>
+<hr>
+<div class="pay-block">
+    <div id="eror_pay" style="display: none;">
+        <p>Вам потрібно обрати спосіб оплати</p>
+    </div>
+    <p>Оплата</p>
+    <div class="pay_later">
+        <label><input name="pay" type="radio" value="При_отриманні" onclick="show()">
+            Оплата під час отримання товару</label>
+    </div>
+    <div class="pay_now">
+        <label><input name="pay" type="radio" id="google_pay" value="На_сайті" onclick="show()">
+            Оплатити зараз через google pay</label>
+    </div>
+</div>
+<form action="{% url 'check_order' %}" id="order" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="data" value="" id="send_data">
+    <input type="submit" value="Замовити">
 </form>
 <script src="{% static 'js/script.js' %}"></script>
-<script async src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>
 {% endblock %}

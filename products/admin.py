@@ -21,19 +21,19 @@ class GalleryHmInline(admin.TabularInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'cat_name',)
+    list_display = ('id', 'cat_name', 'slug')
     list_display_links = ('cat_name',)
 
 
 @admin.register(Clothes)
 class ClothAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'get_html_photo',
+    list_display = ('title', 'get_html_photo',
                     's_code', 'is_published')
     list_filter = ('category', 'brand', 'price')
     list_editable = ('is_published',)
     search_fields = ('title', 'season', 'size')
     fields = ('title', 'description', 'price', 'discount', 'brand',
-              'main_image', 'get_html_photo', 'is_published','in_liked', 'size', 'season', 'department', 'rating', 's_code', 'date_created', 'owner')
+              'main_image', 'get_html_photo', 'is_published', 'in_liked', 'size', 'season', 'department', 'rating', 's_code', 'date_created', 'owner')
     readonly_fields = ('s_code', 'date_created', 'owner',
                        'get_html_photo', 'rating')
     inlines = [GalleryClInline]
@@ -60,7 +60,7 @@ class GamingAdmin(admin.ModelAdmin):
     list_editable = ('is_published',)
     search_fields = ('title', 'brand', 'model')
     fields = ('title', 'description', 'price', 'discount', 'category', 'brand',
-              'main_image', 'is_published','in_liked', 'material', 'model', 'color', 's_code', 'owner')
+              'main_image', 'is_published', 'in_liked', 'material', 'model', 'color', 's_code', 'owner')
     readonly_fields = ('s_code', 'date_created', 'owner')
     inlines = [GalleryGaInline]
 
@@ -86,7 +86,7 @@ class HomeAdmin(admin.ModelAdmin):
     list_editable = ('is_published',)
     search_fields = ('title', 'room_type')
     fields = ('title', 'description', 'price', 'discount', 'category', 'brand',
-              'main_image', 'is_published','in_liked', 'material', 'color', 'room_type', 'weight', 'dimensions', 's_code', 'owner')
+              'main_image', 'is_published', 'in_liked', 'material', 'color', 'room_type', 'weight', 'dimensions', 's_code', 'owner')
     readonly_fields = ('s_code', 'date_created', 'owner')
     inlines = [GalleryHmInline]
 
@@ -103,4 +103,3 @@ class HomeAdmin(admin.ModelAdmin):
         if not obj.s_code:
             obj.s_code = serial_code_randomizer(obj.category)
         obj.save()
-

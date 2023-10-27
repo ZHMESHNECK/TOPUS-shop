@@ -1,239 +1,4 @@
 
-
-// google pay https://developers.google.com/pay/api/web/guides/tutorial?hl=ru#apiversion
-
-/**
- * Define the version of the Google Pay API referenced when creating your
- * configuration
- *
- * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#PaymentDataRequest|apiVersion in PaymentDataRequest}
- */
-const baseRequest = {
-    apiVersion: 2,
-    apiVersionMinor: 0
-};
-
-/**
- * Card networks supported by your site and your gateway
- *
- * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#CardParameters|CardParameters}
- * @todo confirm card networks supported by your site and gateway
- */
-const allowedCardNetworks = ["MASTERCARD", "VISA"];
-
-/**
- * Card authentication methods supported by your site and your gateway
- *
- * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#CardParameters|CardParameters}
- * @todo confirm your processor supports Android device tokens for your
- * supported card networks
- */
-const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"];
-
-/**
- * Identify your gateway and your site's gateway merchant identifier
- *
- * The Google Pay API response will return an encrypted payment method capable
- * of being charged by a supported gateway after payer authorization
- *
- * @todo check with your gateway on the parameters to pass
- * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#gateway|PaymentMethodTokenizationSpecification}
- */
-const tokenizationSpecification = {
-    type: 'PAYMENT_GATEWAY',
-    parameters: {
-        'gateway': 'example',
-        'gatewayMerchantId': 'exampleGatewayMerchantId'
-    }
-};
-
-/**
- * Describe your site's support for the CARD payment method and its required
- * fields
- *
- * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#CardParameters|CardParameters}
- */
-const baseCardPaymentMethod = {
-    type: 'CARD',
-    parameters: {
-        allowedAuthMethods: allowedCardAuthMethods,
-        allowedCardNetworks: allowedCardNetworks
-    }
-};
-
-/**
- * Describe your site's support for the CARD payment method including optional
- * fields
- *
- * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#CardParameters|CardParameters}
- */
-const cardPaymentMethod = Object.assign(
-    {},
-    baseCardPaymentMethod,
-    {
-        tokenizationSpecification: tokenizationSpecification
-    }
-);
-
-/**
- * An initialized google.payments.api.PaymentsClient object or null if not yet set
- *
- * @see {@link getGooglePaymentsClient}
- */
-let paymentsClient = null;
-
-/**
- * Configure your site's support for payment methods supported by the Google Pay
- * API.
- *
- * Each member of allowedPaymentMethods should contain only the required fields,
- * allowing reuse of this base request when determining a viewer's ability
- * to pay and later requesting a supported payment method
- *
- * @returns {object} Google Pay API version, payment methods supported by the site
- */
-function getGoogleIsReadyToPayRequest() {
-    return Object.assign(
-        {},
-        baseRequest,
-        {
-            allowedPaymentMethods: [baseCardPaymentMethod]
-        }
-    );
-}
-
-/**
- * Configure support for the Google Pay API
- *
- * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#PaymentDataRequest|PaymentDataRequest}
- * @returns {object} PaymentDataRequest fields
- */
-function getGooglePaymentDataRequest() {
-    const paymentDataRequest = Object.assign({}, baseRequest);
-    paymentDataRequest.allowedPaymentMethods = [cardPaymentMethod];
-    paymentDataRequest.transactionInfo = getGoogleTransactionInfo();
-    paymentDataRequest.merchantInfo = {
-        // @todo a merchant ID is available for a production environment after approval by Google
-        // See {@link https://developers.google.com/pay/api/web/guides/test-and-deploy/integration-checklist|Integration checklist}
-        // merchantId: '01234567890123456789',
-        merchantName: 'Example Merchant'
-    };
-    return paymentDataRequest;
-}
-
-/**
- * Return an active PaymentsClient or initialize
- *
- * @see {@link https://developers.google.com/pay/api/web/reference/client#PaymentsClient|PaymentsClient constructor}
- * @returns {google.payments.api.PaymentsClient} Google Pay API client
- */
-function getGooglePaymentsClient() {
-    if (paymentsClient === null) {
-        paymentsClient = new google.payments.api.PaymentsClient({ environment: 'TEST' });
-    }
-    return paymentsClient;
-}
-
-/**
- * Initialize Google PaymentsClient after Google-hosted JavaScript has loaded
- *
- * Display a Google Pay payment button after confirmation of the viewer's
- * ability to pay.
- */
-function onGooglePayLoaded() {
-    const paymentsClient = getGooglePaymentsClient();
-    paymentsClient.isReadyToPay(getGoogleIsReadyToPayRequest())
-        .then(function (response) {
-            if (response.result) {
-                addGooglePayButton();
-                // @todo prefetch payment data to improve performance after confirming site functionality
-                // prefetchGooglePaymentData();
-            }
-        })
-        .catch(function (err) {
-            // show error in developer console for debugging
-            console.error(err);
-        });
-}
-
-/**
- * Add a Google Pay purchase button alongside an existing checkout button
- *
- * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#ButtonOptions|Button options}
- * @see {@link https://developers.google.com/pay/api/web/guides/brand-guidelines|Google Pay brand guidelines}
- */
-function addGooglePayButton() {
-    const paymentsClient = getGooglePaymentsClient();
-    const button =
-        paymentsClient.createButton({ onClick: onGooglePaymentButtonClicked, buttonLocale: 'uk', buttonType: 'pay' });
-    document.getElementById('buy-btn-container').appendChild(button);
-}
-
-/**
- * Provide Google Pay API with a payment amount, currency, and amount status
- *
- * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#TransactionInfo|TransactionInfo}
- * @returns {object} transaction info, suitable for use as transactionInfo property of PaymentDataRequest
- */
-let price = document.getElementById('full_cart_price').value
-
-function getGoogleTransactionInfo() {
-    return {
-        totalPriceStatus: 'FINAL',
-        totalPrice: price,
-        currencyCode: 'UAH',
-        countryCode: 'UA'
-    };
-}
-
-/**
- * Prefetch payment data to improve performance
- *
- * @see {@link https://developers.google.com/pay/api/web/reference/client#prefetchPaymentData|prefetchPaymentData()}
- */
-function prefetchGooglePaymentData() {
-    const paymentDataRequest = getGooglePaymentDataRequest();
-    // transactionInfo must be set but does not affect cache
-    paymentDataRequest.transactionInfo = {
-        totalPriceStatus: 'NOT_CURRENTLY_KNOWN',
-        currencyCode: 'UAH'
-    };
-    const paymentsClient = getGooglePaymentsClient();
-    paymentsClient.prefetchPaymentData(paymentDataRequest);
-}
-
-/**
- * Show Google Pay payment sheet when Google Pay payment button is clicked
- */
-function onGooglePaymentButtonClicked() {
-    const paymentDataRequest = getGooglePaymentDataRequest();
-    paymentDataRequest.transactionInfo = getGoogleTransactionInfo();
-
-    const paymentsClient = getGooglePaymentsClient();
-    paymentsClient.loadPaymentData(paymentDataRequest)
-        .then(function (paymentData) {
-            // handle the response
-            processPayment(paymentData);
-        })
-        .catch(function (err) {
-            // show error in developer console for debugging
-            console.error(err);
-        });
-}
-
-/**
- * Process payment data returned by the Google Pay API
- *
- * @param {object} paymentData response from Google Pay API after user approves payment
- * @see {@link https://developers.google.com/pay/api/web/reference/response-objects#PaymentData|PaymentData object reference}
- */
-function processPayment(paymentData) {
-    // show returned data in developer console for debugging
-    console.log(paymentData);
-    // @todo pass payment token to your gateway to process payment
-    paymentToken = paymentData.paymentMethodData.tokenizationData.token;
-}
-
 // csrf_token
 function getCookie(name) {
     let cookieValue = null;
@@ -252,11 +17,165 @@ function getCookie(name) {
 }
 const csrftoken = getCookie('csrftoken');
 
-// delivery form
-let radios = document.querySelectorAll('input[type="radio"]');
-let button = document.querySelector('.delivery-block');
 
-function check() {
+// // Корегування кількості товару
+const buttons = document.querySelectorAll(".input button");
+const minValue = 1;
+const maxValue = 10;
+
+buttons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+        // 1. Get the clicked element
+        const element = event.currentTarget;
+        // 2. Get the parent
+        const parent = element.parentNode;
+        // 3. Get the number (within the parent)
+        const numberContainer = parent.querySelector(".number");
+        const number = parseFloat(numberContainer.textContent);
+        // 4. Get the minus and plus buttons
+        const increment = parent.querySelector(".plus");
+        const decrement = parent.querySelector(".minus");
+        // 5. Change the number based on click (either plus or minus)
+        const newNumber = element.classList.contains("plus")
+            ? number + 1
+            : number - 1;
+        numberContainer.textContent = newNumber;
+        // 6. Disable and enable buttons based on number value (and undim number)
+        if (newNumber === minValue) {
+            decrement.disabled = true;
+            numberContainer.classList.add("dim");
+            // Make sure the button won't get stuck in active state (Safari)
+            element.blur();
+        } else if (newNumber > minValue && newNumber < maxValue) {
+            decrement.disabled = false;
+            increment.disabled = false;
+            numberContainer.classList.remove("dim");
+        } else if (newNumber === maxValue) {
+            increment.disabled = true;
+            numberContainer.textContent = `${newNumber}`;
+            element.blur();
+        }
+
+        // send quantity of product to Back
+        let url = '/cart/'
+        let data = {
+            product_id: numberContainer.id,
+            quantity: newNumber,
+            overide_quantity: true
+        }
+        fetch(url, {
+            'method': 'POST',
+            'headers': { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+            'body': JSON.stringify(data)
+        })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('full_cart_price').textContent = data.to_pay
+                document.getElementById('span_' + numberContainer.id).textContent = Number(document.getElementById('price_' + numberContainer.id).value) * newNumber
+                document.getElementById('num_of_cart').innerHTML = data.len
+
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    });
+});
+
+
+// Перевірка заповнення необхідних полів
+const formorder = document.getElementById('order');
+formorder.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let delivery_block = document.getElementsByClassName('delivery-block')[0]
+    let deliv_to_cstmr = document.getElementById('del_to_custumer')
+    let pay_block = document.getElementsByClassName('pay-block')[0]
+    let contact_block = document.getElementById('personal_data')
+
+    let valid = true
+
+    // У кошику відсутні товари
+    if (document.getElementsByClassName('product')[0]) {
+        document.getElementById('empty_cart').style.display = 'none'
+    } else {
+        document.getElementById('empty_cart').style.display = 'block'
+        valid = false
+    }
+
+    // не обрано спосіб доставки
+    if (delivery_block.querySelectorAll('input[type="radio"]:checked').length == 0) {
+        document.getElementById('eror_delivery').style.display = 'block'
+        valid = false
+    } else {
+        document.getElementById('eror_delivery').style.display = 'none'
+    }
+
+    // не вказан номер відділення поштової служби
+    let nova = document.getElementById('self_f_nova')
+    if (nova.querySelector('input[type="radio"]:checked')) {
+
+        if (!nova.getElementsByTagName('input')[1].value) {
+            document.getElementById('eror_nova_del').style.display = 'block'
+            valid = false
+        } else {
+            document.getElementById('eror_nova_del').style.display = 'none'
+        }
+    }
+
+    let ukr = document.getElementById('self_f_ukr')
+    if (ukr.querySelector('input[type="radio"]:checked')) {
+
+        if (!ukr.getElementsByTagName('input')[1].value) {
+            document.getElementById('eror_ukr_del').style.display = 'block'
+            valid = false
+        } else {
+            document.getElementById('eror_ukr_del').style.display = 'none'
+        }
+    }
+    // Кур'ер - не обрано адрес
+    if (deliv_to_cstmr.querySelector('input[type="radio"]:checked')) {
+        for (let val of document.getElementsByClassName('option2')[0].getElementsByTagName('input')) {
+            if (!val.value) {
+                document.getElementById('eror_adress_del').style.display = 'block'
+                valid = false
+                break
+            } else {
+                document.getElementById('eror_adress_del').style.display = 'none'
+            }
+        }
+    };
+
+    // не обрано спосіб оплати
+    if (pay_block.querySelectorAll('input[type="radio"]:checked').length == 0) {
+        document.getElementById('eror_pay').style.display = 'block'
+        valid = false
+    } else {
+        document.getElementById('eror_pay').style.display = 'none'
+    }
+
+    const formData = new FormData(contact_block);
+    for (let value of formData.values()) {
+        if (!value) {
+            document.getElementById('message_pers').style.display = 'block'
+            valid = false
+            break
+        } else {
+            document.getElementById('message_pers').style.display = 'none'
+        }
+    }
+    console.log(valid)
+    if (valid) {
+        let hid_in = document.getElementById('send_data')
+        hid_in.value = sendform()
+        formorder.submit()
+        return valid
+    };
+    return valid
+});
+
+// Показ форм обраних параметрів
+let radios = document.querySelectorAll('input[type="radio"]');
+
+function show() {
     for (let radio of radios) {
         var form = document.getElementsByClassName(radio.id)[0];
         if (radio.checked && form) {
@@ -268,35 +187,6 @@ function check() {
     }
 };
 
-// check eror in form
-// document.getElementById('order').onsubmit = function () {
-function check2() {
-    let delivery_block = this.getElementsByClassName('delivery-block')[0]
-    let pay_block = this.getElementsByClassName('pay-block')[0]
-    let contact_block = document.getElementById('personal_data')
-
-    let valid = true
-
-    if (delivery_block.querySelectorAll('input[type="radio"]:checked').length == 0) {
-        document.getElementById('eror_delivery').style.display = 'block'
-        valid = false
-    };
-    if (pay_block.querySelectorAll('input[type="radio"]:checked').length == 0) {
-        document.getElementById('eror_pay').style.display = 'block'
-        valid = false
-    };
-    const formData = new FormData(contact_block);
-    console.log(formData)
-    for (let value of formData.values()) {
-        if (!value) {
-            document.getElementById('error_pers').style.display = 'block'
-            valid = false
-            break
-        }
-    }
-
-    return valid
-};
 
 
 // save personal_data
@@ -321,10 +211,69 @@ formElement.addEventListener('submit', (e) => {
     })
         .then(res => res.json())
         .then(data => {
-            document.getElementById('error_pers').style.display = 'block';
-            document.getElementById('p_eror').innerHTML = data.ans;
+            document.getElementById('message_pers').style.display = 'block';
+            document.getElementById('p_message').innerHTML = data.ans;
         })
         .catch(error => {
             console.log(error)
         })
 });
+
+// форма відправки данних
+function sendform() {
+    let pers_data = document.getElementById('personal_data')
+    let deliv_data = document.getElementsByClassName('delivery-block')[0].querySelector('input[type="radio"]:checked')
+    let pay_info = document.getElementsByClassName('pay-block')[0].querySelector('input[type="radio"]:checked').value
+    let product_data = document.getElementsByClassName('product')
+
+    if (deliv_data.value == 'Самовивіз') {
+        deliv_info = {
+            'Самовивіз': document.getElementsByClassName(deliv_data.id)[0].getElementsByTagName('select')[0].value
+        }
+
+    } else if (deliv_data.value == 'Кур\'єр') {
+        let info = document.getElementsByClassName(deliv_data.id)[0]
+        deliv_info = {
+            До_замовника: {
+                Місто: info.getElementsByTagName('input').item(0).value,
+                Вулиця: info.getElementsByTagName('input').item(1).value,
+                Будинок: info.getElementsByTagName('input').item(2).value,
+                Квартира: info.getElementsByTagName('input').item(3).value,
+                Поверх: info.getElementsByTagName('select')[0].value,
+                Ліфт: info.getElementsByTagName('select')[1].value,
+            }
+        }
+    } else if ((deliv_data.value == 'Нова пошта')) {
+        deliv_info = {
+            'Нова пошта': document.getElementsByClassName(deliv_data.id)[0].getElementsByTagName('input')[0].value
+        }
+
+    } else if ((deliv_data.value == 'Укр пошта')) {
+        deliv_info = {
+            'Укр пошта': document.getElementsByClassName(deliv_data.id)[0].getElementsByTagName('input')[0].value
+        }
+    };
+
+    let product_info = {}
+    for (let item of product_data) {
+        product_info[item.getElementsByTagName('input')[0].value] = item.getElementsByTagName('input')[1].value
+    }
+
+    let data = {
+        client_info: {
+            profile: pers_data.querySelector('input[name="profile"]').value,
+            first_name: pers_data.querySelector('input[name="first_name"]').value,
+            last_name: pers_data.querySelector('input[name="last_name"]').value,
+            surname: pers_data.querySelector('input[name="surname"]').value,
+            phone_number: pers_data.querySelector('input[name="phone_number"]').value,
+            email: pers_data.querySelector('input[name="email"]').value,
+        },
+        delivery: deliv_info,
+        pay: pay_info,
+        product: product_info
+    };
+
+    // console.log(data)
+    return JSON.stringify(data)
+};
+
