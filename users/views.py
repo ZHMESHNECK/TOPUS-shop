@@ -72,7 +72,7 @@ class ForgotPassword(PasswordResetView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Змінити пароль'
         return context
-    
+
 ##########################
     def post(self, request, *args, **kwargs):
         form = ForgotPasswordForm(request.POST)
@@ -161,14 +161,14 @@ class ProfileViewSet(ModelViewSet):
     def list(self, request):
         return Response(template_name='404.html')
 
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, username=None):
         try:
-            response = self.queryset.get(user_id=pk)
+            user = self.queryset.get(user__username=username)
         except:
             return redirect('404.html')
-        relation = Relation.objects.filter(user=pk)
+        relation = Relation.objects.filter(user__username=username)
         if len(relation) == 0:
             relation = None
         if request.accepted_renderer.format == 'html':
-            return Response({'data': response, 'relation': relation}, template_name='user_profile.html')
-        return response
+            return Response({'data': user, 'relation': relation}, template_name='user_profile.html')
+        return user

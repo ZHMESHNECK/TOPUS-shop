@@ -7,7 +7,7 @@ from decimal import Decimal
 
 class Cart(models.Model):
     """Модель кошика
-    """ 
+    """
 
     def __init__(self, request):
         """
@@ -30,7 +30,7 @@ class Cart(models.Model):
         if str(product.id) not in self.cart:
             self.cart[str(product.id)] = {
                 "Кількість": 0,
-                "Ціна": float(product.price)
+                "Ціна": float(product.price) if not product.discount else float(product.price - product.price / 100 * product.discount)
             }
         if overide_quantity:
             self.cart[str(product.id)]["Кількість"] = quantity
@@ -56,7 +56,7 @@ class Cart(models.Model):
             self.cart[str(product.id)]['Товар'] = product
 
         for item in self.cart.values():
-            item['Ціна'] = Decimal(item['Ціна'])
+            item['Ціна'] = item['Ціна']
             item['Всього'] = item['Ціна'] * item['Кількість']
 
             yield item
@@ -64,10 +64,10 @@ class Cart(models.Model):
     def __len__(self):
         """Кількість товару у кошику
         """
-        return sum(item["Кількість"] for item in self.cart.values())
+        return sum(item['Кількість'] for item in self.cart.values())
 
     def get_total_price(self):
-        return sum(Decimal(item["Ціна"]) * item["Кількість"] for item in self.cart.values())
+        return sum(float(item['Ціна']) * item['Кількість'] for item in self.cart.values())
 
     def clear(self):
         # Видалення кошика з сесії

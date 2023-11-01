@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework import status, renderers
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models import Q
 from relations.serializers import RelationSerializer
 from relations.models import Relation
 from products.models import MainModel
@@ -50,7 +51,7 @@ class AdToFavAPI(APIView):
             item = get_object_or_404(MainModel, pk=pk)
             if item.in_liked.filter(pk=request.user.id).exists():
                 item.in_liked.remove(request.user)
-                return Response(data={'data': False}, status=status.HTTP_202_ACCEPTED) 
+                return Response(data={'data': False}, status=status.HTTP_202_ACCEPTED)
             else:
                 item.in_liked.add(request.user)
                 return Response(data={'data': True}, status=status.HTTP_202_ACCEPTED)
@@ -58,5 +59,14 @@ class AdToFavAPI(APIView):
         return redirect('login')
 
 
-def main(request):
-    return render(request, 'main_page.html')
+class Main_search(APIView):
+    authentication_classes = [SessionAuthentication]
+    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+
+    def get(self, request):
+        query = request.query_params.get('search')
+        if query:
+            data = MainModel.objects.filter(
+                Q(title__icontains=query) | Q(description__icontains=query), is_published=True)
+            return Response(data=({'data': data}), template_name='list_item_page.html', status=status.HTTP_200_OK)
+        return Response(template_name='main_page.html', status=status.HTTP_200_OK)

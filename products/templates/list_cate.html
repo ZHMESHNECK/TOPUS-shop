@@ -1,15 +1,12 @@
-{% for c in cats %}
-<div class="container">
-    <div class="products-container">
+<div class="products-container">
+    {% for c in cats %}
 
-        <div class="card">
-            <div class="card-details">
-                <p class="text-title">{{c.cat_name}}</p>
-                <img src="{{ c.main_image.url }}" class="img">
-            </div>
-            <a class="card-button" href="{{ c.slug }}">Перейти</a>
-        </div>
-
+    <div class="card">
+        <a href="{{ c.slug }}" class="card__content">
+            <img src="{{ c.main_image.url }}" alt="{{c.cat_name}}">
+            <div class="card__text">{{c.cat_name}}</div>
+        </a>
     </div>
+
+    {% endfor %}
 </div>
-{% endfor %}

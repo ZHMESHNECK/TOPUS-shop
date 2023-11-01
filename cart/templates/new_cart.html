@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="st_category.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+
+    <div class="content">
+    
+        <p>У кошику: 7</p>   
+        <p>Кількість: 4</p>
+        <p>Ціна: 455 грн</p>
+        <p>Photo <img src="https://i.pinimg.com/564x/7d/5e/cd/7d5ecd32efbd16db31c9b73c8b1b93ff.jpg" width="100" height="100"></p>
+        <p>Товар: <a href="{{ item.Товар.get_absolute_url }}">{{ item.Товар.title }}</a></p>
+        <form method="post">
+            <button type="submit" name="remove" value="{{ item.Товар.id }}">Видалити</button>
+        </form>
+        <p>Всього: 254 грн</p>
+    
+        <p><input id="full_cart_price" onclick="" value="{{ to_pay }}" type="hidden">До сплати: 252 грн</p>
+    
+        <form method="post">
+            <button type="submit" name="clear">Видалити все</button>
+            <button disabled type="submit" name="clear">Видалити все</button>
+        </form>
+    </div>
+    
+    <div class="delivery-contact">
+        
+        <form id="personal_data">
+            <div id="message_pers" style="display: none;">
+                <p id="p_message">Потрібно заповнити всю форму</p>
+            </div>
+            <p>Персональні данні</p>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Ім'я</label>
+                    <input type="text" name="first_name" value="" required>
+                </div>
+                <div class="input-group">
+                    <label>Прізвище</label>
+                    <input type="text" name="last_name" value="" required>
+                </div>
+                <div class="input-group">
+                    <label>По батькові</label>
+                    <input type="text" name "surname" value="" required>
+                </div>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Номер телефону</label>
+                    <input type="tel" name="phone_number" minlength="10" maxlength="14" value="" required>
+                </div>
+                <div class="input-group">
+                    <label>Пошта</label>
+                    <input type="email" name="email" value="" required>
+                </div>
+            </div>
+            <div class="input-row">
+                <p><button type="submit">Зберегти</button></p>
+                <p><button disabled type="submit">Зберегти</button></p>
+            </div>
+        </form>
+    </div>
+    
+    <div class="poc">
+        <form id="order" class="forma">
+            <div class="delivery-block">
+                
+                <div id="eror_delivery" style="display: none;">
+                    <p>Вам потрібно обрати спосіб доставки</p>
+                </div>
+                <p>Доставка</p>
+                <div id="self-pickup">
+                    <label><input name="delivery" type="radio" id="option" value="Самовивіз" onclick="check()">
+                        Самовивіз з точок видачі TOPUS</label> (Безкоштовно)
+                    <div class="option">
+                        <select name="self_pickup_choice">
+                            <option value="1">Відділення №1 (ст.м. "Палац Україна")</option>
+                            <option value="2">Відділення №2 (ст.м. "Пл. Українських героїв")</option>
+                            <option value="3">Відділення №3 (ст.м. "Осокорки")</option>
+                            <option value="4">Відділення №4 (тц. "Район")</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="del_to_customer">
+                    <label><input name="delivery" type="radio" id="option2" value="Кур'єр" onclick="check()">
+                        Кур'єр на вашу адресу</label> (100 грн)
+                    <div class="option2">
+                        <div id="eror_adress_del" style="display: none;">
+                            <p>Вам потрібно заповнити адрес доставки</p>
+                        </div>
+
+                        <input type="text" name="city" value="" placeholder="Місто" maxlength="50">
+                        <input type="text" name="street" value="" placeholder="Вулиця" maxlength="50">
+                        <input type="text" name="building" value="" placeholder="Будинок" maxlength="6">
+                        <input type="number" name="apartment" value="" placeholder="Квартира" maxlength="4">
+
+                        <br>
+                        <label>Поверх</label>
+                        <select id="floor">
+                            <option value="-">-</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="more 10"> > 10</option>
+                        </select>
+                        <label>Ліфт</label>
+                        <select id="elivator">
+                            <option value="-">-</option>
+                            <option value="присутній">присутній</option>
+                            <option value="немає">немає</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="self_f_nova">
+                    <label><input name="delivery" type="radio" id="option3" value="Нова пошта" onclick="check()">
+                        Самовивіз з відділення Нової пошти</label> (80 грн)
+                    <div class="option3">
+                        <label>Вкажіть номер відділення</label><br>
+                        <input name="delivery" type="text" id="option3" value="" minlength="1">
+                    </div>
+                </div>
+                <div id="self_f_ukr">
+                    <label><input name="delivery" type="radio" id="option4" value="Укр пошта" onclick="check()">
+                        Самовивіз з відділення Укр пошти</label> (40 грн)
+                    <div class="option4">
+                        <label>Вкажіть номер відділення</label><br>
+                        <input name="delivery" type="text" id="option4" value="" minlength="1">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pay-block">
+                <div id="eror_pay" style="display: none;">
+                    <p>Вам потрібно обрати спосіб оплати</p>
+                </div>
+                <p>Оплата</p>
+                <div class="pay_later">
+                    <label><input name="pay" type="radio" value="При отриманні" onclick="check()">
+                        Оплата під час отримання товару</label>
+                </div>
+                <div class="pay_now">
+                    <label><input name="pay" type="radio" id="how_to_pay" value="На сайті" onclick="check()">
+                        Оплатити зараз через Google Pay</label>
+                    <div class="how_to_pay">
+                        <div id="buy-btn-container"></div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit">Замовлення підтверджую</button>
+        </form>
+    </div>
+    
+    <script src="script.js"></script>
+    <script async src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>
+    
+
+
+
+
+    
+</body>
+</html>

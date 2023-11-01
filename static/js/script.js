@@ -73,6 +73,7 @@ buttons.forEach((button) => {
                 document.getElementById('full_cart_price').textContent = data.to_pay
                 document.getElementById('span_' + numberContainer.id).textContent = Number(document.getElementById('price_' + numberContainer.id).value) * newNumber
                 document.getElementById('num_of_cart').innerHTML = data.len
+                document.getElementById('count_in_cart').innerHTML = "У кошику: " + data.len
 
             })
             .catch(error => {

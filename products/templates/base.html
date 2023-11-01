@@ -41,9 +41,9 @@
                 <p id="num_of_cart">{% show_count_cart request %}</p>
             </a>
         </div>
-
+        <form method="get" accept="{% url 'home' %}">
         <div class="header-container">
-            <input type="text" name="text" class="header-input" placeholder=" Пошук ">
+            <input type="search" name="search" class="header-input" placeholder="Пошук ">
             <button class="header-search__btn">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22">
                     <path
@@ -52,6 +52,7 @@
                 </svg>
             </button>
         </div>
+    </form>
 
         <div class="header-logo-container">
             <a href="{% url 'home' %}" class="header-logo">
@@ -61,7 +62,7 @@
 
         {% if request.user.is_authenticated %}
         <div class="header-header-r">
-            <a href="/api/profile/{{user.id}}" class="header-shadow__btn">{{ user.username|truncatewords:10 }}</a>
+            <a href="/api/profile/{{user.username}}" class="header-shadow__btn">{{ user.username|truncatewords:10 }}</a>
             <div class="header-button-spacing"></div>
             <a href="{% url 'logout' %}" class="header-shadow__btn">Вийти</a>
         </div>
