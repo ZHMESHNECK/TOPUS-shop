@@ -1,3 +1,33 @@
+// csrf_token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+let price = '0'
+// До сплати
+fetch('/cart/check_order', {
+    'method': 'POST',
+    'headers': { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+    'body': JSON.stringify({ to_pay: 'to_pay' })
+})
+    .then(res => res.json())
+    .then(data => {
+        price = data.to_pay;
+        print(price)
+    })
 
 // google pay https://developers.google.com/pay/api/web/guides/tutorial?hl=ru#apiversion
 
@@ -18,7 +48,7 @@ const baseRequest = {
  * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#CardParameters|CardParameters}
  * @todo confirm card networks supported by your site and gateway
  */
-const allowedCardNetworks = ["MASTERCARD", "VISA"];
+const allowedCardNetworks = ["AMEX", "DISCOVER", "INTERAC", "JCB", "MASTERCARD", "VISA"];
 
 /**
  * Card authentication methods supported by your site and your gateway
@@ -117,6 +147,9 @@ function getGooglePaymentDataRequest() {
         // merchantId: '01234567890123456789',
         merchantName: 'Example Merchant'
     };
+
+    paymentDataRequest.callbackIntents = ["PAYMENT_AUTHORIZATION"];
+
     return paymentDataRequest;
 }
 
@@ -128,9 +161,43 @@ function getGooglePaymentDataRequest() {
  */
 function getGooglePaymentsClient() {
     if (paymentsClient === null) {
-        paymentsClient = new google.payments.api.PaymentsClient({ environment: 'TEST' });
+        paymentsClient = new google.payments.api.PaymentsClient({
+            environment: 'TEST',
+            paymentDataCallbacks: {
+                onPaymentAuthorized: onPaymentAuthorized
+            }
+        });
     }
     return paymentsClient;
+}
+
+/**
+ * Handles authorize payments callback intents.
+ *
+ * @param {object} paymentData response from Google Pay API after a payer approves payment through user gesture.
+ * @see {@link https://developers.google.com/pay/api/web/reference/response-objects#PaymentData object reference}
+ *
+ * @see {@link https://developers.google.com/pay/api/web/reference/response-objects#PaymentAuthorizationResult}
+ * @returns Promise<{object}> Promise of PaymentAuthorizationResult object to acknowledge the payment authorization status.
+ */
+function onPaymentAuthorized(paymentData) {
+    return new Promise(function (resolve, reject) {
+        // handle the response
+        processPayment(paymentData)
+            .then(function () {
+                resolve({ transactionState: 'SUCCESS' });
+            })
+            .catch(function () {
+                resolve({
+                    transactionState: 'ERROR',
+                    error: {
+                        intent: 'PAYMENT_AUTHORIZATION',
+                        message: 'Insufficient funds, try again. Next attempt should work.',
+                        reason: 'PAYMENT_DATA_INVALID'
+                    }
+                });
+            });
+    });
 }
 
 /**
@@ -145,8 +212,6 @@ function onGooglePayLoaded() {
         .then(function (response) {
             if (response.result) {
                 addGooglePayButton();
-                // @todo prefetch payment data to improve performance after confirming site functionality
-                // prefetchGooglePaymentData();
             }
         })
         .catch(function (err) {
@@ -164,7 +229,11 @@ function onGooglePayLoaded() {
 function addGooglePayButton() {
     const paymentsClient = getGooglePaymentsClient();
     const button =
-        paymentsClient.createButton({ buttonLocale: 'uk', onClick: onGooglePaymentButtonClicked });
+        paymentsClient.createButton({
+            buttonType: 'buy',
+            buttonLocale: 'uk',
+            onClick: onGooglePaymentButtonClicked
+        });
     document.getElementById('container').appendChild(button);
 }
 
@@ -175,32 +244,23 @@ function addGooglePayButton() {
  * @returns {object} transaction info, suitable for use as transactionInfo property of PaymentDataRequest
  */
 function getGoogleTransactionInfo() {
-    price = document.getElementById('full_cart_price').textContent
+    console.log('price', price)
     return {
+        displayItems: [
+            {
+                label: "Subtotal",
+                type: "SUBTOTAL",
+                price: price,
+            },
+        ],
         countryCode: 'UA',
-        currencyCode: 'UAH',
-        totalPriceStatus: 'FINAL',
-        totalPriceLabel: price,
-        // set to cart total
+        currencyCode: "UAH",
+        totalPriceStatus: "FINAL",
         totalPrice: price,
+        totalPriceLabel: "Total"
     };
 }
 
-/**
- * Prefetch payment data to improve performance
- *
- * @see {@link https://developers.google.com/pay/api/web/reference/client#prefetchPaymentData|prefetchPaymentData()}
- */
-function prefetchGooglePaymentData() {
-    const paymentDataRequest = getGooglePaymentDataRequest();
-    // transactionInfo must be set but does not affect cache
-    paymentDataRequest.transactionInfo = {
-        totalPriceStatus: 'NOT_CURRENTLY_KNOWN',
-        currencyCode: 'UAH'
-    };
-    const paymentsClient = getGooglePaymentsClient();
-    paymentsClient.prefetchPaymentData(paymentDataRequest);
-}
 
 /**
  * Show Google Pay payment sheet when Google Pay payment button is clicked
@@ -210,32 +270,30 @@ function onGooglePaymentButtonClicked() {
     paymentDataRequest.transactionInfo = getGoogleTransactionInfo();
 
     const paymentsClient = getGooglePaymentsClient();
-
-    paymentsClient.loadPaymentData(paymentDataRequest)
-        .then(function (paymentData) {
-            // handle the response
-            processPayment(paymentData);
-        })
-        .catch(function (err) {
-            // show error in developer console for debugging
-            console.error(err);
-        });
+    paymentsClient.loadPaymentData(paymentDataRequest);
 }
 
-/**
- * Process payment data returned by the Google Pay API
- *
- * @param {object} paymentData response from Google Pay API after user approves payment
- * @see {@link https://developers.google.com/pay/api/web/reference/response-objects#PaymentData|PaymentData object reference}
- */
 function processPayment(paymentData) {
-    // show returned data in developer console for debugging
-    console.log(paymentData);
-    // @todo pass payment token to your gateway to process payment
-    paymentToken = paymentData.paymentMethodData.tokenizationData.token;
-    // send order to server
-    send_order();
-};
+    return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+            // @todo pass payment token to your gateway to process payment
+            paymentToken = paymentData.paymentMethodData.tokenizationData.token;
+            resolve({});
+            console.log(paymentData);
+            alert('Дякуємо за покупку!')
+
+        }, 500);
+    });
+}
+
+// function processPayment(paymentData) {
+//     // show returned data in developer console for debugging
+//     console.log(paymentData);
+//     // @todo pass payment token to your gateway to process payment
+//     paymentToken = paymentData.paymentMethodData.tokenizationData.token;
+//     // send order to server
+//     // send_order();
+// };
 
 
 function send_order() {

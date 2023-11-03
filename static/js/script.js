@@ -63,6 +63,7 @@ buttons.forEach((button) => {
             quantity: newNumber,
             overide_quantity: true
         }
+        // console.log(data)
         fetch(url, {
             'method': 'POST',
             'headers': { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
@@ -70,8 +71,10 @@ buttons.forEach((button) => {
         })
             .then(res => res.json())
             .then(data => {
-                document.getElementById('full_cart_price').textContent = data.to_pay
-                document.getElementById('span_' + numberContainer.id).textContent = Number(document.getElementById('price_' + numberContainer.id).value) * newNumber
+                document.getElementById('full_cart_price').textContent = data.to_pay.toFixed(2)
+                var price = document.getElementById('price_' + numberContainer.id).value
+                var correct_price = price.replace(/,/g, '.')
+                document.getElementById('span_' + numberContainer.id).textContent = (Number(correct_price) * newNumber).toFixed(2)
                 document.getElementById('num_of_cart').innerHTML = data.len
                 document.getElementById('count_in_cart').innerHTML = "У кошику: " + data.len
 
@@ -163,7 +166,7 @@ formorder.addEventListener('submit', (e) => {
             document.getElementById('message_pers').style.display = 'none'
         }
     }
-    console.log(valid)
+    // console.log(valid)
     if (valid) {
         let hid_in = document.getElementById('send_data')
         hid_in.value = sendform()
@@ -196,7 +199,7 @@ formElement.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(formElement);
 
-    let url = '/api/save_pers_data'
+    let url = '/api/profile/' + document.getElementsByClassName('header-shadow__btn')[0].textContent
     let data = {
         first_name: formData.get('first_name'),
         last_name: formData.get('last_name'),

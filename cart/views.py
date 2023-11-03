@@ -60,15 +60,20 @@ class CheckCartAPI(APIView):
     """
 
     authentication_classes = [SessionAuthentication]
-    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer) 
+
+    def get(self, request):
+        return redirect('cart')
 
     def post(self, request):
         cart = Cart(request)
+        to_pay = cart.get_total_price()
+        if 'to_pay' in request.data:
+            return Response(data={'to_pay': str(to_pay)})
         try:
             data = json.loads(request.data['data'])
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        to_pay = cart.get_total_price()
         if 'До_замовника' in data['delivery']:
             to_pay += 100  # + 100 грн за кур'єра
         return Response(data={'data': data, 'products': list(cart.__iter__()), 'to_pay': to_pay}, template_name='check_order.html', status=status.HTTP_200_OK)

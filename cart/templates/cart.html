@@ -67,7 +67,7 @@
     {% csrf_token %}
     <button type="submit" name="remove" value="{{ item.Товар.id }}">Видалити</button>
 </form>
-Всього:<span id="span_{{item.Товар.id}}">{{ item.Всього }}</span> грн
+Всього:<span id="span_{{ item.Товар.id }}">{{ item.Всього }}</span> грн
 
 {% endfor %}
 <div>До сплати: <p id="full_cart_price">{{ to_pay }}</p> грн</div>

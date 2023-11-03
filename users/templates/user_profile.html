@@ -5,6 +5,39 @@
 <head>
     <link rel="stylesheet" href="{% static 'css/user_profile.css' %}">
 </head>
+<p>username: {{ data.user.username }}</p>
+<p>profile: {{ profile }}</p>
+<p>relation: {{ relation }}</p>
+
+<form method="post" action="{% url 'update_profile' %}">
+    {% csrf_token %}
+    <div id="message_pers" style="display: none;">
+        <p id="p_message">Потрібно заповнити всю форму</p>
+    </div>
+    <p>Персональні данні</p>
+    {% if profile %}
+    <input type="hidden" name="profile" value="{{ profile.id }}">
+    {% else %}
+    <input type="hidden" name="profile" value="0">
+    {% endif %}
+    <label>Ім'я</label>
+    <input type="text" name="first_name" value="{{ profile.first_name }}" required>
+    <label>Прізвище</label>
+    <input type="text" name="last_name" value="{{ profile.last_name }}" required>
+    <label>По батькові</label>
+    <input type="text" name="surname" value="{{ profile.surname }}" required>
+    <br>
+    <label>Номер телефону</label>
+    <input type="tel" name="phone_number" placeholder="+38" minlength="9" maxlength="14" value="{{ profile.phone_number }}" required>
+    <label>Пошта</label>
+    <input type="email" name="email" readonly value="{{ profile.user.email }}" required>
+
+    {% if request.user.is_authenticated %}
+    <p><button type="submit">Зберегти</button></p>
+    {% else %}
+    <p><button disabled type="submit">Зберегти</button></p>
+    {% endif %}
+</form>
 <div class="profile_container">
     <div class="profile">
         <div class="imgphoto"></div>
@@ -19,7 +52,6 @@
     </div>
     <div class="menu_profile"></div>
 </div>
-<p>username: {{ data.user.username }}</p>
 
 
 

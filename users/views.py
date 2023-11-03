@@ -8,7 +8,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import GenericAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from rest_framework import renderers
+from rest_framework import renderers, status
 from relations.models import Relation
 from users.serializers import *
 from users.permission import *
@@ -161,14 +161,34 @@ class ProfileViewSet(ModelViewSet):
     def list(self, request):
         return Response(template_name='404.html')
 
-    def retrieve(self, request, username=None):
+    def retrieve(self, request, pk=None):
         try:
-            user = self.queryset.get(user__username=username)
+            user = self.queryset.get(user__username=pk)
         except:
             return redirect('404.html')
-        relation = Relation.objects.filter(user__username=username)
+        relation = Relation.objects.filter(user__username=pk)
         if len(relation) == 0:
             relation = None
         if request.accepted_renderer.format == 'html':
-            return Response({'data': user, 'relation': relation}, template_name='user_profile.html')
+            return Response({'profile': user, 'relation': relation}, template_name='user_profile.html')
         return user
+
+    def post(self, request, *args, **kwargs):
+        """ Зберігає персональні данні
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            Response: data=dict
+        """
+        profile = self.queryset.get(user_id=request.user.id)
+        try:
+            profile.first_name = request.data.get('first_name')
+            profile.last_name = request.data.get('last_name')
+            profile.surname = request.data.get('surname')
+            profile.phone_number = request.data.get('phone_number')
+            profile.save()
+            return Response(data={'ans': 'Данні успішно збережено'}, status=status.HTTP_202_ACCEPTED)
+        except:
+            return Response(data={'ans': 'Сталася помилка'}, status=status.HTTP_400_BAD_REQUEST)

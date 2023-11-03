@@ -1,8 +1,7 @@
 from rest_framework.routers import SimpleRouter
 from django.conf.urls.static import static
 from django.conf import settings
-from relations.views import AdToFavAPI
-from relations.views import Main_search
+from relations.views import AdToFavAPI,Main_search
 from relations.utils import render_404
 from products.views import ClothviewSet, GamingViewSet, HomeViewSet
 

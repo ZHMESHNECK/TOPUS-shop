@@ -57,7 +57,7 @@ class Cart(models.Model):
 
         for item in self.cart.values():
             item['Ціна'] = item['Ціна']
-            item['Всього'] = item['Ціна'] * item['Кількість']
+            item['Всього'] = round(item['Ціна'] * item['Кількість'], 2)
 
             yield item
 
@@ -67,7 +67,7 @@ class Cart(models.Model):
         return sum(item['Кількість'] for item in self.cart.values())
 
     def get_total_price(self):
-        return sum(float(item['Ціна']) * item['Кількість'] for item in self.cart.values())
+        return round(sum(item['Ціна'] * item['Кількість'] for item in self.cart.values()), 2)
 
     def clear(self):
         # Видалення кошика з сесії

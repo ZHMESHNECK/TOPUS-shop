@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import path, re_path, include
 from users.views import *
-from users.utils import PesnolaData
+# from users.utils import PesnolaData
 
 
 router = SimpleRouter()
@@ -23,7 +23,7 @@ urlpatterns = [
     path('login/', LoginUser.as_view(), name='login'),
     path('logout/', logout_user, name='logout'),
     path('forgot_password/', ForgotPassword.as_view(), name='forgot_pass'),
-    path('save_pers_data/', PesnolaData.as_view(), name='update_profile')
+    # path('save_pers_data/', PesnolaData.as_view(), name='update_profile')
 ]
 
 urlpatterns += router.urls
