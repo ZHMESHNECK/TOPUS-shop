@@ -39,8 +39,9 @@ class ClothviewSet(ModelViewSet):
         images = Gallery_cloth.objects.filter(clothes_id=pk)
         relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
 
+        # якщо це зміна відгуку, то блокується кнопка "надіслати" 
         for message in get_messages(request):
-            if message.extra_tags == '1':
+            if message.extra_tags == 'middle':
                 parametrs['accept'] = False
 
         return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='view_page.html')

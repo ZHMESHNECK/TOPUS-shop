@@ -2,9 +2,12 @@
 {% load tags %}
 {% load static %}
 {% block content %}
+
 <head>
     <link rel="stylesheet" href="{% static 'css/st_category.css' %}">
 </head>
 
+{% include 'include/messages.html' %}
 {% show_categories %}
+
 {% endblock %}

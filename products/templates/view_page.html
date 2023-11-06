@@ -2,17 +2,7 @@
 {% block content %}
 {% load static %}
 
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    {% if message.extra_tags == 'cart_update' %}
-    <li class="{{ message.tags }}">
-        {{ message|safe }}
-    </li>
-        {% endif %}
-    {% endfor %}
-</ul>
-{% endif %}
+{% include 'include/messages.html' %}
 {{ data }}
 {% if request.user.is_authenticated %}
 <p>{{ user.username }} - {{ user.id }}</p>
@@ -137,25 +127,6 @@
         {% endif %}
     </div>
 </form>
-
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    {% if message.extra_tags == 'review_true' or message.extra_tags == 'need_choice_rate' %}
-    <li class="{{ message.tags }}">
-        {{ message|safe }}
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="rate" value="{{ parametrs.rate }}">
-            <input type="hidden" name="comment" value="{{ parametrs.comment }}">
-            <button type="submit" name="confirm" value="True">✔</button>
-            <a href="{{ requst.META.HTTP_REFERER }}">✖</a>
-        </form>
-    </li>
-        {% endif %}
-    {% endfor %}
-</ul>
-{% endif %}
 
 <p>Коментарі</p>
 

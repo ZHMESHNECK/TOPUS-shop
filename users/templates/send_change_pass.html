@@ -1,11 +1,35 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    {{ form.as_p }}
-    <p><input type="submit" value="Відправити"></p>
-</form>
+<head>
+    <link rel="stylesheet" href="{% static 'css/style_sing.css' %}">
+</head>
+
+<div class="preloader-wrapper active">
+    <div class="spinner-layer spinner-red-only">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
+
+<div class="login-box">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+        <div class="row">
+            {{field}}
+        </div>
+        {% endfor %}
+        <p style="padding-top: 15px ;"><input type="submit" class="btn btn-primary" value="Відправити"></p>
+    </form>
+</div>
+
 
 {% endblock %}

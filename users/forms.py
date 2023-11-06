@@ -49,7 +49,8 @@ class LoginUserForm(AuthenticationForm):
 class ForgotPasswordForm(forms.ModelForm):
     """ Форма відправки листа зміни пароля на пошту
     """
-    email = forms.EmailField(label='Пошта')
+    email = forms.EmailField(max_length=120, widget=forms.EmailInput(
+        attrs={'class': 'input-field col s12', 'placeholder': 'Пошта'}))
 
     class Meta:
         model = User
@@ -59,19 +60,22 @@ class ForgotPasswordForm(forms.ModelForm):
 class SetPasswordForm(forms.Form):
     """ Форма встановлення нового пароля
     """
-    new_password = forms.CharField(label='Новий пароль',
-                                   widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}), strip=False)
-    re_new_password = forms.CharField(label='Повтор нового пароля', strip=False,
-                                      widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}))
+    new_password = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'input-field col s12', 'placeholder': 'Пароль'}), strip=False)
+    re_new_password = forms.CharField(strip=False, widget=forms.PasswordInput(
+        attrs={'class': 'input-field col s12', 'placeholder': 'Повтор пароля'}))
 
     def error_400(self, error):
         data = json.loads(error)
         error_pass = data.get('new_password')
-        error_detail = data.get('details')
+        error_detail = data.get('non_field_errors')
+        error_token = data.get('token')
         if error_pass:
             self.add_error('new_password', error_pass)
+        if error_token:
+            self.add_error('new_password', 'Час зміни пароля минув')
         if error_detail:
-            self.add_error('new_password', error_detail)
+            self.add_error('re_new_password', 'Паролі на збігаються')
 
     class Meta:
         model = User

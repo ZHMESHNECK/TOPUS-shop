@@ -1,14 +1,14 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.views import *
-from django.contrib.auth import logout
-from django.contrib import messages
-from django.views.generic.edit import FormView
-from django.views.generic import CreateView, TemplateView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import GenericAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import renderers, status
+from django.contrib.auth.views import *
+from django.contrib.auth import logout
+from django.views.generic.edit import FormView
+from django.views.generic import CreateView, TemplateView
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from relations.models import Relation
 from users.serializers import *
 from users.permission import *
@@ -27,9 +27,11 @@ class ActivateUser(GenericAPIView):
 
         if response.status_code in (204, 301, 302):
             messages.success(
-                request, 'Профіль створено, тепер потрібно увійти')
-            return redirect('/', permanent=True)
+                request, 'Профіль створено, тепер можете увійти')
+            return redirect('home', permanent=True)
         else:
+            messages.error(
+                request, 'При створенні профілю сталася помилка')
             return render(request, '404.html')
 
 
@@ -57,7 +59,7 @@ class ChangePasswordUser(PasswordContextMixin, FormView):
             }
             return render(request, self.template_name, parametrs)
         messages.success(request, 'Пароль успішно змінено')
-        return render(request, self.template_name)
+        return redirect('home')
 
 
 class ForgotPassword(PasswordResetView):
@@ -71,17 +73,19 @@ class ForgotPassword(PasswordResetView):
         context['title'] = 'Змінити пароль'
         return context
 
-##########################
     def post(self, request, *args, **kwargs):
-        form = ForgotPasswordForm(request.POST)
-        if form.is_valid():  # ?
+        try:
             data = {"email": request.POST['email']}
             url = 'http://localhost:8000/api/auth/users/reset_password/'
             response = requests.post(url, data=data)
             if response.status_code != 204:
                 return render(request,  '404.html')
-            return render(request, 'success_send.html', context={'info': 'щоб змінити пароль'})
-        # response +-
+            messages.info(
+                request, 'На пошту було відправлено лист для зміни пароля')
+            return redirect('home')
+        except:
+            messages.error(request, 'Сталася помилка :(')
+            return render(request, template_name=self.template_name)
 
 
 class RegisterView(CreateView):
@@ -116,7 +120,9 @@ class RegisterView(CreateView):
                 "form": form
             }
             return render(request, self.template_name, parametrs)
-        return render(request, 'success_send.html', context={'info': 'щоб завершити реєстрацію'})
+        messages.info(
+            request, 'На пошту було відправлено лист для підтвердження реєстрації')
+        return redirect('home')
 
 
 class EmailSendView(TemplateView):

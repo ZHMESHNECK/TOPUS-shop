@@ -21,28 +21,30 @@ def accept_post(self, request, pk):
     if request.data.get('confirm', None):
         fill_the_form = False
         if pre_save(self, request, pk):
-            messages.info(request, 'Успіх')
+            messages.success(request, 'Успіх, відгук змінено')
         else:
-            messages.info(
+            messages.warning(
                 request, 'При створенні відгуку трапилася помилка :(')
 
     # staff дає відповідь на відгук
     elif request.data.get('parent', None):
         fill_the_form = False
         if pre_save(self, request, pk, answer=True):
-            messages.info(request, 'Успіх')
+            messages.success(
+                request, 'Успіх, відповідь додана')
         else:
-            messages.info(
+            messages.warning(
                 request, 'При створенні відгуку трапилася помилка :(')
 
     # користувач выдаляє свій відгук
     elif request.data.get('delete_relation', None):
         fill_the_form = False
         if relation_delete(self, request, pk):
-            messages.info(request, 'Успіх')
+            messages.success(request, 'Успіх, відгук видалено')
         else:
-            messages.info(
+            messages.warning(
                 request, 'При видаленні відгуку трапилася помилка :(')
+    # додання відгуку
     else:
         form = RelationForm(request.data)
         relation = Relation.objects.filter(
@@ -51,13 +53,15 @@ def accept_post(self, request, pk):
             if len(relation) == 0:
                 fill_the_form = False
                 pre_save(self, request, pk)
-                messages.info(request, 'Успіх')
+                messages.success(
+                    request, 'Успіх, відгук створено')
             else:
                 messages.info(
-                    request, 'У вас вже є відгук на цей товар, якщо ви створите новий відгук - старий видалиться', extra_tags='review_true')
+                    request, 'У вас вже є відгук на цей товар, якщо ви створите новий відгук - старий видалиться', extra_tags='middle')
         else:
+            fill_the_form = True
             messages.info(
-                request, 'Вам потрібно обрати рейтинг для цього товару', extra_tags='need_choice_rate')
+                request, 'Вам потрібно обрати рейтинг для цього товару')
     if fill_the_form:
         parametrs = {
             "rate": form.cleaned_data.get('rate', None),
@@ -126,6 +130,7 @@ def relation_delete(self, request, pk):
         return True
     except:
         return False
+
 
 def render_404(request):
     return render(request, '404.html', status=404)
