@@ -7,6 +7,10 @@ from django.test import TestCase
 from datetime import timedelta
 
 
+# 3 -  Літній час, 2 - зимний час
+time_zone = 2
+
+
 class ClothSerializerTestCase(TestCase):
     def test_ok(self):
         """тест сериалайзера
@@ -49,7 +53,7 @@ class ClothSerializerTestCase(TestCase):
                 'brand': '',
                 'main_image': '/media/category_photo/no-image-icon.png',
                 's_code': item.s_code,
-                'date_created': (item.date_created+timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
+                'date_created': (item.date_created+timedelta(hours=time_zone)).strftime('%Y-%m-%d %H:%M:%S'),
                 'discount': 20,
                 'rating': '3.7',
                 'size': '',
@@ -68,7 +72,7 @@ class ClothSerializerTestCase(TestCase):
                 'brand': '',
                 'main_image': '/media/category_photo/no-image-icon.png',
                 's_code': item2.s_code,
-                'date_created': (item2.date_created+timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S'),
+                'date_created': (item2.date_created+timedelta(hours=time_zone)).strftime('%Y-%m-%d %H:%M:%S'),
                 'discount': 0,
                 'rating': '3.5',
                 'size': '',

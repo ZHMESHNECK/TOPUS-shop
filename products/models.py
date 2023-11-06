@@ -138,7 +138,7 @@ class Home(MainModel):
         return f'Id {self.id}: {self.title}'
 
     def get_absolute_url(self):
-        return reverse('home-detail', args=(self.id,))
+        return reverse('for_home-detail', args=(self.id,))
 
 
 class Gallery_cloth(models.Model):

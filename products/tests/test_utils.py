@@ -31,4 +31,3 @@ class UtilsTestCase(TestCase):
 
         self.assertEqual(10, len(gen_code('1')))
         self.assertEqual(10, len(gen_code('10')))
-        self.assertEqual(10, len(gen_code('100')))

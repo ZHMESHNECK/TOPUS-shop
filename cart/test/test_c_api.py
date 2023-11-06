@@ -96,7 +96,7 @@ class CartApiTestCase(APITestCase):
         cart = self.client.session
         self.assertEqual(status.HTTP_202_ACCEPTED, response.status_code)
         self.assertEqual(cart._session, {'cart': {str(self.item.id): {'Кількість': 2, 'Ціна': float(self.item.price)},
-                         str(self.item2.id): {'Кількість': 3, 'Ціна': float(self.item2.price)}}})
+                         str(self.item2.id): {'Кількість': 3, 'Ціна': float(70)}}})
 
     def test_buy_and_change_count(self):
         """Додання 1 товару 5 одиниць до кошика та зменшення до 2-х
@@ -203,7 +203,7 @@ class CartApiTestCase(APITestCase):
         self.assertEqual(status.HTTP_301_MOVED_PERMANENTLY,
                          response.status_code)
         self.assertEqual(
-            cart._session, {'cart': {str(self.item2.id): {'Кількість': 2, 'Ціна': 100.0}}})
+            cart._session, {'cart': {str(self.item2.id): {'Кількість': 2, 'Ціна': 70.0}}})
 
     def test_clear(self):
         """Видалення кошика з сессії

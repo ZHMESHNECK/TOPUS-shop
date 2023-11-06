@@ -11,7 +11,7 @@ from django.urls import path
 router = SimpleRouter()
 router.register(r'cloth', ClothviewSet, basename='cloth')
 router.register(r'gaming', GamingViewSet, basename='gaming')
-router.register(r'for_home', HomeViewSet, basename='f_home')
+router.register(r'for_home', HomeViewSet, basename='for_home')
 
 
 urlpatterns = [
