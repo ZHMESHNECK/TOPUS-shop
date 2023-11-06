@@ -244,7 +244,6 @@ function addGooglePayButton() {
  * @returns {object} transaction info, suitable for use as transactionInfo property of PaymentDataRequest
  */
 function getGoogleTransactionInfo() {
-    console.log('price', price)
     return {
         displayItems: [
             {
@@ -279,21 +278,12 @@ function processPayment(paymentData) {
             // @todo pass payment token to your gateway to process payment
             paymentToken = paymentData.paymentMethodData.tokenizationData.token;
             resolve({});
-            console.log(paymentData);
-            alert('Дякуємо за покупку!')
-
+            // console.log(paymentData);
+            // send order to the server
+            send_order();
         }, 500);
     });
 }
-
-// function processPayment(paymentData) {
-//     // show returned data in developer console for debugging
-//     console.log(paymentData);
-//     // @todo pass payment token to your gateway to process payment
-//     paymentToken = paymentData.paymentMethodData.tokenizationData.token;
-//     // send order to server
-//     // send_order();
-// };
 
 
 function send_order() {

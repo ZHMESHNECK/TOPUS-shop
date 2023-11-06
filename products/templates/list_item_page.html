@@ -8,18 +8,16 @@
 <div class="list-container">
     {% for item in data %}
     <div class="product-card">
-        {% if item.main_image %}
-        <a href="{{ item.id }}"><img src="{{ item.main_image }}" alt="Товар" class="product-image"></a>
-        {% endif %}
+        <a href="{{ item.id }}"><img src="{{ item.main_image }}" alt="Фото" class="product-image"></a>
         <a href="{{ item.id }}">
             <h2 class="product-title">{{ item.title }}</h2>
         </a>
-        {% if item.brand %}
         <p class="product-description">Бренд: {{ item.brand }}</p>
-        {% endif %}
         {% if item.discount is not 0 %}
-        <p class="product-original-price"><del>{{ item.price }} грн</del></p>
-        <p class="product-discount">Знижка: {{ item.discount }} %</p>
+        <div class="discount">
+            <div class="product-discount">Знижка: {{ item.discount }} %</div>
+            <div class="product-original-price"><del>{{ item.price }} грн</del></div>
+        </div>
         <p class="product-discounted-price">{{ item.price_w_dis }} грн</p>
         {% else %}
         <p class="product-discounted-price">{{ item.price }} грн</p>
@@ -39,8 +37,7 @@
                 <div hidden class="rating__value">{{ item.rating }}</div>
             </div>
         </div>
-        <div claas="P_otziv">Відгуків: <div class="otziv">{{ item.views }}</div>
-        </div>
+        <div class="P_otziv">Відгуків: {{ item.views }}</div>
     </div>
     {% endfor %}
     <script src="{% static 'js/list_item.js' %}"></script>

@@ -7,6 +7,7 @@ a {
     justify-content: center; 
     align-items: center; 
     height: 100vh; 
+    flex-wrap: wrap;
   }
 
 .product-card {
@@ -17,6 +18,7 @@ a {
     padding: 20px;
     width: 300px;
     margin: 15px;
+    height: 520px;
 }
 
 .product-image {
@@ -35,7 +37,11 @@ a {
     font-size: 1.5rem;
     font-weight: bold;
     margin: 10px 0;
+    height: 23%;
+    color: black;
+    word-wrap: break-word;
 }
+
 
 .product-description {
     font-size: 1rem;
@@ -56,6 +62,9 @@ a {
     color: #1e0e45;
     /*  для перечеркнутой цены */
 }
+.discount {
+    margin-bottom: 1rem;
+}
 
 .product-discount {
     font-size: 1rem;
@@ -73,8 +82,8 @@ a {
 
 /*rating*/
 .container_rat {
-    margin-left: 50px;
-    margin-bottom: 25px;
+    display: inline-block;
+    margin-bottom: 5px;
 }
 
 .rating {

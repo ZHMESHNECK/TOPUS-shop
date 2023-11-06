@@ -110,8 +110,6 @@ header {
     justify-content: center;
     align-items: center;
     height: 17px;
-    min-width: 230px;
-    margin-right: 350px;
 }
 
 .header-input {
@@ -163,9 +161,19 @@ header {
 .header-logo-container {
     display: flex;
     align-items: center;
-    margin-right: 600px;
 }
 
 .header-logo {
     text-decoration: none;
+}
+
+.header-search {
+    display: flex;
+    width: 250px;
+}
+
+.header-left-block {
+    display: flex;
+    width: 500px;
+    align-items: center;
 }

@@ -16,8 +16,6 @@ from users.models import User
 from users.forms import *
 import requests
 
-# https://www.django-rest-framework.org/tutorial/3-class-based-views/
-
 
 class ActivateUser(GenericAPIView):
 

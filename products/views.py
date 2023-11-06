@@ -64,8 +64,8 @@ class ClothviewSet(ModelViewSet):
 
 
 class GamingViewSet(ModelViewSet):
-    queryset = Gaming.objects.all().annotate(price_w_dis=F('price')-F('price') /
-                                             100*F('discount'), views=Count('viewed')).order_by('id')
+    queryset = Gaming.objects.filter(is_published=True).annotate(price_w_dis=F('price')-F('price') /
+                                                                  100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('id')
     serializer_class = GamingSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']
@@ -112,8 +112,8 @@ class GamingViewSet(ModelViewSet):
 
 
 class HomeViewSet(ModelViewSet):
-    queryset = Home.objects.all().annotate(price_w_dis=F('price')-F('price') /
-                                           100*F('discount'), views=Count('viewed')).order_by('id')
+    queryset = Home.objects.filter(is_published=True).annotate(price_w_dis=F('price')-F('price') /
+                                                                  100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('id')
     serializer_class = HomeSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']

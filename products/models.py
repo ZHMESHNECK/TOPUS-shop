@@ -27,7 +27,7 @@ class Category(models.Model):
 class MainModel(models.Model):
     """Головна модель
     """
-    title = models.CharField('Назва', max_length=150)
+    title = models.CharField('Назва', max_length=60)
     description = models.TextField('Опис', blank=True)
     price = models.DecimalField('Вартість', max_digits=7, decimal_places=2)
     brand = models.CharField('Бренд', max_length=50, blank=True)
@@ -128,7 +128,7 @@ class Home(MainModel):
     room_type = models.CharField('Для кімнат', max_length=50, blank=True)
     weight = models.DecimalField(
         'Вага', max_digits=5, decimal_places=1, blank=True)
-    dimensions = models.CharField('Розмір', max_length=30, blank=True)
+    dimensions = models.CharField('Розмір(ВхШхГ), см', max_length=30, blank=True)
 
     class Meta:
         verbose_name = 'Для дому'

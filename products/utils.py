@@ -6,8 +6,20 @@ from django.db.models import Avg, Count
 
 
 def gen_code(x: str) -> str:
-    return (x+''.join(random.choice([*
-                                    ascii_uppercase, *digits]) for _ in range(10-len(x)))).zfill(10)
+    """Генератор серійних номерів
+
+    Args:
+         рандомні числа та букви
+                    ↓
+            (00)(00000000)
+              ↑           
+         category.id   
+
+    Returns:
+        str: серійний номер
+    """
+    return x.zfill(2)+(''.join(random.choice([*
+                                              ascii_uppercase, *digits]) for _ in range(8)))
 
 
 def serial_code_randomizer(args):
