@@ -29,8 +29,8 @@
 </div>
 {{ item }}
 
-<!--  Зміна кількості товару -->
-<div class="container">
+ <!-- Зміна кількості товару -->
+<!-- <div class="container">
     <div class="input-row">
         <div class="title">
             <h2 class="label">Кількість</h2>
@@ -55,8 +55,32 @@
             </button>
         </div>
     </div>
-</div>
+</div> -->
 <!--  -->
+
+<div class="container">
+    <div class="input-row">
+      <div class="title">
+        <h2 class="label">Adults</h2>
+        <p class="description">People 18 years old and above.</p>
+      </div>
+      <div class="input">
+        <button class="minus" aria-label="Decrease by one" disabled>
+          <svg width="16" height="2" viewBox="0 0 16 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line y1="1" x2="16" y2="1" stroke="#0064FE" stroke-width="2" class="icon" />
+          </svg>
+        </button>
+        <div class="number dim">0</div>
+        <button class="plus" aria-label="Increase by one">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="icon">
+            <line x1="8" y1="4.37114e-08" x2="8" y2="16" stroke="#0064FE" stroke-width="2" />
+            <line y1="8" x2="16" y2="8" stroke="#0064FE" stroke-width="2" />
+          </svg>
+  
+        </button>
+      </div>
+    </div>
+  </div>
 
 <p>Ціна: {{ item.Ціна }} грн</p>
 {% if item.Товар.main_image %}

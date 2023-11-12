@@ -16,7 +16,7 @@ from relations.utils import accept_post
 
 class ClothviewSet(ModelViewSet):
     queryset = Clothes.objects.filter(is_published=True).annotate(price_w_dis=F('price')-F('price') /
-                                                                  100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('id')
+                                                                  100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
     serializer_class = ClothSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']
@@ -39,7 +39,7 @@ class ClothviewSet(ModelViewSet):
         images = Gallery_cloth.objects.filter(clothes_id=pk)
         relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
 
-        # якщо це зміна відгуку, то блокується кнопка "надіслати" 
+        # якщо це зміна існуючого відгуку, то блокується кнопка "надіслати"
         for message in get_messages(request):
             if message.extra_tags == 'middle':
                 parametrs['accept'] = False
@@ -57,16 +57,21 @@ class ClothviewSet(ModelViewSet):
         if request.accepted_renderer.format == 'html':
             images = Gallery_cloth.objects.filter(clothes_id=pk)
             relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
+            data_info = {
+                'Пора року': response.data['season'],
+                'Для кого': response.data['department'],
+                'Розмір': response.data['size']
+            }
             parametrs = {
                 "accept": True
             }
-            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='view_page.html')
+            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs, 'info': data_info}, template_name='view_page.html')
         return response
 
 
 class GamingViewSet(ModelViewSet):
     queryset = Gaming.objects.filter(is_published=True).annotate(price_w_dis=F('price')-F('price') /
-                                                                  100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('id')
+                                                                 100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
     serializer_class = GamingSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']
@@ -88,6 +93,7 @@ class GamingViewSet(ModelViewSet):
         images = Gallery_gaming.objects.filter(gaming_id=pk)
         relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
 
+        # якщо це зміна існуючого відгуку, то блокується кнопка "надіслати"
         for message in get_messages(request):
             if message.extra_tags == '1':
                 parametrs['accept'] = False
@@ -105,16 +111,22 @@ class GamingViewSet(ModelViewSet):
         if request.accepted_renderer.format == 'html':
             images = Gallery_gaming.objects.filter(gaming_id=pk)
             relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
+            data_info = {
+                'Модель': response.data['model'],
+                'Матеріал': response.data['material'],
+                'Колір': response.data['color']
+            }
             parametrs = {
                 "accept": True
             }
-            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='view_page.html')
+            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs, 'info': data_info
+                             }, template_name='view_page.html')
         return response
 
 
 class HomeViewSet(ModelViewSet):
     queryset = Home.objects.filter(is_published=True).annotate(price_w_dis=F('price')-F('price') /
-                                                                  100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('id')
+                                                               100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
     serializer_class = HomeSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']
@@ -136,6 +148,8 @@ class HomeViewSet(ModelViewSet):
         images = Gallery_home.objects.filter(home_id=pk)
         relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
 
+
+        # якщо це зміна існуючого відгуку, то блокується кнопка "надіслати"
         for message in get_messages(request):
             if message.extra_tags == '1':
                 parametrs['accept'] = False
@@ -153,8 +167,15 @@ class HomeViewSet(ModelViewSet):
         if request.accepted_renderer.format == 'html':
             images = Gallery_home.objects.filter(home_id=pk)
             relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
+            data_info = {
+                'Для кімнат': response.data['room_type'],
+                'Матеріал': response.data['material'],
+                'Колір': response.data['color'],
+                'Вага': str(response.data['weight']) +' кг',
+                'Розмір(ВхШхГ), см': response.data['dimensions'],
+            }
             parametrs = {
                 "accept": True
             }
-            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='view_page.html')
+            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs, 'info': data_info}, template_name='view_page.html')
         return response

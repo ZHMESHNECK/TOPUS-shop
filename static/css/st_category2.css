@@ -1,0 +1,291 @@
+#largeImg {
+    border: solid 1px #ccc;
+    width: 550px;
+    height: 400px;
+    padding: 5px;
+}
+
+#thumbs a {
+    border: solid 1px #ccc;
+    width: 100px;
+    /* Set a fixed width */
+    height: 100px;
+    /* Set a fixed height */
+    padding: 3px;
+    margin: 2px;
+    float: left;
+}
+
+#thumbs a img {
+    width: 100%;
+    /* Make the images take up the full width of the parent container */
+    height: 100%;
+    /* Make the images take up the full height of the parent container */
+}
+
+#thumbs a:hover {
+    border-color: #FF9900;
+}
+
+
+.product-page {
+    display: flex;
+    align-items: flex-start;
+    width: 70%;
+    margin: 0 auto;
+}
+
+.product-page {
+    position: relative;
+    width: 70%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.buy-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+.product-image {
+    flex: 1;
+}
+
+/* Характеристики */
+.left {
+	margin-right: -50%;
+	width: 60%;
+	vertical-align: top;
+	overflow: hidden;
+	display: inline-block;
+	letter-spacing: normal
+}
+
+.left::after {
+    content: '';
+	display: inline-block;
+	width: 100%;
+	margin: 0 -99% 0 3px;
+	vertical-align: baseline;
+	border-bottom: 1px dashed #888; 
+}
+
+.right {
+    display: inline-block;
+	letter-spacing: normal;
+	padding-left: 3px;
+	margin-left: 50%;
+	width: 30%;
+	vertical-align: bottom;
+}
+
+.product-details {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.product-detail {
+    display: block;
+    letter-spacing: -1ex;
+    margin: 5px 0;
+}
+/*  */
+
+.product-description {
+    flex: 2;
+    padding: 20px;
+    position: relative;
+}
+
+.description {
+    margin-left: 2%;
+    margin-bottom: 20px;
+    width: 75%;
+}
+
+.add-review {
+    margin-left: 2%;
+}
+
+.reviews {
+    margin-top: 20px;
+}
+
+.review {
+    border: 1px solid #ddd;
+    padding: 1% 1%;
+    margin-bottom: 10px;
+    width: 80%;
+    margin-left: 2%;
+}
+
+.review h3 {
+    margin: 0;
+}
+
+.rating {
+    font-weight: bold;
+}
+
+.review-text {
+    margin-top: 10px;
+}
+
+.reply-link,
+.delete-button {
+    margin-top: 10px;
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+}
+.ans-for-review {
+    display: inline-block;
+    background-color: aquamarine;
+    margin-left: 1%;
+}
+
+
+/*Отправить*/
+.button_view_page {
+    font-size: 18px;
+    display: inline-block;
+    outline: 0;
+    border: 0;
+    cursor: pointer;
+    will-change: box-shadow, transform;
+    background: radial-gradient(100% 100% at 100% 0%, #89E5FF 0%, #5468FF 100%);
+    box-shadow: 0px 0.01em 0.01em rgb(45 35 66 / 40%), 0px 0.3em 0.7em -0.01em rgb(45 35 66 / 30%), inset 0px -0.01em 0px rgb(58 65 111 / 50%);
+    padding: 0 2em;
+    border-radius: 0.3em;
+    color: #fff;
+    height: 2.6em;
+    text-shadow: 0 1px 0 rgb(0 0 0 / 40%);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.button_view_page:hover {
+    box-shadow: 0px 0.1em 0.2em rgb(45 35 66 / 40%), 0px 0.4em 0.7em -0.1em rgb(45 35 66 / 30%), inset 0px -0.1em 0px #3c4fe0;
+    transform: translateY(-0.1em);
+}
+
+.button_view_page:active {
+    box-shadow: inset 0px 0.1em 0.6em #3c4fe0;
+    transform: translateY(0em);
+}
+.button_view_page[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+    box-shadow: none;
+}
+
+.button_view_page[disabled]:hover {
+    transform: none;
+
+}
+
+.reply-form {
+    display: none;
+}
+
+.buy {
+    position: absolute;
+    /* left: 85px; */
+    justify-content: space-between;
+    display: flex;
+    height: 50px;
+    padding-top: 20px;
+    width: 300px;
+}
+
+/* Отправить*/
+
+
+/*name*/
+#label-input {
+    transition: all 0.1s ease-in-out;
+    color: #2c2c54;
+    position: absolute;
+    top: 30%;
+    left: 18px;
+    transform: scale(0.95);
+    opacity: 1;
+    pointer-events: none;
+}
+
+#user-review {
+    width: 440px;
+    height: 180px;
+    font-size: 20px;
+}
+
+.input-base {
+    border-radius: 10px;
+    max-width: 150px;
+
+}
+
+#input:focus~label#label-input,
+#input:not(:placeholder-shown)~#label-input {
+    top: -20% !important;
+    left: 2px !important;
+    transform: scale(0.8);
+    background: white;
+    color: black;
+    padding: 0 6px;
+    opacity: 1;
+}
+
+#input {
+    transition: outline 0.2s ease;
+    font-size: 1rem;
+    outline-color: var(--button-text);
+    outline: unset;
+    border: 1px solid #bbbbbb;
+    padding: 17px 10px 10px 17px;
+    width: 100%;
+}
+
+#input:focus {
+    box-shadow: 0 0 0 1px #e8e8e8, 0 0 0 3px rgb(92, 127, 202);
+}
+
+.relative {
+    position: relative;
+    max-width: 150px;
+    padding: 10px 0px 10px 0px;
+}
+
+/*name*/
+
+/*рейт*/
+.rating {
+    display: inline-block;
+
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    float: right;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.3s;
+}
+
+.rating label:before {
+    content: '\2605';
+    font-size: 30px;
+}
+
+.rating input:checked~label,
+.rating label:hover,
+.rating label:hover~label {
+    color: #6f00ff;
+    transition: color 0.3s;
+}
+
+/*рейт*/

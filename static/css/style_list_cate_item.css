@@ -4,11 +4,14 @@ a {
 
 .list-container {
     display: flex;
-    justify-content: center; 
-    align-items: center; 
-    height: 100vh; 
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     flex-wrap: wrap;
-  }
+    max-width: 1600px;
+    width: 100%;
+    margin: 0 auto;
+}
 
 .product-card {
     background-color: #ab9bd4;
@@ -62,6 +65,7 @@ a {
     color: #1e0e45;
     /*  для перечеркнутой цены */
 }
+
 .discount {
     margin-bottom: 1rem;
 }

@@ -161,6 +161,7 @@ header {
 .header-logo-container {
     display: flex;
     align-items: center;
+    margin-right: 10%;
 }
 
 .header-logo {

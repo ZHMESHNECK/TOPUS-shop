@@ -49,13 +49,17 @@ function AddToCart(e) {
 
 // Додання до улюбленого
 
-let ad_fav = document.querySelectorAll('.add_to_fav button')
+let ad_fav = document.querySelectorAll('.add_to_fav')
 ad_fav.forEach(btn => {
     btn.addEventListener('click', AddToFav)
 })
 
 function AddToFav(e) {
-    let item = e.target.value
+    if (e.target.id == 'to_fav') {
+        item = ad_fav[0].getElementsByTagName('button')[0].value
+    } else {
+        item = e.target.value
+}
     let url = '/add_to_fav/' + item.toString()
 
     fetch(url, {
@@ -74,5 +78,18 @@ function AddToFav(e) {
         .catch(error => {
             console.log(error.data)
         })
+}
 
+// Відповідь на відгук 
+let show_textar = document.querySelectorAll('.answer button')
+show_textar.forEach(btn => {
+    btn.addEventListener('click', showtextarea)
+})
+function showtextarea(e) {
+    e.originalTarget.style.display = 'none'
+    e.target.nextElementSibling.style.display = 'block'
+    let name = e.target.value.split(',')[0]
+    let id = e.target.value.split(',')[1]
+    e.target.nextElementSibling[2].value = id;
+    e.target.nextElementSibling[1].innerText = `${name}, `
 }
