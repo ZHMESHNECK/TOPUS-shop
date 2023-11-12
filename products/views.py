@@ -44,7 +44,7 @@ class ClothviewSet(ModelViewSet):
             if message.extra_tags == 'middle':
                 parametrs['accept'] = False
 
-        return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='view_page.html')
+        return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='item_view.html')
 
     def list(self, request, *args, **kwargs):
         response = super(ClothviewSet, self).list(request, *args, **kwargs)
@@ -65,7 +65,7 @@ class ClothviewSet(ModelViewSet):
             parametrs = {
                 "accept": True
             }
-            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs, 'info': data_info}, template_name='view_page.html')
+            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs, 'info': data_info}, template_name='item_view.html')
         return response
 
 
@@ -98,7 +98,7 @@ class GamingViewSet(ModelViewSet):
             if message.extra_tags == '1':
                 parametrs['accept'] = False
 
-        return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='view_page.html')
+        return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='item_view.html')
 
     def list(self, request, *args, **kwargs):
         response = super(GamingViewSet, self).list(request, *args, **kwargs)
@@ -120,7 +120,7 @@ class GamingViewSet(ModelViewSet):
                 "accept": True
             }
             return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs, 'info': data_info
-                             }, template_name='view_page.html')
+                             }, template_name='item_view.html')
         return response
 
 
@@ -154,7 +154,7 @@ class HomeViewSet(ModelViewSet):
             if message.extra_tags == '1':
                 parametrs['accept'] = False
 
-        return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='view_page.html')
+        return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='item_view.html')
 
     def list(self, request, *args, **kwargs):
         response = super(HomeViewSet, self).list(request, *args, **kwargs)
@@ -177,5 +177,5 @@ class HomeViewSet(ModelViewSet):
             parametrs = {
                 "accept": True
             }
-            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs, 'info': data_info}, template_name='view_page.html')
+            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs, 'info': data_info}, template_name='item_view.html')
         return response

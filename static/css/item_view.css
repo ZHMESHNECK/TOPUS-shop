@@ -1,8 +1,27 @@
 #largeImg {
-    border: solid 1px #ccc;
     width: 550px;
     height: 400px;
     padding: 5px;
+    cursor: zoom-in;
+    transition: opacity .4s;
+    -webkit-backface-visibility: hidden;
+}
+#largeImg:hover:not(.active) {
+    opacity: 0.8;
+}
+#largeImg.active {
+    cursor: zoom-out;
+}
+
+#materialbox-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #292929;
+    z-index: 1000;
+    will-change: opacity;
 }
 
 #thumbs a {

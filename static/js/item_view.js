@@ -93,3 +93,20 @@ function showtextarea(e) {
     e.target.nextElementSibling[2].value = id;
     e.target.nextElementSibling[1].innerText = `${name}, `
 }
+
+// materialize - збільшення головної картинки
+document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.materialboxed');
+    console.log(elems)
+    var instances = M.Materialbox.init(elems);
+    console.log(instances)
+  });
+
+
+//   Труш - доп. фото
+document.querySelector('#thumbs').addEventListener('click', function(event) {
+    event.preventDefault();
+ let link = event.target.closest('a');
+    document.querySelector('#largeImg').src = link.getAttribute('href');
+    document.querySelector('#largeImg').alt = link.title;
+  })

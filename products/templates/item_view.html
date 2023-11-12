@@ -3,15 +3,17 @@
 {% block content %}
 
 <head>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/st_category2.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/item_view.css' %}">
 </head>
 
 {% include 'include/messages.html' %}
+
 <div class="product-page">
     <div class="product-image">
-        <p><img id="largeImg" src="{{ data.main_image }}" alt="Large image"></p>
-
+        <p><img class="materialboxed" id="largeImg" src="{{ data.main_image }}" alt="Large image" width="650"></p>
+        
         <div id="thumbs">
+            <a href="{{ data.main_image }}"><img src="{{ data.main_image }}"></a>
             {% for image in images %}
             <a href="{{ image.images.url }}"><img src="{{ image.images.url }}"></a>
             {% endfor %}
