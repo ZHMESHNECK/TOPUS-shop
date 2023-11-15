@@ -7,10 +7,11 @@
 </head>
 
 {% include 'include/messages.html' %}
+<div id="snackbar">Добавлено у кошик!</div>
 
 <div class="product-page">
     <div class="product-image">
-        <p><img class="materialboxed" id="largeImg" src="{{ data.main_image }}" alt="Large image" width="650"></p>
+        <p><img class="materialboxed" id="largeImg" src="{{ data.main_image }}" alt="Large image"></p>
         
         <div id="thumbs">
             <a href="{{ data.main_image }}"><img src="{{ data.main_image }}"></a>
@@ -87,7 +88,7 @@
             <!-- \ auth -->
 
             <div class="add_to_cart_btn">
-                <button value="{{ data.id }}" class="button_view_page">Придбати</button>
+                <button value="{{ data.id }}" class="button_view_page" id="to_cart" onclick="Toast()">Придбати</button>
             </div>
         </div>
 

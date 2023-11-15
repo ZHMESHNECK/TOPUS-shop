@@ -1,14 +1,16 @@
 #largeImg {
-    width: 550px;
-    height: 400px;
+    width: 630px;
+    max-height: 600px;
     padding: 5px;
     cursor: zoom-in;
     transition: opacity .4s;
     -webkit-backface-visibility: hidden;
 }
+
 #largeImg:hover:not(.active) {
     opacity: 0.8;
 }
+
 #largeImg.active {
     cursor: zoom-out;
 }
@@ -40,6 +42,7 @@
     /* Make the images take up the full width of the parent container */
     height: 100%;
     /* Make the images take up the full height of the parent container */
+    vertical-align: baseline;
 }
 
 #thumbs a:hover {
@@ -73,30 +76,30 @@
 
 /* Характеристики */
 .left {
-	margin-right: -50%;
-	width: 60%;
-	vertical-align: top;
-	overflow: hidden;
-	display: inline-block;
-	letter-spacing: normal
+    margin-right: -50%;
+    width: 60%;
+    vertical-align: top;
+    overflow: hidden;
+    display: inline-block;
+    letter-spacing: normal
 }
 
 .left::after {
     content: '';
-	display: inline-block;
-	width: 100%;
-	margin: 0 -99% 0 3px;
-	vertical-align: baseline;
-	border-bottom: 1px dashed #888; 
+    display: inline-block;
+    width: 100%;
+    margin: 0 -99% 0 3px;
+    vertical-align: baseline;
+    border-bottom: 1px dashed #888;
 }
 
 .right {
     display: inline-block;
-	letter-spacing: normal;
-	padding-left: 3px;
-	margin-left: 50%;
-	width: 30%;
-	vertical-align: bottom;
+    letter-spacing: normal;
+    padding-left: 3px;
+    margin-left: 50%;
+    width: 30%;
+    vertical-align: bottom;
 }
 
 .product-details {
@@ -110,6 +113,7 @@
     letter-spacing: -1ex;
     margin: 5px 0;
 }
+
 /*  */
 
 .product-description {
@@ -159,6 +163,7 @@
     color: blue;
     text-decoration: underline;
 }
+
 .ans-for-review {
     display: inline-block;
     background-color: aquamarine;
@@ -193,6 +198,7 @@
     box-shadow: inset 0px 0.1em 0.6em #3c4fe0;
     transform: translateY(0em);
 }
+
 .button_view_page[disabled] {
     cursor: not-allowed;
     opacity: 0.5;
@@ -307,4 +313,45 @@
     transition: color 0.3s;
 }
 
-/*рейт*/
+/* \рейт*/
+
+#snackbar {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #662d91;
+    color: #fff;
+    text-align: center;
+    border-radius: 10px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    font-size: 17px;
+}
+
+#snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {up: 0; opacity: 0;} 
+    to {up: 30px; opacity: 1;}
+  }
+  
+  @keyframes fadein {
+    from {up: 0; opacity: 0;}
+    to {up: 30px; opacity: 1;}
+  }
+  
+  @-webkit-keyframes fadeout {
+    from {up: 30px; opacity: 1;} 
+    to {up: 0; opacity: 0;}
+  }
+  
+  @keyframes fadeout {
+    from {up: 30px; opacity: 1;}
+    to {up: 0; opacity: 0;}
+}

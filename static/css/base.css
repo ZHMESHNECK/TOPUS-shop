@@ -160,8 +160,8 @@ header {
 
 .header-logo-container {
     display: flex;
-    align-items: center;
     margin-right: 10%;
+    align-items: center;
 }
 
 .header-logo {

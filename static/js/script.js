@@ -71,12 +71,13 @@ buttons.forEach((button) => {
         })
             .then(res => res.json())
             .then(data => {
-                document.getElementById('full_cart_price').textContent = data.to_pay.toFixed(2)
+                // console.log(data)
+                document.getElementById('full_cart_price').textContent = 'До сплати: ' + data.to_pay.toFixed(2) + ' грн'
                 var price = document.getElementById('price_' + numberContainer.id).value
                 var correct_price = price.replace(/,/g, '.')
                 document.getElementById('span_' + numberContainer.id).textContent = (Number(correct_price) * newNumber).toFixed(2)
                 document.getElementById('num_of_cart').innerHTML = data.len
-                document.getElementById('count_in_cart').innerHTML = "У кошику: " + data.len
+                document.getElementById('count_in_cart').innerHTML = data.len
 
             })
             .catch(error => {
@@ -97,17 +98,10 @@ formorder.addEventListener('submit', (e) => {
 
     let valid = true
 
-    // У кошику відсутні товари
-    if (document.getElementsByClassName('product')[0]) {
-        document.getElementById('empty_cart').style.display = 'none'
-    } else {
-        document.getElementById('empty_cart').style.display = 'block'
-        valid = false
-    }
-
     // не обрано спосіб доставки
     if (delivery_block.querySelectorAll('input[type="radio"]:checked').length == 0) {
         document.getElementById('eror_delivery').style.display = 'block'
+        document.getElementById('eror_delivery').scrollIntoView()
         valid = false
     } else {
         document.getElementById('eror_delivery').style.display = 'none'
@@ -151,15 +145,18 @@ formorder.addEventListener('submit', (e) => {
     // не обрано спосіб оплати
     if (pay_block.querySelectorAll('input[type="radio"]:checked').length == 0) {
         document.getElementById('eror_pay').style.display = 'block'
+        document.getElementById('eror_pay').scrollIntoView()
         valid = false
     } else {
         document.getElementById('eror_pay').style.display = 'none'
     }
 
+    // блок персональних данних
     const formData = new FormData(contact_block);
     for (let value of formData.values()) {
         if (!value) {
             document.getElementById('message_pers').style.display = 'block'
+            document.getElementById('message_pers').scrollIntoView()
             valid = false
             break
         } else {
@@ -193,18 +190,20 @@ function show() {
 
 
 
-// save personal_data
+// Зберігання персональних даних
 const formElement = document.getElementById('personal_data');
 formElement.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(formElement);
+    console.log(formData)
 
-    let url = '/api/profile/' + document.getElementsByClassName('header-shadow__btn')[0].textContent
+    let url = '/api/profile/' + document.getElementsByClassName('header-shadow__btn')[0].textContent + '/'
     let data = {
         first_name: formData.get('first_name'),
         last_name: formData.get('last_name'),
         surname: formData.get('surname'),
-        phone_number: formData.get('phone_number'),
+        phone_number_0: formData.get('phone_number_0'),
+        phone_number_1: formData.get('phone_number_1'),
         email: formData.get('email'),
     }
 
@@ -269,7 +268,7 @@ function sendform() {
             first_name: pers_data.querySelector('input[name="first_name"]').value,
             last_name: pers_data.querySelector('input[name="last_name"]').value,
             surname: pers_data.querySelector('input[name="surname"]').value,
-            phone_number: pers_data.querySelector('input[name="phone_number"]').value,
+            phone_number: pers_data.querySelector('input[name="phone_number_1"]').value,
             email: pers_data.querySelector('input[name="email"]').value,
         },
         delivery: deliv_info,
@@ -281,3 +280,70 @@ function sendform() {
     return JSON.stringify(data)
 };
 
+
+// Видаляє нижній border останнього елемента в кошику
+var myList = document.getElementsByClassName('cart-item')
+if (myList.length > 0) {
+    var lastItem = myList[myList.length - 1];
+    lastItem.style.border = 'none'
+}
+
+
+// //  input - number phone
+var backspacePressedLast = false;
+
+document.addEventListener('keydown', function(e) {
+    var target = e.target;
+    if (target && target.id == 'id_phone_number_1') {
+        var currentKey = e.which;
+
+        if (currentKey === 8 || currentKey === 46) {
+            backspacePressedLast = true;
+        } else {
+            backspacePressedLast = false;
+        }
+    }
+});
+
+document.addEventListener('input', function(e) {
+    var target = e.target;
+
+    if (target && target.id == 'id_phone_number_1') {
+        if (backspacePressedLast) return;
+
+        var currentValue = target.value,
+            newValue = currentValue.replace(/\D+/g, ''),
+            formattedValue = formatToTelephone(newValue);
+
+        target.value = formattedValue;
+    }
+});
+
+function formatToTelephone(str) {
+    var splitString = str.split(''),
+        returnValue = '';
+
+    for (var i = 0; i < splitString.length; i++) {
+        var currentLoop = i,
+            currentCharacter = splitString[i];
+
+        switch (currentLoop) {
+            case 0:
+                returnValue = returnValue.concat('(');
+                returnValue = returnValue.concat(currentCharacter);
+                break;
+            case 2:
+                returnValue = returnValue.concat(currentCharacter);
+                returnValue = returnValue.concat(') ');
+                break;
+            case 5:
+                returnValue = returnValue.concat(currentCharacter);
+                returnValue = returnValue.concat('-');
+                break;
+            default:
+                returnValue = returnValue.concat(currentCharacter);
+        }
+    }
+
+    return returnValue;
+}

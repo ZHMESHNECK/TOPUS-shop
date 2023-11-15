@@ -26,7 +26,6 @@ fetch('/cart/check_order', {
     .then(res => res.json())
     .then(data => {
         price = data.to_pay;
-        print(price)
     })
 
 // google pay https://developers.google.com/pay/api/web/guides/tutorial?hl=ru#apiversion

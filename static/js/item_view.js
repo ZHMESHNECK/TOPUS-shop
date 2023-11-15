@@ -27,7 +27,7 @@ ad_cart.forEach(btn => {
 function AddToCart(e) {
     let item = e.target.value
     let url = '/cart/'
-
+    M.toast({html: 'I am a toast!'})
     let data = {
         product_id: Number(item),
         quantity: 1
@@ -42,6 +42,7 @@ function AddToCart(e) {
         .then(data => {
             document.getElementById('num_of_cart').innerHTML = data.len
         })
+        // .then(alert('Товар добавлено у кошик'))
         .catch(error => {
             console.log(error)
         })
@@ -59,7 +60,7 @@ function AddToFav(e) {
         item = ad_fav[0].getElementsByTagName('button')[0].value
     } else {
         item = e.target.value
-}
+    }
     let url = '/add_to_fav/' + item.toString()
 
     fetch(url, {
@@ -95,18 +96,26 @@ function showtextarea(e) {
 }
 
 // materialize - збільшення головної картинки
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var elems = document.querySelectorAll('.materialboxed');
-    console.log(elems)
-    var instances = M.Materialbox.init(elems);
-    console.log(instances)
-  });
+    M.Materialbox.init(elems);
+});
 
 
 //   Труш - доп. фото
-document.querySelector('#thumbs').addEventListener('click', function(event) {
+document.querySelector('#thumbs').addEventListener('click', function (event) {
     event.preventDefault();
- let link = event.target.closest('a');
+    let link = event.target.closest('a');
     document.querySelector('#largeImg').src = link.getAttribute('href');
     document.querySelector('#largeImg').alt = link.title;
-  })
+})
+
+// Повідомлення про добавлення товару до кошика
+function Toast() {
+    var x = document.getElementById("snackbar");
+    x.className = "show";
+    let btn = document.getElementById('to_cart');
+    btn.disabled = true;
+    setTimeout(function(){ x.className = x.className.replace("show", ""); btn.disabled = false;}, 3000);
+
+  }

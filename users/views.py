@@ -1,3 +1,4 @@
+from phonenumber_field.phonenumber import PhoneNumber
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import GenericAPIView
 from rest_framework.viewsets import ModelViewSet
@@ -191,7 +192,9 @@ class ProfileViewSet(ModelViewSet):
             profile.first_name = request.data.get('first_name')
             profile.last_name = request.data.get('last_name')
             profile.surname = request.data.get('surname')
-            profile.phone_number = request.data.get('phone_number')
+            number = PhoneNumber.from_string(request.data.get(
+                'phone_number_1'), region=request.data.get('phone_number_0'))
+            profile.phone_number = number
             profile.save()
             return Response(data={'ans': 'Данні успішно збережено'}, status=status.HTTP_202_ACCEPTED)
         except:

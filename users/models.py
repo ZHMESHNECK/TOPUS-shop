@@ -28,7 +28,7 @@ class Profile(models.Model):
     surname = models.CharField(
         "По батькові",  blank=True, max_length=50)
     city = models.CharField('Місто', blank=True,  max_length=100)
-    adress = models.CharField('Адресса', blank=True, max_length=100)
+    adress = models.CharField('Адреса', blank=True, max_length=100)
 
     def __str__(self):
         return f'{self.user.username} Profile'

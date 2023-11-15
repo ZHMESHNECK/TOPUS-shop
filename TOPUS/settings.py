@@ -165,7 +165,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 
-    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
+    'DATETIME_FORMAT': "%Y-%m-%d %H:%M",
 }
 # JWT configure
 SIMPLE_JWT = {
