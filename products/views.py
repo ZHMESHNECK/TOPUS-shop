@@ -12,6 +12,8 @@ from products.models import *
 from products.utils import serial_code_randomizer
 from relations.models import Relation
 from relations.utils import accept_post
+from utils.pagination import Pagination
+from users.permission import ReadOnly
 
 
 class ClothviewSet(ModelViewSet):
@@ -20,13 +22,15 @@ class ClothviewSet(ModelViewSet):
     serializer_class = ClothSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [ReadOnly]  # !
+    # permission_classes = [IsAuthenticatedOrReadOnly]  # !
     search_fields = ['title', 'description', 'season', 'size']
-    ordering_fields = ['title', 'price', 'category',
+    ordering_fields = ['title', 'price',
                        'season', 'size', 'date_created']
     ordering = ['-date_created']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
     authentication_classes = [SessionAuthentication]
+    pagination_class = Pagination
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user,
@@ -75,12 +79,13 @@ class GamingViewSet(ModelViewSet):
     serializer_class = GamingSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [ReadOnly]
     search_fields = ['title', 'description', 'brand', 'model']
     ordering_fields = ['title', 'brand', 'price', 'model']
     ordering = ['-date_created']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
     authentication_classes = [SessionAuthentication]
+    pagination_class = Pagination
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user,
@@ -130,12 +135,13 @@ class HomeViewSet(ModelViewSet):
     serializer_class = HomeSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['price']
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [ReadOnly]
     search_fields = ['title', 'description', 'brand', 'model']
     ordering_fields = ['title', 'brand', 'price', 'model']
     ordering = ['-date_created']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
     authentication_classes = [SessionAuthentication]
+    pagination_class = Pagination
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user,
@@ -147,7 +153,6 @@ class HomeViewSet(ModelViewSet):
         response = super(HomeViewSet, self).retrieve(request, pk)
         images = Gallery_home.objects.filter(home_id=pk)
         relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
-
 
         # якщо це зміна існуючого відгуку, то блокується кнопка "надіслати"
         for message in get_messages(request):
@@ -171,7 +176,7 @@ class HomeViewSet(ModelViewSet):
                 'Для кімнат': response.data['room_type'],
                 'Матеріал': response.data['material'],
                 'Колір': response.data['color'],
-                'Вага': str(response.data['weight']) +' кг',
+                'Вага': str(response.data['weight']) + ' кг',
                 'Розмір(ВхШхГ), см': response.data['dimensions'],
             }
             parametrs = {

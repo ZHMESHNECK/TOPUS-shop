@@ -64,9 +64,9 @@ h4 {
 
 .input-row {
     display: flex;
-    justify-content: space-between;
     margin-bottom: 10px;
     margin-right: 20px;
+    justify-content: space-between;
 }
 .input-row:last-child {
     border-bottom: 0;
@@ -113,22 +113,21 @@ h4 {
     margin-left: 20px;
     border: 1px solid rgb(150, 150, 150);
     border-radius: 5px;
+    margin-bottom: 20px;
 
 }
 
 #personal_data {
     max-width: 790px;
     padding: 20px;
-
 }
 
 
 .inputs-group {
     display: flex;
-    flex-direction: column;
     flex-basis: 48%;
     padding: 0px 10px 0px 10px;
-
+    flex-direction: column;
 }
 
 .inputs-group input[type="text"],
@@ -138,8 +137,9 @@ h4 {
     border: 1px solid rgb(150, 150, 150);
     border-radius: 5px;
     font-size: 1rem;
-    /* width: 230px; */
+    
 }
+
 .option2 input[type="text"],
 .option3 input[type="text"],
 .option4 input[type="text"],

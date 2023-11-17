@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
+{% load tags %}
 {% block content %}
 
 <head>
     <link rel="stylesheet" href="{% static 'css/style_list_cate_item.css' %}">
 </head>
+<!-- {{data}} -->
+
 <div class="list-container">
-    {% for item in data %}
+    {% for item in data.results %}
     <div class="product-card">
         <a href="{{ item.id }}"><img src="{{ item.main_image }}" alt="Фото" class="product-image"></a>
         <a href="{{ item.id }}">
@@ -40,6 +43,35 @@
         <div class="P_otziv">Відгуків: {{ item.views }}</div>
     </div>
     {% endfor %}
-    <script src="{% static 'js/list_item.js' %}"></script>
 </div>
+    <!-- Пагінация -->
+    {% if data.count_page %}
+        <ul class="pagination justify-content-center">
+            {% if data.previous != None %}
+            <li class="page-item">
+                <a href="{{ data.previous }}"><span class="page-link">&laquo;</span></a>
+            </li>
+            {% endif %}
+            {% for p in data.list_page %}
+            {% if data.page_num == p %}
+            <li class="page-item active">
+                <span class="page-link">
+                    <span>{{ p }}</spna>
+                        <span class="sr-only"></span>
+                    </span>
+            </li>
+            {% elif p >= data.page_num|add:-2 and p <= data.page_num|add:2 %} <li class="page-item"><a class="page-link"
+                    href="?page={{ p }}">{{ p }}</a></li>
+                {% endif %}
+                {% endfor %}
+
+                {% if data.next != None %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ data.next }}">&raquo;</a>
+                </li>
+                {% endif %}
+        </ul>
+    {% endif %}
+    <!--\ пагінация -->
+<script src="{% static 'js/list_item.js' %}"></script>
 {% endblock %}

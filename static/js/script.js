@@ -129,6 +129,7 @@ formorder.addEventListener('submit', (e) => {
             document.getElementById('eror_ukr_del').style.display = 'none'
         }
     }
+
     // Кур'ер - не обрано адрес
     if (deliv_to_cstmr.querySelector('input[type="radio"]:checked')) {
         for (let val of document.getElementsByClassName('option2')[0].getElementsByTagName('input')) {
@@ -175,7 +176,6 @@ formorder.addEventListener('submit', (e) => {
 
 // Показ форм обраних параметрів
 let radios = document.querySelectorAll('input[type="radio"]');
-
 function show() {
     for (let radio of radios) {
         var form = document.getElementsByClassName(radio.id)[0];
@@ -189,13 +189,12 @@ function show() {
 };
 
 
-
 // Зберігання персональних даних
 const formElement = document.getElementById('personal_data');
 formElement.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(formElement);
-    console.log(formData)
+    // console.log(formData)
 
     let url = '/api/profile/' + document.getElementsByClassName('header-shadow__btn')[0].textContent + '/'
     let data = {
@@ -268,7 +267,7 @@ function sendform() {
             first_name: pers_data.querySelector('input[name="first_name"]').value,
             last_name: pers_data.querySelector('input[name="last_name"]').value,
             surname: pers_data.querySelector('input[name="surname"]').value,
-            phone_number: pers_data.querySelector('input[name="phone_number_1"]').value,
+            phone_number: pers_data.querySelector('select[name="phone_number_0"]').selectedOptions[0].innerHTML.split(' ')[1] + pers_data.querySelector('input[name="phone_number_1"]').value,
             email: pers_data.querySelector('input[name="email"]').value,
         },
         delivery: deliv_info,
@@ -279,7 +278,6 @@ function sendform() {
     // console.log(data)
     return JSON.stringify(data)
 };
-
 
 // Видаляє нижній border останнього елемента в кошику
 var myList = document.getElementsByClassName('cart-item')

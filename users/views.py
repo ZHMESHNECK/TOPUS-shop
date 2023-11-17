@@ -15,10 +15,11 @@ from users.serializers import *
 from users.permission import *
 from users.models import User
 from users.forms import *
+from cart.forms import PhoneNumber
 import requests
 
 
-class ActivateUser(GenericAPIView):
+class ActivateUser(GenericAPIView): #from django.contrib.auth.views import LoginView - test
 
     def get(self, request, uid, token, format=None):
         payload = {"uid": uid, "token": token}
@@ -175,7 +176,9 @@ class ProfileViewSet(ModelViewSet):
         if len(relation) == 0:
             relation = None
         if request.accepted_renderer.format == 'html':
-            return Response({'profile': user, 'relation': relation}, template_name='user_profile.html')
+            number = PhoneNumber(
+                initial={'phone_number': user.phone_number})
+            return Response({'profile': user, 'relation': relation, 'number': number}, template_name='user_profile.html')
         return user
 
     def post(self, request, *args, **kwargs):

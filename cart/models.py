@@ -2,7 +2,6 @@ from django.conf import settings
 from django.db import models
 from products.models import MainModel
 from users.models import Customer
-from decimal import Decimal
 
 
 class Cart(models.Model):
@@ -47,7 +46,7 @@ class Cart(models.Model):
             del self.cart[product_id]
             self.save()
 
-    def __iter__(self):
+    def __iter__(self): 
         """Перебір елементів у кошику та отримання продуктів із бази даних.
         """
         # Отримання товару та додання їх до кошика
@@ -103,7 +102,7 @@ class Order(models.Model):
         Customer, on_delete=models.CASCADE, verbose_name='Користувач')
     product = models.ForeignKey(
         MainModel, on_delete=models.CASCADE, verbose_name='Товар')
-    pickup = models.CharField('Спосіб доставки', default='-', max_length=50)
+    pickup = models.CharField('Спосіб доставки', default='---', max_length=50)
     city = models.CharField('Місто', blank=True,
                             max_length=100, default='Не вказано')
     adress = models.TextField('Адресса', blank=True, max_length=100)

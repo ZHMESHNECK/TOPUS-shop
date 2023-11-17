@@ -1,48 +1,59 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<!-- инфа для меня -->
+
+<head>
+    <link rel="stylesheet" href="{% static 'css/check_order.css' %}">
+</head>
+
 {{ data|json_script:"hello-data" }}
-<br>
-{{data}}
 <form action="{% url 'accept_order' %}" id="order" method="post">
     {% csrf_token %}
     <input type="hidden" name="data" value="" id="send_data">
 </form>
-<!--  -->
-<br>
 
-<p>Отримувач замовлення</p>
-{{ data.client_info.first_name}} {{ data.client_info.last_name }} {{ data.client_info.surname }} <br>
-{{ data.client_info.phone_number }}
+<div class="info">
+    <div id="deliveryForm">
+        <h2 class="HHHH">Контактна інформація</h2>
+        <div class="deliverInfo">
+            <p>Імя:<span>{{ data.client_info.first_name }}</span></p>
+            <p>Прізвище:<span>{{ data.client_info.last_name }}</span></p>
+            <p>По-батькові:<span>{{ data.client_info.surname }}</span></p>
+            <p>Телефон:<span>{{ data.client_info.phone_number }}</span></p>
+            <p>Спосіб доставки:<span>{% for key in data.delivery.keys %} {{ key }} {% endfor %}</span></p>
+            <p>Адреса:<span>{% if 'До_замовника' in data.delivery %} {% for key, value in data.delivery.До_замовника.items %} <br> {{ key }}: {{ value }} {% endfor %} {% else %} {% for val in data.delivery.values %} {{ val }} {% endfor %} {% endif %}</span></p>
+            <p>Email:<span>ff@gmail.com</span></p>
+        </div>
+    </div>
 
-<!-- циклом выводит название продукта и его количество -->
-{% for item in products %}
-<br>
-{{ item }}
-<br>
-{{ item.Товар.title }} x {{ item.Кількість }}
-<br>
-Всього: {{ item.Всього }} грн
-{% endfor %}
-<!--  -->
-<br>
-<!-- если доставка куръером -->
-{% if "До_замовника" in data.delivery %}
-До сплати: <span id="full_cart_price">{{ to_pay }}</span> грн (100 грн за доставлення вже врахованні)
-<!-- если нет, то -->
-{% else %}
-До сплати: <span id="full_cart_price">{{ to_pay }}</span> грн
-{% endif %}
-<!--  -->
-
-{% if data.pay == "На_сайті" %}
-<!-- кнопка гугл если оплата на сайте -->
-<div id="container"></div>
-{% else %}
-<br>
-<button onclick="send_order()">Замовлення Підтверджую</button>
-{% endif %}
+    <div class="productBlock">
+        <div class="ollcont">
+            {% for item in products %}
+            <div class="container">
+                <p><span id="model">{{ item.Товар.title }}</p>
+                <p>Ціна: <span id="price">{{ item.Всього }} грн</span></p>
+                <p>Кількість: <span id="price">{{ item.Кількість }}</span></p>
+            </div>
+            {% endfor %}
+            <div class="total">
+                {% if "До_замовника" in data.delivery %}
+                <p>До сплати: <span id="full_cart_price">{{ to_pay }}</span> грн <br>(100 грн за доставлення вже врахованні)
+                </p>
+                {% else %}
+                <p>До сплати: <span id="full_cart_price">{{ to_pay }}</span> грн</p>
+                {% endif %}
+            </div>
+        </div>
+        {% if data.pay == "На_сайті" %}
+        <!-- кнопка гугл якщо оплата на сайті -->
+        <div class="google">
+            <div id="container"></div>
+        </div>
+        {% else %}
+        <button class="Button" onclick="send_order()">Замовлення підтверджую</button>
+        {% endif %}
+    </div>
+</div>
 
 <script src="{% static 'js/check-pay.js' %}"></script>
 <script async src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>
