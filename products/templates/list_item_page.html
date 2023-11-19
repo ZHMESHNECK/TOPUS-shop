@@ -44,34 +44,6 @@
     </div>
     {% endfor %}
 </div>
-    <!-- Пагінация -->
-    {% if data.count_page %}
-        <ul class="pagination justify-content-center">
-            {% if data.previous != None %}
-            <li class="page-item">
-                <a href="{{ data.previous }}"><span class="page-link">&laquo;</span></a>
-            </li>
-            {% endif %}
-            {% for p in data.list_page %}
-            {% if data.page_num == p %}
-            <li class="page-item active">
-                <span class="page-link">
-                    <span>{{ p }}</spna>
-                        <span class="sr-only"></span>
-                    </span>
-            </li>
-            {% elif p >= data.page_num|add:-2 and p <= data.page_num|add:2 %} <li class="page-item"><a class="page-link"
-                    href="?page={{ p }}">{{ p }}</a></li>
-                {% endif %}
-                {% endfor %}
-
-                {% if data.next != None %}
-                <li class="page-item">
-                    <a class="page-link" href="{{ data.next }}">&raquo;</a>
-                </li>
-                {% endif %}
-        </ul>
-    {% endif %}
-    <!--\ пагінация -->
+  
 <script src="{% static 'js/list_item.js' %}"></script>
 {% endblock %}

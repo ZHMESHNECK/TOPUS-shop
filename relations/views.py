@@ -2,7 +2,6 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-from rest_framework.mixins import ListModelMixin
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.views import APIView
 from rest_framework import status, renderers
@@ -72,6 +71,14 @@ class Main(APIView):
 
 
 class SearchViewSet(ListAPIView):
+    """ Search
+
+    Args:
+        ListAPIView (_type_): пошук товарів по запиту
+
+    Returns:
+        Response: data
+    """
     queryset = MainModel.objects.filter(is_published=True).annotate(price_w_dis=F('price')-F('price') /
                                                                     100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('-date_created')
     serializer_class = SearchSerializer

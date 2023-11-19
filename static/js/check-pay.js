@@ -279,8 +279,8 @@ function processPayment(paymentData) {
             resolve({});
             // console.log(paymentData);
             // send order to the server
-            send_order();
         }, 500);
+        send_order();
     });
 }
 

@@ -6,181 +6,122 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import renderers
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.messages import get_messages
-from django.db.models import F, Count, Q
+from django.db.models import F, Count, Q, Prefetch
 from products.serializers import *
 from products.models import *
 from products.utils import serial_code_randomizer
 from relations.models import Relation
 from relations.utils import accept_post
 from utils.pagination import Pagination
-from users.permission import ReadOnly
+from users.models import User
+
+price_with_discount = F('price') - F('price') / 100 * F('discount')
 
 
-class ClothviewSet(ModelViewSet):
-    queryset = Clothes.objects.filter(is_published=True).annotate(price_w_dis=F('price')-F('price') /
-                                                                  100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
+class BaseItemViewSet(ModelViewSet):
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['price']
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    search_fields = ['title', 'description', 'brand', 'model']
+    ordering_fields = ['title', 'brand', 'price', 'model']
+    ordering = ['-date_created']
+    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+    authentication_classes = [SessionAuthentication]
+    pagination_class = Pagination
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user,
+                        s_code=serial_code_randomizer(serializer.validated_data['category']))
+
+    def post(self, request, pk):
+        request, parametrs = accept_post(self, request, pk)
+
+        response = super(BaseItemViewSet, self).retrieve(request, pk)
+        images = self.get_gallery_objects(pk)
+        relation = Relation.objects.select_related(
+            'item', 'user').filter(parent__isnull=True, item_id=pk)
+        answer = Relation.objects.select_related(
+            'item', 'user').filter(parent__isnull=False, item_id=pk)
+        data_info = self.get_additional_info(response.data)
+
+        # якщо це зміна існуючого відгуку, то блокується кнопка "надіслати"
+        for message in get_messages(request):
+            if message.extra_tags == '1':
+                parametrs['accept'] = False
+
+        return Response({'data': response.data, 'images': images, 'relation': relation, 'answer': answer, 'parametrs': parametrs, 'info': data_info}, template_name='item_view.html')
+
+    def list(self, request, *args, **kwargs):
+        response = super(BaseItemViewSet, self).list(request, *args, **kwargs)
+        if request.accepted_renderer.format == 'html':
+            return Response({'data': response.data}, template_name='list_item_page.html')
+        return response
+
+    def retrieve(self, request, pk=None):
+        response = super(BaseItemViewSet, self).retrieve(request, pk)
+        if request.accepted_renderer.format == 'html':
+            images = self.get_gallery_objects(pk)
+            relation = Relation.objects.select_related(
+                'item', 'user').filter(parent__isnull=True, item_id=pk)
+            answer = Relation.objects.select_related(
+                'item', 'user').filter(parent__isnull=False, item_id=pk)
+            data_info = self.get_additional_info(response.data)
+            parametrs = {'accept': True}
+            return Response({'data': response.data, 'images': images, 'relation': relation, 'answer': answer, 'parametrs': parametrs, 'info': data_info}, template_name='item_view.html')
+        return response
+
+    def get_gallery_objects(self, pk):
+        raise NotImplementedError('Метод для дітей :)')
+
+    def get_additional_info(self, data):
+        raise NotImplementedError('Метод для дітей :)')
+
+
+class ClothviewSet(BaseItemViewSet):
+    queryset = Clothes.objects.all().prefetch_related(Prefetch('in_liked', queryset=User.objects.all().only('id'))).filter(
+        is_published=True).annotate(price_w_dis=F('price') - F('price') / 100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
     serializer_class = ClothSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['price']
-    permission_classes = [ReadOnly]  # !
-    # permission_classes = [IsAuthenticatedOrReadOnly]  # !
-    search_fields = ['title', 'description', 'season', 'size']
-    ordering_fields = ['title', 'price',
-                       'season', 'size', 'date_created']
-    ordering = ['-date_created']
-    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
-    authentication_classes = [SessionAuthentication]
-    pagination_class = Pagination
 
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user,
-                        s_code=serial_code_randomizer(serializer.validated_data['category']))
+    def get_gallery_objects(self, pk):
+        return Gallery_cloth.objects.filter(clothes_id=pk)
 
-    def post(self, request, pk):
-        request, parametrs = accept_post(self, request, pk)
-
-        response = super(ClothviewSet, self).retrieve(request, pk)
-        images = Gallery_cloth.objects.filter(clothes_id=pk)
-        relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
-
-        # якщо це зміна існуючого відгуку, то блокується кнопка "надіслати"
-        for message in get_messages(request):
-            if message.extra_tags == 'middle':
-                parametrs['accept'] = False
-
-        return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='item_view.html')
-
-    def list(self, request, *args, **kwargs):
-        response = super(ClothviewSet, self).list(request, *args, **kwargs)
-        if request.accepted_renderer.format == 'html':
-            return Response({'data': response.data}, template_name='list_item_page.html')
-        return response
-
-    def retrieve(self, request, pk=None):
-        response = super(ClothviewSet, self).retrieve(request, pk)
-        if request.accepted_renderer.format == 'html':
-            images = Gallery_cloth.objects.filter(clothes_id=pk)
-            relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
-            data_info = {
-                'Пора року': response.data['season'],
-                'Для кого': response.data['department'],
-                'Розмір': response.data['size']
-            }
-            parametrs = {
-                "accept": True
-            }
-            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs, 'info': data_info}, template_name='item_view.html')
-        return response
+    def get_additional_info(self, data):
+        return {
+            'Пора року': data['season'],
+            'Для кого': data['department'],
+            'Розмір': data['size']
+        }
 
 
-class GamingViewSet(ModelViewSet):
-    queryset = Gaming.objects.filter(is_published=True).annotate(price_w_dis=F('price')-F('price') /
-                                                                 100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
+class GamingViewSet(BaseItemViewSet):
+    queryset = Gaming.objects.all().prefetch_related(Prefetch('in_liked', queryset=User.objects.all().only('id'))).filter(
+        is_published=True).annotate(price_w_dis=F('price') - F('price') / 100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
     serializer_class = GamingSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['price']
-    permission_classes = [ReadOnly]
-    search_fields = ['title', 'description', 'brand', 'model']
-    ordering_fields = ['title', 'brand', 'price', 'model']
-    ordering = ['-date_created']
-    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
-    authentication_classes = [SessionAuthentication]
-    pagination_class = Pagination
 
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user,
-                        s_code=serial_code_randomizer(serializer.validated_data['category']))
+    def get_gallery_objects(self, pk):
+        return Gallery_gaming.objects.filter(gaming_id=pk)
 
-    def post(self, request, pk):
-        request, parametrs = accept_post(self, request, pk)
-
-        response = super(GamingViewSet, self).retrieve(request, pk)
-        images = Gallery_gaming.objects.filter(gaming_id=pk)
-        relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
-
-        # якщо це зміна існуючого відгуку, то блокується кнопка "надіслати"
-        for message in get_messages(request):
-            if message.extra_tags == '1':
-                parametrs['accept'] = False
-
-        return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='item_view.html')
-
-    def list(self, request, *args, **kwargs):
-        response = super(GamingViewSet, self).list(request, *args, **kwargs)
-        if request.accepted_renderer.format == 'html':
-            return Response({'data': response.data}, template_name='list_item_page.html')
-        return response
-
-    def retrieve(self, request, pk=None):
-        response = super(GamingViewSet, self).retrieve(request, pk)
-        if request.accepted_renderer.format == 'html':
-            images = Gallery_gaming.objects.filter(gaming_id=pk)
-            relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
-            data_info = {
-                'Модель': response.data['model'],
-                'Матеріал': response.data['material'],
-                'Колір': response.data['color']
-            }
-            parametrs = {
-                "accept": True
-            }
-            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs, 'info': data_info
-                             }, template_name='item_view.html')
-        return response
+    def get_additional_info(self, data):
+        return {
+            'Модель': data['model'],
+            'Матеріал': data['material'],
+            'Колір': data['color']
+        }
 
 
-class HomeViewSet(ModelViewSet):
-    queryset = Home.objects.filter(is_published=True).annotate(price_w_dis=F('price')-F('price') /
-                                                               100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
+class HomeViewSet(BaseItemViewSet):
+    queryset = Home.objects.all().prefetch_related(Prefetch('in_liked', queryset=User.objects.all().only('id'))).filter(
+        is_published=True).annotate(price_w_dis=F('price') - F('price') / 100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
     serializer_class = HomeSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['price']
-    permission_classes = [ReadOnly]
-    search_fields = ['title', 'description', 'brand', 'model']
-    ordering_fields = ['title', 'brand', 'price', 'model']
-    ordering = ['-date_created']
-    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
-    authentication_classes = [SessionAuthentication]
-    pagination_class = Pagination
 
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user,
-                        s_code=serial_code_randomizer(serializer.validated_data['category']))
+    def get_gallery_objects(self, pk):
+        return Gallery_home.objects.filter(home_id=pk)
 
-    def post(self, request, pk):
-        request, parametrs = accept_post(self, request, pk)
-
-        response = super(HomeViewSet, self).retrieve(request, pk)
-        images = Gallery_home.objects.filter(home_id=pk)
-        relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
-
-        # якщо це зміна існуючого відгуку, то блокується кнопка "надіслати"
-        for message in get_messages(request):
-            if message.extra_tags == '1':
-                parametrs['accept'] = False
-
-        return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs}, template_name='item_view.html')
-
-    def list(self, request, *args, **kwargs):
-        response = super(HomeViewSet, self).list(request, *args, **kwargs)
-        if request.accepted_renderer.format == 'html':
-            return Response({'data': response.data}, template_name='list_item_page.html')
-        return response
-
-    def retrieve(self, request, pk=None):
-        response = super(HomeViewSet, self).retrieve(request, pk)
-        if request.accepted_renderer.format == 'html':
-            images = Gallery_home.objects.filter(home_id=pk)
-            relation = Relation.objects.filter(parent__isnull=True, item_id=pk)
-            data_info = {
-                'Для кімнат': response.data['room_type'],
-                'Матеріал': response.data['material'],
-                'Колір': response.data['color'],
-                'Вага': str(response.data['weight']) + ' кг',
-                'Розмір(ВхШхГ), см': response.data['dimensions'],
-            }
-            parametrs = {
-                "accept": True
-            }
-            return Response({'data': response.data, 'images': images, 'relation': relation, 'parametrs': parametrs, 'info': data_info}, template_name='item_view.html')
-        return response
+    def get_additional_info(self, data):
+        return {
+            'Для кімнат': data['room_type'],
+            'Матеріал': data['material'],
+            'Колір': data['color'],
+            'Вага': str(data['weight']) + ' кг',
+            'Розмір(ВхШхГ), см': data['dimensions'],
+        }

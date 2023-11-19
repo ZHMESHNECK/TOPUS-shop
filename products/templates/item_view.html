@@ -137,9 +137,10 @@
 <div class="reviews">
     <!-- Відгук  -->
     {% for review in relation %}
+    {% with review_username=review.user.username %}
     <div class="review">
         <p>Дата: {{ review.created_at|date:"d E Y" }}</p>
-        <h4>Юзер: {{ review.user.username }}</h4>
+        <h4>Юзер: {{ review_username }}</h4>
         <div class="rating">Оцінка: <span>{{ review.rate }}</span></div>
         <p class="review-text">Текст: {{ review.comment }}</p>
 
@@ -153,7 +154,7 @@
 
         {% if request.user.is_staff %}
         <div class="answer" >
-            <button class="btn btn-primary" style="margin: 5px;" value="{{ review.user.username }},{{ review.id }}">Відповісти</button>
+            <button class="btn btn-primary" style="margin: 5px;" value="{{ review_username }},{{ review.id }}">Відповісти</button>
             <form method="post" style="margin: 5px; display: none;" >
                 {% csrf_token %}
                 <textarea name="comment" id="answer_text" width="10"></textarea>
@@ -163,10 +164,10 @@
             {% endif %}
 
         <!-- Відповіді на відгук -->
-        {% for ans in review.relation_set.all %}
-        <!-- <br> -->
+        {% for ans in answer %}
+        {% if ans.parent_id == review.id %}
         <div class="ans-for-review">
-            <p>{{ ans.user.username }} відповів {{ review.user.username }}</p>
+            <p>{{ ans.user.username }} відповів {{ review_username }}</p>
             <p>{{ ans.comment }}</p>
         </div>
             {% if ans.user.id is request.user.id %}
@@ -176,9 +177,11 @@
                 <input type="hidden" name="delete_relation" value="{{ans.id}}">
             </form>
             {% endif %}
+            {% endif %}
         {% endfor %}
         <!-- \ Відповіді на відкуг -->
     </div>
+    {% endwith %}
     {% endfor %}
     <!-- \ Відгук -->
 </div>

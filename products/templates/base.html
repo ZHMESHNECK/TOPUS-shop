@@ -79,8 +79,55 @@
         {% endif %}
 
     </header>
-    {% block content %}
-    {% endblock %}
+    <div class="projects-section">
+        <div id="overlay" class="d-flex">
+            <div id="loader" class="spinner-border text-primary" role="status">
+            <!-- <span class="sr-only">Loading...</span> -->
+          </div>
+        </div>
+        {% block content %}
+        {% endblock %}
+          <!-- Пагінация -->
+    {% if data.count_page %}
+    <ul class="pagination justify-content-center">
+        {% if data.previous != None %}
+        <li class="page-item">
+            <a href="{{ data.previous }}"><span class="page-link">&laquo;</span></a>
+        </li>
+        {% endif %}
+        {% for p in data.list_page %}
+        {% if data.page_num == p %}
+        <li class="page-item active">
+            <span class="page-link">
+                <span>{{ p }}</spna>
+                    <span class="sr-only"></span>
+                </span>
+        </li>
+        {% elif p >= data.page_num|add:-2 and p <= data.page_num|add:2 %} <li class="page-item"><a class="page-link"
+                href="?page={{ p }}">{{ p }}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if data.next != None %}
+            <li class="page-item">
+                <a class="page-link" href="{{ data.next }}">&raquo;</a>
+            </li>
+            {% endif %}
+    </ul>
+{% endif %}
+<!--\ пагінация -->
+</div>
+
+    <!-- spinner -->
+    <script>
+        window.onload = (event) => {
+            document.getElementById('overlay').remove();
+
+
+        }
+      </script>
+      <!-- \spinner -->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
