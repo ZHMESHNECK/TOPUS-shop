@@ -5,60 +5,62 @@
 <head>
     <link rel="stylesheet" href="{% static 'css/user_profile.css' %}">
 </head>
-<p>username: {{ data.user.username }}</p>
-<p>profile: {{ profile }}</p>
-<p>relation: {{ relation }}</p>
+
+<div class="sidebar">
+    <a href="#" class="sidebar-link">Избранное</a>
+    <a href="#" class="sidebar-link">Покупки</a>
+</div>
 
 <!-- Персональні данні-->
-<div class="delivery-contact">
-
+<div class="user-info">
     <form id="personal_data">
-        {% csrf_token %}
-        <div id="message_pers" style="display: none;">
-            <p id="p_message" class="error">Потрібно заповнити всю форму</p>
-        </div>
         <p>Персональні данні</p>
-        {% if profile %}
-        <input type="hidden" name="profile" value="{{ profile.id }}">
-        {% else %}
-        <input type="hidden" name="profile" value="0">
-        {% endif %}
-        <div class="input-row">
-            <div class="inputs-group">
-                <label>Ім'я</label>
-                <input type="text" name="first_name" value="{{ profile.first_name }}" required>
-            </div>
-            <div class="inputs-group">
-                <label>Прізвище</label>
-                <input type="text" name="last_name" value="{{ profile.last_name }}" required>
-            </div>
-            <div class="inputs-group">
-                <label>По батькові</label>
-                <input type="text" name="surname" value="{{ profile.surname }}" required>
-            </div>
+        <div class="label-input-group">
+            <label>Нікнейм:</label>
+            <input type="text" name="username" value="{{ profile.user.username }}" required>
         </div>
-        <div class="input-row">
-            <div class="inputs-group">
-                <label>Номер телефону</label>
-                {{ number}}
-            </div>
-            <div class="inputs-group">
-                <label>Пошта</label>
-                <input type="email" name="email" value="{{ profile.user.email }}" required>
-            </div>
+
+        <div class="label-input-group">
+            <label>Ім'я:</label>
+            <input type="text" name="first_name" value="{{ profile.first_name }}" required>
         </div>
-        <div class="input-row">
-            {% if request.user.is_authenticated %}
-            <p><button type="submit">Зберегти</button></p>
-            {% else %}
-            <p><button disabled type="submit">Зберегти</button></p>
-            {% endif %}
+
+        <div class="label-input-group">
+            <label>Прізвище:</label>
+            <input type="text" name="last_name" value="{{ profile.last_name }}" required>
         </div>
+
+        <div class="label-input-group">
+            <label>По батькові:</label>
+            <input type="text" name="surname" value="{{ profile.surname }}" required>
+        </div>
+        
+        <div class="label-input-group">
+            <label>Пошта:</label>
+            <input type="email" name="email" value="{{ profile.user.email }}" required>
+        </div>
+
+        <div class="label-input-group">
+            <label>Місто:</label>
+            <input type="text" name="city" value="{{ profile.city }}">
+        </div>
+
+        <div class="label-input-group">
+            <label>Адрес:</label>
+            <input type="text" name="adress" value="{{ profile.address }}">
+        </div>
+
+        {% for field in form %}
+        <div class="label-input-group">
+            <label>{{ field.label }}</label>
+            {{ field }}
+        </div>
+        {% endfor %}
+
+        <button class="btn" type="submit">Зберегти</button>
+
     </form>
 </div>
 <!-- \ персональні данні -->
-
-
-
-
+<script src="{% static 'js/profile.js' %}"></script>
 {% endblock %}

@@ -52,7 +52,9 @@ def create_customer_and_order(request):
             else:
                 addres = f'{list(data["delivery"].keys())[0]} - {list(data["delivery"].values())[0]}'
             order.adress = addres
-            order.pay = data['pay']
+            order.how_to_pay = data['how_to_pay']
+            order.is_pay = data['is_pay']
+            order.summ_of_pay = float(order.product.price - order.product.price / 100 * order.product.discount) * int(quantity)
             order.save()
     except:
         # print(traceback.format_exc())

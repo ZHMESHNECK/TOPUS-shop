@@ -23,6 +23,7 @@ from django.conf.urls.static import static
 
 from django.conf import settings
 from django.urls import path
+from django.conf.urls import handler404, handler403
 
 
 urlpatterns = [
@@ -33,3 +34,6 @@ urlpatterns = [
     path('__debug__/', include('debug_toolbar.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+handler403 = 'utils.errors.handler403'
+handler404 = 'utils.errors.handler404'

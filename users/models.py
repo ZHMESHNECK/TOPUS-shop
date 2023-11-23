@@ -1,8 +1,8 @@
-from django.utils.translation import gettext_lazy as _
+from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
+from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import post_save
 from django.db import models
-from django.dispatch import receiver
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -27,7 +27,7 @@ class Profile(models.Model):
     first_name = models.CharField('Ім\'я', max_length=150, blank=True)
     last_name = models.CharField('Прізвище', max_length=150, blank=True)
     surname = models.CharField(
-        "По батькові",  blank=True, max_length=50)
+        'По батькові',  blank=True, max_length=50)
     city = models.CharField('Місто', blank=True,  max_length=100)
     adress = models.CharField('Адреса', blank=True, max_length=100)
 

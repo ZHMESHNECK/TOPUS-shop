@@ -18,7 +18,7 @@ function getCookie(name) {
 const csrftoken = getCookie('csrftoken');
 
 
-// // Корегування кількості товару
+// Корегування кількості товару
 const buttons = document.querySelectorAll(".input button");
 const minValue = 1;
 const maxValue = 10;
@@ -56,7 +56,7 @@ buttons.forEach((button) => {
             element.blur();
         }
 
-        // send quantity of product to Back
+        // send quantity of product to Back-end
         let url = '/cart/'
         let data = {
             product_id: numberContainer.id,
@@ -76,6 +76,7 @@ buttons.forEach((button) => {
                 var price = document.getElementById('price_' + numberContainer.id).value
                 var correct_price = price.replace(/,/g, '.')
                 document.getElementById('span_' + numberContainer.id).textContent = (Number(correct_price) * newNumber).toFixed(2)
+                document.getElementById('quantity_' + numberContainer.id).value = data.len
                 document.getElementById('num_of_cart').innerHTML = data.len
                 document.getElementById('count_in_cart').innerHTML = data.len
 
@@ -198,6 +199,7 @@ formElement.addEventListener('submit', (e) => {
 
     let url = '/api/profile/' + document.getElementsByClassName('header-shadow__btn')[0].textContent + '/'
     let data = {
+        cart: true,
         first_name: formData.get('first_name'),
         last_name: formData.get('last_name'),
         surname: formData.get('surname'),
@@ -205,17 +207,14 @@ formElement.addEventListener('submit', (e) => {
         phone_number_1: formData.get('phone_number_1'),
         email: formData.get('email'),
     }
+    // console.log(data)
 
     fetch(url, {
         'method': 'POST',
         'headers': { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
         'body': JSON.stringify(data)
     })
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById('message_pers').style.display = 'block';
-            document.getElementById('p_message').innerHTML = data.ans;
-        })
+        .then(res => { res.json(), location.reload(true) })
         .catch(error => {
             console.log(error)
         })
@@ -271,7 +270,7 @@ function sendform() {
             email: pers_data.querySelector('input[name="email"]').value,
         },
         delivery: deliv_info,
-        pay: pay_info,
+        how_to_pay: pay_info,
         product: product_info
     };
 
@@ -290,7 +289,7 @@ if (myList.length > 0) {
 // //  input - number phone
 var backspacePressedLast = false;
 
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
     var target = e.target;
     if (target && target.id == 'id_phone_number_1') {
         var currentKey = e.which;
@@ -303,7 +302,7 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-document.addEventListener('input', function(e) {
+document.addEventListener('input', function (e) {
     var target = e.target;
 
     if (target && target.id == 'id_phone_number_1') {

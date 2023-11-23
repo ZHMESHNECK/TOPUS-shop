@@ -6,8 +6,6 @@
     <link rel="stylesheet" href="{% static 'css/cart.css' %}">
 </head>
 
-{% include 'include/messages.html' %}
-
 <div class="all_total">
     <h4>У кошику: <span id="count_in_cart">{{ count }}</span>{% if count == 1 %} товар {% else %} товарів {% endif %}</h4>
 </div>
@@ -45,7 +43,7 @@
     </div>
     <div hidden class="product">
         <input type="hidden" name="id" value="{{ item.Товар.id }}">
-        <input type="hidden" name="quantity" value="{{ item.Кількість }}">
+        <input type="hidden" name="quantity" id="quantity_{{ item.Товар.id }}" value="{{ item.Кількість }}">
         <input type="hidden" name="price" id="price_{{ item.Товар.id }}" value="{{ item.Ціна }}">
     </div>
     {% endfor %}
@@ -62,9 +60,6 @@
 
     <form id="personal_data">
         {% csrf_token %}
-        <div id="message_pers" style="display: none;">
-            <p id="p_message" class="error">Потрібно заповнити всю форму</p>
-        </div>
         <p>Персональні данні</p>
         {% if profile %}
         <input type="hidden" name="profile" value="{{ profile.id }}">
@@ -88,7 +83,7 @@
         <div class="input-row">
             <div class="inputs-group">
                 <label>Номер телефону</label>
-                {{ form }}
+                {{ form.phone_number }}
             </div>
             <div class="inputs-group">
                 <label>Пошта</label>

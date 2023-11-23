@@ -39,9 +39,9 @@ class BaseItemViewSet(ModelViewSet):
         response = super(BaseItemViewSet, self).retrieve(request, pk)
         images = self.get_gallery_objects(pk)
         relation = Relation.objects.select_related(
-            'item', 'user').filter(parent__isnull=True, item_id=pk)
+            'item', 'user').filter(parent__isnull=True, item_id=pk).only('item__id','user__id','rate','comment','user__username','parent__id','id')
         answer = Relation.objects.select_related(
-            'item', 'user').filter(parent__isnull=False, item_id=pk)
+            'item', 'user').filter(parent__isnull=False, item_id=pk).only('item__id','user__id','rate','comment','user__username','parent__id','id')
         data_info = self.get_additional_info(response.data)
 
         # якщо це зміна існуючого відгуку, то блокується кнопка "надіслати"
@@ -62,9 +62,9 @@ class BaseItemViewSet(ModelViewSet):
         if request.accepted_renderer.format == 'html':
             images = self.get_gallery_objects(pk)
             relation = Relation.objects.select_related(
-                'item', 'user').filter(parent__isnull=True, item_id=pk)
+                'item', 'user').filter(parent__isnull=True, item_id=pk).only('item__id','user__id','rate','created_at','comment','user__username','id')
             answer = Relation.objects.select_related(
-                'item', 'user').filter(parent__isnull=False, item_id=pk)
+                'item', 'user').filter(parent__isnull=False, item_id=pk).only('item__id','user__id','rate','comment','user__username','parent__id','id')
             data_info = self.get_additional_info(response.data)
             parametrs = {'accept': True}
             return Response({'data': response.data, 'images': images, 'relation': relation, 'answer': answer, 'parametrs': parametrs, 'info': data_info}, template_name='item_view.html')

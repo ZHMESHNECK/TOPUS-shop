@@ -18,7 +18,6 @@ const csrftoken = getCookie('csrftoken');
 
 
 // Додання до кошика
-
 let ad_cart = document.querySelectorAll('.add_to_cart_btn button')
 ad_cart.forEach(btn => {
     btn.addEventListener('click', AddToCart)
@@ -27,7 +26,6 @@ ad_cart.forEach(btn => {
 function AddToCart(e) {
     let item = e.target.value
     let url = '/cart/'
-    M.toast({html: 'I am a toast!'})
     let data = {
         product_id: Number(item),
         quantity: 1
@@ -42,7 +40,6 @@ function AddToCart(e) {
         .then(data => {
             document.getElementById('num_of_cart').innerHTML = data.len
         })
-        // .then(alert('Товар добавлено у кошик'))
         .catch(error => {
             console.log(error)
         })

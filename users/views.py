@@ -10,16 +10,18 @@ from django.views.generic.edit import FormView
 from django.views.generic import CreateView, TemplateView
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from relations.models import Relation
+from django.db.utils import IntegrityError
+from django.http import Http404
 from users.serializers import *
 from users.permission import *
 from users.models import User
 from users.forms import *
-from cart.forms import PhoneNumber
 import requests
+import traceback
 
 
-class ActivateUser(GenericAPIView): #from django.contrib.auth.views import LoginView - test
+# from django.contrib.auth.views import LoginView - need test !!!!!
+class ActivateUser(GenericAPIView):
 
     def get(self, request, uid, token, format=None):
         payload = {"uid": uid, "token": token}
@@ -141,7 +143,6 @@ class LoginUser(LoginView):
     """Сторінка логіну
     """
     serializer_class = UserLoginSerializer
-    form_class = LoginUserForm
     template_name = 'login.html'
 
     def get_context_data(self, **kwargs):
@@ -165,21 +166,23 @@ class ProfileViewSet(ModelViewSet):
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
 
     def list(self, request):
-        return Response(template_name='404.html')
+        return Response(template_name='404.html', data={'message': 'Упс, цієї сторінки не існує'}, status=status.HTTP_404_NOT_FOUND)
 
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, pk: str = None):
+        # pk = username
         try:
             user = self.queryset.get(user__username=pk)
+            if user.user_id != request.user.id:
+                raise Http404
         except:
-            return redirect('404.html')
-        relation = Relation.objects.filter(user__username=pk)
-        if len(relation) == 0:
-            relation = None
+            return Response(template_name='404.html', data={'message': 'Упс, цієї сторінки не існує'}, status=status.HTTP_404_NOT_FOUND)
         if request.accepted_renderer.format == 'html':
-            number = PhoneNumber(
-                initial={'phone_number': user.phone_number})
-            return Response({'profile': user, 'relation': relation, 'number': number}, template_name='user_profile.html')
-        return user
+            form = ProfileForm(
+                initial={'phone_number': user.phone_number}, instance=user)  # phone / department
+            return Response({'profile': user, 'form': form}, template_name='user_profile.html')
+
+        serializer = ProfileSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """ Зберігає персональні данні
@@ -191,14 +194,50 @@ class ProfileViewSet(ModelViewSet):
             Response: data=dict
         """
         profile = self.queryset.get(user_id=request.user.id)
-        try:
-            profile.first_name = request.data.get('first_name')
-            profile.last_name = request.data.get('last_name')
-            profile.surname = request.data.get('surname')
-            number = PhoneNumber.from_string(request.data.get(
-                'phone_number_1'), region=request.data.get('phone_number_0'))
-            profile.phone_number = number
-            profile.save()
-            return Response(data={'ans': 'Данні успішно збережено'}, status=status.HTTP_202_ACCEPTED)
-        except:
-            return Response(data={'ans': 'Сталася помилка'}, status=status.HTTP_400_BAD_REQUEST)
+        data = request.data
+
+        # Зберігання даних з кошика
+        if request.data.get('cart'):
+            try:
+                profile.first_name = data.get('first_name')
+                profile.last_name = data.get('last_name')
+                profile.surname = data.get('surname')
+                number = PhoneNumber.from_string(
+                    data.get('phone_number_1'), region=data.get('phone_number_0'))
+                profile.phone_number = number
+                profile.save()
+                messages.success(request, 'Данні успішно збережено')
+                return Response(status=status.HTTP_202_ACCEPTED)
+            except:
+                messages.error(request, 'Сталася помилка')
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        # Зберігання даних з профілю
+        else:
+            try:
+                if profile.user.username != data.get('username'):
+                    user = profile.user
+                    user.username = data.get('username')
+                    user.save()
+
+                profile.first_name = data.get('first_name')
+                profile.last_name = data.get('last_name')
+                profile.surname = data.get('surname')
+                number = PhoneNumber.from_string(
+                    data.get('phone_number_1'), region=data.get('phone_number_0'))
+                profile.phone_number = number
+                profile.department = data.get('department')
+                profile.city = data.get('city')
+                profile.adress = data.get('adress')
+                profile.save()
+                profile.refresh_from_db()
+                messages.success(request, 'Данні успішно збережено')
+                return Response(data={'username': profile.user.username}, status=status.HTTP_202_ACCEPTED)
+            except IntegrityError:
+                # print(traceback.print_exc())
+                messages.error(request, 'Юзер з таким нікнеймом вже існує')
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            except:
+                # print(traceback.print_exc())
+                messages.error(request, 'Сталася помилка')
+                return Response(status=status.HTTP_400_BAD_REQUEST)

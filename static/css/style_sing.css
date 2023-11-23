@@ -14,18 +14,19 @@ body {
 
 
 .login-box {
-    position: absolute;
+    /* position: absolute; */
     top: 50%;
     left: 50%;
     width: 400px;
     padding: 40px;
     margin: 20px auto;
-    transform: translate(-50%, -55%);
+    /* transform: translate(-50%, -55%); */
     background: rgba(0, 0, 0, .9);
     box-sizing: border-box;
     box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
     border-radius: 10px;
-
+    /* display: flex; */
+    /* flex-direction: column; */
 }
 
 .login-box p:first-child {
@@ -37,6 +38,19 @@ body {
     font-weight: bold;
     letter-spacing: 1px;
 }
+.user-box {
+    display: flex;
+    /* border-top: 1px solid #fff; */
+    justify-content: center;
+    align-items: baseline;
+}
+.show_password {
+    position: absolute;
+    top: 35%;
+    right: 10px; /* Расположение иконки справа от поля ввода */
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
 
 .login-box .user-box {
     position: relative;
@@ -52,6 +66,7 @@ body {
     border-bottom: 1px solid #fff;
     outline: none;
     background: transparent;
+    margin-top: 5px;
 }
 
 .login-box .user-box label {

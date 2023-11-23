@@ -8,7 +8,7 @@ from cart.models import *
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer_info', 'product_info', 'quantity', 'city',
-                    'ordered_date', 'pay', 'status')
+                    'ordered_date', 'is_pay', 'status')
     readonly_fields = ('customer', 'product', 'city',
                        'quantity', 'ordered_date')
     list_filter = ('ordered_date', 'status')

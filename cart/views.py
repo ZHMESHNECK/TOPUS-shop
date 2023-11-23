@@ -2,12 +2,14 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status, renderers
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.contrib import messages
 from django.urls import reverse_lazy
 from users.models import Profile
 from cart.models import Cart
 from cart.utils import create_customer_and_order
-from cart.forms import PhoneNumber
+from users.forms import ProfileForm
+from phonenumbers import PhoneNumber
 import json
 
 
@@ -24,7 +26,7 @@ class CartAPI(APIView):
         if not request.user.is_anonymous:
             profile = Profile.objects.get(user_id=request.user.id)
             # Підставляємо в input номер телефону користувача
-            form = PhoneNumber(
+            form = ProfileForm(
                 initial={'phone_number': profile.phone_number})
             return Response(data={'in_cart': list(cart.__iter__()), 'to_pay': cart.get_total_price(), 'count': cart.__len__(), 'profile': profile, 'form': form},
                             status=status.HTTP_200_OK, template_name='cart.html')
@@ -64,7 +66,7 @@ class CheckCartAPI(APIView):
     """
 
     authentication_classes = [SessionAuthentication]
-    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer) 
+    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
 
     def get(self, request):
         return redirect('cart')
@@ -90,19 +92,21 @@ class AcceptCartAPI(APIView):
         APIView (_type_): Створення моделі Order та Custumer
 
     Returns:
-        Response:  500, якщо сталася помилка при збереженні даних
+        Response:  404 - якщо сталася помилка при збереженні даних & 403 - Немає доступу до цієї сторінки
         redirect:  якщо замовлення успішно створене
     """
     authentication_classes = [SessionAuthentication]
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
 
     def get(self, request):
-        return redirect('/')
+        return Response(template_name='403.html', data={'message': 'Немає доступу до цієї сторінки'}, status=status.HTTP_403_FORBIDDEN)
 
     def post(self, request):
 
         if create_customer_and_order(request):
             cart = Cart(request)
             cart.clear()
-            return redirect('/', permanent=True)
-        return render(request, '404.html', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            messages.success(
+                request, 'Замовлення успішно створено')
+            return redirect('home', permanent=True)
+        return Response(template_name='404.html', data={'message': 'При створенні замовлення сталася помилка'}, status=status.HTTP_404_NOT_FOUND)

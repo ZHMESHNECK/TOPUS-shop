@@ -17,6 +17,7 @@ function getCookie(name) {
 const csrftoken = getCookie('csrftoken');
 
 let price = '0'
+
 // До сплати
 fetch('/cart/check_order', {
     'method': 'POST',
@@ -185,6 +186,9 @@ function onPaymentAuthorized(paymentData) {
         processPayment(paymentData)
             .then(function () {
                 resolve({ transactionState: 'SUCCESS' });
+                console.log(price)
+                // send order to the server
+                send_order(true);
             })
             .catch(function () {
                 resolve({
@@ -278,15 +282,18 @@ function processPayment(paymentData) {
             paymentToken = paymentData.paymentMethodData.tokenizationData.token;
             resolve({});
             // console.log(paymentData);
-            // send order to the server
         }, 500);
-        send_order();
     });
 }
 
 
-function send_order() {
-    data = JSON.stringify(JSON.parse(document.getElementById('hello-data').textContent))
-    document.getElementById('send_data').value = data;
+function send_order(google) {
+    data = JSON.parse(document.getElementById('hello-data').textContent)
+    if (google) {
+        data['is_pay'] = true
+    } else {
+        data['is_pay'] = false
+    }
+    document.getElementById('send_data').value = JSON.stringify(data);
     document.getElementById('order').submit();
 }

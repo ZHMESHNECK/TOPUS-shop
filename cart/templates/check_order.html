@@ -22,7 +22,7 @@
             <p>Телефон:<span>{{ data.client_info.phone_number }}</span></p>
             <p>Спосіб доставки:<span>{% for key in data.delivery.keys %} {{ key }} {% endfor %}</span></p>
             <p>Адреса:<span>{% if 'До_замовника' in data.delivery %} {% for key, value in data.delivery.До_замовника.items %} <br> {{ key }}: {{ value }} {% endfor %} {% else %} {% for val in data.delivery.values %} {{ val }} {% endfor %} {% endif %}</span></p>
-            <p>Email:<span>ff@gmail.com</span></p>
+            <p>Пошта:<span>{{ data.client_info.email }}</span></p>
         </div>
     </div>
 
@@ -50,7 +50,7 @@
             <div id="container"></div>
         </div>
         {% else %}
-        <button class="Button" onclick="send_order()">Замовлення підтверджую</button>
+        <button class="Button" onclick="send_order(false)">Замовлення підтверджую</button>
         {% endif %}
     </div>
 </div>

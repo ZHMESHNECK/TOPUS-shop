@@ -1,10 +1,11 @@
 #largeImg {
-    width: 630px;
+    /* width: 600px; */
     max-height: 600px;
     padding: 5px;
     cursor: zoom-in;
     transition: opacity .4s;
     -webkit-backface-visibility: hidden;
+    min-width: 300px;
 }
 
 #largeImg:hover:not(.active) {
@@ -63,6 +64,7 @@
     margin: 0 auto;
     padding: 20px;
 }
+
 
 .buy-button {
     position: absolute;

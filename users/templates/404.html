@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<head>
+    <link rel="stylesheet" href="{% static 'css/errors.css' %}">
+</head>
+
+<div class="error-container">
+    <div class="image-container">
+        <img class="error-image" src="{% static 'images/404.png' %}" alt="Error 404" width="300">
+    </div>
+    <p class="text">{{ message }}</p>
+</div>
+{%endblock%}

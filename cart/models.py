@@ -46,7 +46,7 @@ class Cart(models.Model):
             del self.cart[product_id]
             self.save()
 
-    def __iter__(self): 
+    def __iter__(self):
         """Перебір елементів у кошику та отримання продуктів із бази даних.
         """
         # Отримання товару та додання їх до кошика
@@ -106,9 +106,13 @@ class Order(models.Model):
     city = models.CharField('Місто', blank=True,
                             max_length=100, default='Не вказано')
     adress = models.TextField('Адресса', blank=True, max_length=100)
-    quantity = models.PositiveSmallIntegerField("Кількість", default=1)
+    quantity = models.PositiveSmallIntegerField('Кількість', default=1)
     ordered_date = models.DateTimeField('Дата', auto_now_add=True)
-    pay = models.CharField('Оплата', max_length=50, choices=PAY, default='-')
+    how_to_pay = models.CharField(
+        'Спосіб оплати', max_length=50, choices=PAY, default='-')
+    is_pay = models.BooleanField('Сплачено', default=False)
+    summ_of_pay = models.DecimalField(
+        'Вартість', max_digits=7, decimal_places=2, default=0)
     status = models.CharField('Статус',
                               max_length=50, choices=STATUS_ORDER, default='Прийнято')
 

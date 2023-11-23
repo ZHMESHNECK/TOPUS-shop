@@ -57,11 +57,23 @@ __
 
 ## Дякую
 
-- [ImDeath](mailto:hiphoplands@gmail.com) - Front-end (css | html)
-- [vladfraer1](mailto:vladfraer1@gmail.com) - images | logo 
+- [ImDeath](mailto:hiphoplands@gmail.com) - Front-end (css & html)
+- [vladfraer1](mailto:vladfraer1@gmail.com) - images & logo 
 
 
 ## Оновлення
+
+version 0.2.4
+- Правки css ( header & login & registration )
+- На стронінці login.html, змінено авто-генерування форми на html код ( для можливости вставлення svg картинки ) + можливість перегляду введеного пароля
+- Додані нові поля для моделі Order ( is_pay & summ_of_pay )
+- Додан файл для handlers ( 403 & 404 ) utils/error & templates/(403 & 404)
+- Перероблена функція post в ProfileView для зберігання персональніх даних з кошика та сторінки профіля
+- Видалена форма логіну ( LoginForm )
+- Додана форма профіля ( ProfileForm )
+- Додана функція .only в post & retrieve - products/view
+- Message перенесенні в product/template/base.html
+
 
 version 0.2.3
 - Оптимазація сторінки товару та списку товарів по категоріїї ( sql запроси )
@@ -155,7 +167,7 @@ version 0.0.15
 version 0.0.14.a
 - Додана нова app - cart
 - Виправлення ImDeathS
-    - Додана нова гілка для Front-end (css|html)
+    - Додана нова гілка для Front-end (css & html)
     - Видалено файл HTML
 - В розробці кошик для товарів
 
@@ -192,7 +204,7 @@ version 0.0.10
     - Переміщені всі моделі де є зв'язок між юзером та товаром
 - граматичні виправлення в README.md
 - Додано профіль юзеру
-    - автоматично створюється при реєстрації ( звичайної | google )
+    - автоматично створюється при реєстрації ( звичайної & google )
 
 version 0.0.9
 - Добавлена інформація в html файлах про залогіненого юзера
@@ -216,7 +228,7 @@ version 0.0.7
 - Добавленні djoser та jwt
 - Добавленні базові templates
 - Доданий додаток users
-- Реєстрація та логін користувача  (логін за email | username)
+- Реєстрація та логін користувача  (логін за email & username)
     - Реєстрація через підтвердження через пошту
 - Warnings - social_user() missing 1 required positional argument: 'uid'
 
@@ -238,7 +250,7 @@ version 0.0.4
 
 version 0.0.3
 - Видалене поле slug для Mainmodel 
-- Добавленні поля date_create | s_code
+- Добавленні поля date_create & s_code
 - Добавлен генератор серійного коду при створенні нового запису django-admin / postman
 - Добавлена admin.model для Home
 - WARNING в тестах -> DateTimeField MainModel.date_created received a naive datetime (2023-09-06 17:34:00) while time zone support is active.

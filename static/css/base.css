@@ -22,9 +22,9 @@ header {
     background-color: #333;
     color: #fff;
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
+    justify-content: space-between;
 }
 
 .header-ul {
@@ -36,6 +36,9 @@ header {
 .header-header-r {
     display: flex;
     /* margin-left: 100px; */
+    width: 470px;
+    justify-content: end;
+    min-width: 260px;
 }
 
 .header-shadow__btn {
@@ -78,6 +81,7 @@ header {
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px,
         rgba(49, 98, 232, 0.2) 5px 10px 15px;
+    min-width: 100px;
 }
 
 .header-button {
@@ -109,7 +113,8 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 17px;
+    /* height: 17px; */
+    min-width: 20px;
 }
 
 .header-input {
@@ -127,7 +132,10 @@ header {
     border-bottom-left-radius: 7px;
     margin-right: 1px;
     transition: all .2s ease;
-    margin-left: 30px;
+    margin-left: 5%;
+    flex: 1;
+    min-width: 20px;
+    width: 100%;
 }
 
 .header-input:hover {
@@ -160,8 +168,10 @@ header {
 
 .header-logo-container {
     display: flex;
-    margin-right: 10%;
+    /* margin-right: 10%; */
     align-items: center;
+    margin: 0 5px 0 5px;
+    width: 140px;
 }
 
 .header-logo {
@@ -170,13 +180,15 @@ header {
 
 .header-search {
     display: flex;
-    width: 250px;
+    /* width: 250px; */
+    min-width: 20px;
 }
 
 .header-left-block {
     display: flex;
-    width: 500px;
+    min-width: 164px;
     align-items: center;
+    max-width: 470px;
 }
 .projects-section {
     padding: 32px 32px 0 32px;

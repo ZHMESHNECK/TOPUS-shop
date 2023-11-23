@@ -1,6 +1,6 @@
-from django.contrib.auth.forms import AuthenticationForm
+from phonenumber_field.widgets import PhoneNumberPrefixWidget
 from django import forms
-from users.models import User
+from users.models import User, Profile
 import json
 
 
@@ -34,16 +34,6 @@ class UserRegistrationForm(forms.ModelForm):
             self.add_error('password', error_pass)
         if error_detail:
             self.add_error('email', error_detail)
-
-
-class LoginUserForm(AuthenticationForm):
-    """ Форма логіну
-    """
-
-    username = forms.CharField(
-        label='Пошта / Логін')
-    password = forms.CharField(
-        label='Пароль', widget=forms.PasswordInput)
 
 
 class ForgotPasswordForm(forms.ModelForm):
@@ -80,3 +70,22 @@ class SetPasswordForm(forms.Form):
     class Meta:
         model = User
         fields = ('password1', 'password2')
+
+
+class ProfileForm(forms.ModelForm):
+    """Форма збереження контактних даних юзера у профілю
+    ( потрібна лише для department )
+    """
+
+    DEPART = (
+        ('---', '---'),
+        ('Жіноча', 'Жіноча'),
+        ('Чоловіча', 'Чоловіча'),
+    )
+    department = forms.ChoiceField(label='Стать:', choices=DEPART)
+    phone_number = forms.CharField(label='Номер телефону:', widget=PhoneNumberPrefixWidget(
+        attrs={'type': 'text', 'name': 'phone_number', 'maxlength': '14'}))
+
+    class Meta:
+        model = Profile
+        fields = ('phone_number','department')

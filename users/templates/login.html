@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+
 <head>
     <link rel="stylesheet" href="{% static 'css/style_sing.css' %}">
 </head>
@@ -15,12 +16,22 @@
     <form method="post">
         {% csrf_token %}
         {{ form.non_field_errors }}
-        {% for field in form %}
         <div class="user-box">
-            {{ field }}
-            <label>{{field.label}}</label>
+            <input type="text" name="username" maxlength="150" required id="id_username">
+            <label>Пошта / Логін</label>
         </div>
-        {% endfor %}
+        <div class="user-box">
+            <input type="password" name="password" required id="id_password">
+            <i class="show_password" id="show_pass">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-eye-fill"
+                    viewBox="0 0 16 16">
+                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                    <path
+                        d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+                </svg>
+            </i>
+            <label>Пароль</label>
+        </div>
         <button class="login-button" type="submit" value="Увійти">
             <span></span>
             <span></span>
@@ -30,9 +41,9 @@
         </button>
     </form>
     <div class="nual">
-    <a href="{% url 'registration' %}" class="noacc">Реєстрація</a>
-    <a href="{% url 'forgot_pass' %}" class="noacc">Забув пароль</a>
-</div>
+        <a href="{% url 'registration' %}" class="noacc">Реєстрація</a>
+        <a href="{% url 'forgot_pass' %}" class="noacc">Забув пароль</a>
+    </div>
     <br>
 
     <div class="google">
@@ -64,4 +75,17 @@
     </div>
 </div>
 {% endif %}
+
+<!-- показ та приховування пароля -->
+<script>
+    let show_pass = document.getElementById('show_pass');
+    show_pass.addEventListener('click', (e) => {
+        if (show_pass.previousElementSibling.type == 'password') {
+            show_pass.previousElementSibling.type = 'text'
+        } else {
+            show_pass.previousElementSibling.type = 'password'
+        };
+    })
+</script>
+<!-- \ показ та приховування пароля -->
 {% endblock %}
