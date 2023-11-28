@@ -20,7 +20,6 @@
     {% for item in in_cart %}
 
     <div class="cart-item">
-        <!-- {{ item }} -->
         <a href="{{ item.Товар.get_absolute_url }}"><img src="{{ item.Товар.main_image.url }}" width="200"></a>
         <a href="{{ item.Товар.get_absolute_url }}">{{ item.Товар.title }}</a>
         <!-- Зміна кількості товару -->
@@ -53,7 +52,6 @@
 <div class="all_total">
     <h3 id="full_cart_price">До сплати: {{ to_pay }} грн</h3>
 </div>
-
 <div class="center">
 <!-- Персональні данні-->
 <div class="delivery-contact">
@@ -128,10 +126,10 @@
                 <div id="eror_adress_del" style="display: none;">
                     <p>Вам потрібно заповнити адрес доставки</p>
                 </div>
-                <input type="text" name="city" value="" placeholder="Місто" maxlength="50">
-                <input type="text" name="street" value="" placeholder="Вулиця" maxlength="50">
-                <input type="text" name="building" value="" placeholder="Будинок" maxlength="6">
-                <input type="number" name="apartment" value="" placeholder="Квартира" maxlength="4">
+                <input type="text" name="city" value="{{ profile.city }}" placeholder="Місто" maxlength="50">
+                <input type="text" name="street" value="{{ profile.street }}" placeholder="Вулиця" maxlength="50">
+                <input type="text" name="building" value="{{ profile.num_street }}" placeholder="Будинок" maxlength="6">
+                <input type="number" name="apartment" value="{{ profile.apartment }}" placeholder="Квартира" maxlength="4">
                 <br>
                 <label>Поверх</label>
                 <select id="floor">

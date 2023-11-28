@@ -66,7 +66,7 @@
 
         {% if request.user.is_authenticated %}
         <div class="header-header-r">
-            <a href="/api/profile/{{user.username}}" class="header-shadow__btn">{{ user.username }}</a>
+            <a href="/api/profile/{{user.username}}" class="header-shadow__btn">{{ user.username|truncatechars:10 }}</a>
             <div class="header-button-spacing"></div>
             <a href="{% url 'logout' %}" class="header-shadow__btn">Вийти</a>
         </div>

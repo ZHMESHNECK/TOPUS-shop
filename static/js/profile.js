@@ -37,7 +37,6 @@ formElement.addEventListener('submit', (e) => {
         phone_number_1: formData.get('phone_number_1'),
         department: formData.get('department'),
     }
-    // !!!!
     fetch(url, {
         'method': 'POST',
         'headers': { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
@@ -51,3 +50,74 @@ formElement.addEventListener('submit', (e) => {
             console.log(error)
         })
 });
+
+// Для поля телефону
+var backspacePressedLast = false;
+
+document.addEventListener('keydown', function (e) {
+    var target = e.target;
+    if (target && target.id == 'id_phone_number_1') {
+        var currentKey = e.which;
+
+        if (currentKey === 8 || currentKey === 46) {
+            backspacePressedLast = true;
+        } else {
+            backspacePressedLast = false;
+        }
+    }
+});
+
+document.addEventListener('input', function (e) {
+    var target = e.target;
+
+    if (target && target.id == 'id_phone_number_1') {
+        if (backspacePressedLast) return;
+
+        var currentValue = target.value,
+            newValue = currentValue.replace(/\D+/g, ''),
+            formattedValue = formatToTelephone(newValue);
+
+        target.value = formattedValue;
+    }
+});
+
+function formatToTelephone(str) {
+    var splitString = str.split(''),
+        returnValue = '';
+
+    for (var i = 0; i < splitString.length; i++) {
+        var currentLoop = i,
+            currentCharacter = splitString[i];
+
+        switch (currentLoop) {
+            case 0:
+                returnValue = returnValue.concat('(');
+                returnValue = returnValue.concat(currentCharacter);
+                break;
+            case 2:
+                returnValue = returnValue.concat(currentCharacter);
+                returnValue = returnValue.concat(') ');
+                break;
+            case 5:
+                returnValue = returnValue.concat(currentCharacter);
+                returnValue = returnValue.concat('-');
+                break;
+            default:
+                returnValue = returnValue.concat(currentCharacter);
+        }
+    }
+
+    return returnValue;
+}
+
+// help-text
+var help_btn = document.getElementsByClassName('help-text-i')[0]
+var help_text = document.getElementById('help-text')
+help_btn.addEventListener('click', (e) => {
+
+    if (help_text.style.display == 'none') {
+        help_text.style.display = 'block'
+    } else {
+        help_text.style.display = 'none'
+    };
+})

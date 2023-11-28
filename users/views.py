@@ -234,10 +234,8 @@ class ProfileViewSet(ModelViewSet):
                 messages.success(request, 'Данні успішно збережено')
                 return Response(data={'username': profile.user.username}, status=status.HTTP_202_ACCEPTED)
             except IntegrityError:
-                # print(traceback.print_exc())
                 messages.error(request, 'Юзер з таким нікнеймом вже існує')
                 return Response(status=status.HTTP_400_BAD_REQUEST)
             except:
-                # print(traceback.print_exc())
                 messages.error(request, 'Сталася помилка')
                 return Response(status=status.HTTP_400_BAD_REQUEST)

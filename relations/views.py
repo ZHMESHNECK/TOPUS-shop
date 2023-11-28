@@ -54,10 +54,10 @@ class AdToFavAPI(APIView):
             item = get_object_or_404(MainModel, pk=pk)
             if item.in_liked.filter(pk=request.user.id).exists():
                 item.in_liked.remove(request.user)
-                return Response(data={'data': False}, status=status.HTTP_202_ACCEPTED)
+                return Response(data={'data': False, 'id': pk}, status=status.HTTP_202_ACCEPTED)
             else:
                 item.in_liked.add(request.user)
-                return Response(data={'data': True}, status=status.HTTP_202_ACCEPTED)
+                return Response(data={'data': True, 'id': pk}, status=status.HTTP_202_ACCEPTED)
 
         return redirect('login')
 

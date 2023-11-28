@@ -11,9 +11,21 @@
 <div class="list-container">
     {% for item in data.results %}
     <div class="product-card">
+        <!-- in liked -->
+        <div class="to_fav">
+            {% if request.user.id in item.in_liked %}
+            <button class="heart-btn" style="color: #ff8d02;" id="{{ item.id }}"><i value="{{ item.id }}"
+                    class="fa-solid fa-heart fa-lg"></i></button>
+            {% else %}
+            <button class="heart-btn" style="color: #ff8d02;" id="{{ item.id }}"><i value="{{ item.id }}"
+                    class="fa-regular fa-heart fa-lg"></i></button>
+            {% endif %}
+        </div>
+        <!-- \ in liked -->
+
         <a href="{{ item.id }}"><img src="{{ item.main_image }}" alt="Фото" class="product-image"></a>
         <a href="{{ item.id }}">
-            <h2 class="product-title">{{ item.title }}</h2>
+            <h2 class="product-title">{{ item.title|truncatechars:50 }}</h2>
         </a>
         <p class="product-description">Бренд: {{ item.brand }}</p>
         {% if item.discount is not 0 %}
@@ -44,6 +56,6 @@
     </div>
     {% endfor %}
 </div>
-  
+
 <script src="{% static 'js/list_item.js' %}"></script>
 {% endblock %}

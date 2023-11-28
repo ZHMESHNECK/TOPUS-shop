@@ -23,11 +23,17 @@ class CartAPI(APIView):
     def get(self, request):
         cart = Cart(request)
         profile = None
+        # Якщо юзер не анонім
         if not request.user.is_anonymous:
             profile = Profile.objects.get(user_id=request.user.id)
             # Підставляємо в input номер телефону користувача
             form = ProfileForm(
                 initial={'phone_number': profile.phone_number})
+            if len(profile.adress.split()) >= 3:
+                adress = profile.adress.split()
+                profile.street = adress[0]
+                profile.num_street = adress[1]
+                profile.apartment = adress[2]
             return Response(data={'in_cart': list(cart.__iter__()), 'to_pay': cart.get_total_price(), 'count': cart.__len__(), 'profile': profile, 'form': form},
                             status=status.HTTP_200_OK, template_name='cart.html')
         form = PhoneNumber()

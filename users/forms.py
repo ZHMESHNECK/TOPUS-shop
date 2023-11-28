@@ -74,18 +74,13 @@ class SetPasswordForm(forms.Form):
 
 class ProfileForm(forms.ModelForm):
     """Форма збереження контактних даних юзера у профілю
-    ( потрібна лише для department )
     """
-
-    DEPART = (
-        ('---', '---'),
-        ('Жіноча', 'Жіноча'),
-        ('Чоловіча', 'Чоловіча'),
-    )
-    department = forms.ChoiceField(label='Стать:', choices=DEPART)
     phone_number = forms.CharField(label='Номер телефону:', widget=PhoneNumberPrefixWidget(
         attrs={'type': 'text', 'name': 'phone_number', 'maxlength': '14'}))
+    adress = forms.CharField(
+        label='12', help_text='Для коректного збереження цього поля, використовуйте такий формат:\n" Вулиця номер_будинку номер_квартири "\nНаприклад:\nЗакревського 155 50')
 
     class Meta:
         model = Profile
-        fields = ('phone_number','department')
+        fields = ('first_name', 'last_name', 'surname',
+                  'phone_number', 'department', 'city', 'adress')

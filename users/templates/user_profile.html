@@ -6,60 +6,74 @@
     <link rel="stylesheet" href="{% static 'css/user_profile.css' %}">
 </head>
 
-<div class="sidebar">
-    <a href="#" class="sidebar-link">Избранное</a>
-    <a href="#" class="sidebar-link">Покупки</a>
-</div>
+<div class="block">  
+    <div class="sidebar">
+        <a href="#" class="sidebar-link">Избранное</a>
+        <a href="#" class="sidebar-link">Покупки</a>
+    </div>
 
-<!-- Персональні данні-->
-<div class="user-info">
-    <form id="personal_data">
-        <p>Персональні данні</p>
-        <div class="label-input-group">
-            <label>Нікнейм:</label>
-            <input type="text" name="username" value="{{ profile.user.username }}" required>
-        </div>
+    <!-- Персональні данні-->
+    <div class="user-info">
+        <form id="personal_data">
+            <p>Персональні данні</p>
+            <div class="label-input-group">
+                <label>Нікнейм:</label>
+                <input type="text" name="username" value="{{ profile.user.username }}" required>
+            </div>
 
-        <div class="label-input-group">
-            <label>Ім'я:</label>
-            <input type="text" name="first_name" value="{{ profile.first_name }}" required>
-        </div>
+            <div class="label-input-group">
+                <label>Пошта:</label>
+                <input type="email" name="email" value="{{ profile.user.email }}" required>
+            </div>
 
-        <div class="label-input-group">
-            <label>Прізвище:</label>
-            <input type="text" name="last_name" value="{{ profile.last_name }}" required>
-        </div>
+            <div class="label-input-group">
+                <label>Ім'я:</label>
+                {{ form.first_name }}
+            </div>
 
-        <div class="label-input-group">
-            <label>По батькові:</label>
-            <input type="text" name="surname" value="{{ profile.surname }}" required>
-        </div>
-        
-        <div class="label-input-group">
-            <label>Пошта:</label>
-            <input type="email" name="email" value="{{ profile.user.email }}" required>
-        </div>
+            <div class="label-input-group">
+                <label>Прізвище:</label>
+                {{ form.last_name }}
+            </div>
 
-        <div class="label-input-group">
-            <label>Місто:</label>
-            <input type="text" name="city" value="{{ profile.city }}">
-        </div>
+            <div class="label-input-group">
+                <label>По батькові:</label>
+                {{ form.surname }}
+            </div>
 
-        <div class="label-input-group">
-            <label>Адрес:</label>
-            <input type="text" name="adress" value="{{ profile.address }}">
-        </div>
+            <div class="label-input-group">
+                <label>Місто:</label>
+                {{ form.city }}
+            </div>
 
-        {% for field in form %}
-        <div class="label-input-group">
-            <label>{{ field.label }}</label>
-            {{ field }}
-        </div>
-        {% endfor %}
+            <div class="label-input-group">
+                <label>Адрес:</label>
+                <span id="help-text" style="display: none;">{{ form.adress.help_text }}</span>
+                {{ form.adress }}
+                <i class="help-text-i">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-question-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                        <path
+                            d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94" />
+                    </svg>
+                </i>
+            </div>
 
-        <button class="btn" type="submit">Зберегти</button>
+            <div class="label-input-group">
+                <label>Номер телефону:</label>
+                {{ form.phone_number }}
+            </div>
 
-    </form>
+            <div class="label-input-group">
+                <label>Стать:</label>
+                {{ form.department }}
+            </div>
+
+            <button class="btn" type="submit">Зберегти</button>
+
+        </form>
+    </div>
 </div>
 <!-- \ персональні данні -->
 <script src="{% static 'js/profile.js' %}"></script>

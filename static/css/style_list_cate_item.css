@@ -23,6 +23,7 @@ a {
     width: 300px;
     margin: 15px;
     height: 520px;
+    position: relative;
 }
 
 .product-image {
@@ -38,7 +39,7 @@ a {
 
 
 .product-title {
-    font-size: 1.5rem;
+    font-size: 1.5em;
     font-weight: bold;
     margin: 10px 0;
     height: 23%;
@@ -150,3 +151,22 @@ a {
 }
 
 /*rating*/
+
+
+
+.heart-btn {
+    font-size: 24px;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 0;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.heart-btn:active {
+    animation: heartBeat 0.5s ease;
+}

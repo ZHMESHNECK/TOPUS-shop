@@ -65,7 +65,7 @@
         <div class="buy">
             <!-- auth -->
             {% if request.user.is_authenticated %}
-            <!-- in liked -->
+                <!-- in liked -->
                 {% if request.user.id in data.in_liked %}
                 <div class="add_to_fav">
                     <button class="button_view_page" style="color: #ff0080;" value="{{ data.id }}"><i value="{{ data.id }}"

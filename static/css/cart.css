@@ -137,7 +137,7 @@ h4 {
     border: 1px solid rgb(150, 150, 150);
     border-radius: 5px;
     font-size: 1rem;
-    /* width: 100%; */
+    width: 100%;
 }
 
 .option2 input[type="text"],
