@@ -9,9 +9,7 @@ from users.models import Profile
 from cart.models import Cart
 from cart.utils import create_customer_and_order
 from users.forms import ProfileForm
-from phonenumbers import PhoneNumber
 import json
-
 
 class CartAPI(APIView):
     """
@@ -36,7 +34,8 @@ class CartAPI(APIView):
                 profile.apartment = adress[2]
             return Response(data={'in_cart': list(cart.__iter__()), 'to_pay': cart.get_total_price(), 'count': cart.__len__(), 'profile': profile, 'form': form},
                             status=status.HTTP_200_OK, template_name='cart.html')
-        form = PhoneNumber()
+        form = ProfileForm(
+            initial={'phone_number': ''})
         return Response(data={'in_cart': list(cart.__iter__()), 'to_pay': cart.get_total_price(), 'count': cart.__len__(), 'profile': profile, 'form': form},
                         status=status.HTTP_200_OK, template_name='cart.html')
 
@@ -108,7 +107,6 @@ class AcceptCartAPI(APIView):
         return Response(template_name='403.html', data={'message': 'Немає доступу до цієї сторінки'}, status=status.HTTP_403_FORBIDDEN)
 
     def post(self, request):
-
         if create_customer_and_order(request):
             cart = Cart(request)
             cart.clear()

@@ -59,6 +59,9 @@
     <form id="personal_data">
         {% csrf_token %}
         <p>Персональні данні</p>
+        <div id="message_pers" style="display: none;">
+            <p id="p_message" class="error">Потрібно заповнити всю форму</p>
+        </div>
         {% if profile %}
         <input type="hidden" name="profile" value="{{ profile.id }}">
         {% else %}

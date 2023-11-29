@@ -23,8 +23,8 @@
         </div>
         <!-- \ in liked -->
 
-        <a href="{{ item.id }}"><img src="{{ item.main_image }}" alt="Фото" class="product-image"></a>
-        <a href="{{ item.id }}">
+        <a href="{{ item.absolute_url }}"><img src="{{ item.main_image }}" alt="Фото" class="product-image"></a>
+        <a href="{{ item.absolute_url }}">
             <h2 class="product-title">{{ item.title|truncatechars:50 }}</h2>
         </a>
         <p class="product-description">Бренд: {{ item.brand }}</p>

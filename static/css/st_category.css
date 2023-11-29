@@ -3,10 +3,10 @@
 .products-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; 
-    align-items: center; 
-    padding-top: 100px;
-
+    justify-content: center;
+    align-items: center;
+    /* padding-top: 100px; */
+    min-height: 90vh;
 }
 
 .card {

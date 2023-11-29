@@ -83,48 +83,63 @@
         {% include 'include/messages.html' %}
         <div id="overlay" class="d-flex">
             <div id="loader" class="spinner-border text-primary" role="status">
-          </div>
+            </div>
         </div>
         {% block content %}
         {% endblock %}
-          <!-- Пагінация -->
-    {% if data.count_page %}
-    <ul class="pagination justify-content-center">
-        {% if data.previous != None %}
-        <li class="page-item">
-            <a href="{{ data.previous }}"><span class="page-link">&laquo;</span></a>
-        </li>
-        {% endif %}
-        {% for p in data.list_page %}
-        {% if data.page_num == p %}
-        <li class="page-item active">
-            <span class="page-link">
-                <span>{{ p }}</spna>
-                    <span class="sr-only"></span>
-                </span>
-        </li>
-        {% elif p >= data.page_num|add:-2 and p <= data.page_num|add:2 %} <li class="page-item"><a class="page-link"
-                href="?page={{ p }}">{{ p }}</a></li>
-            {% endif %}
-            {% endfor %}
-
-            {% if data.next != None %}
+        <!-- Пагінация -->
+        {% if data.count_page %}
+        <ul class="pagination justify-content-center">
+            {% if data.previous != None %}
             <li class="page-item">
-                <a class="page-link" href="{{ data.next }}">&raquo;</a>
+                <a href="{{ data.previous }}"><span class="page-link">&laquo;</span></a>
             </li>
             {% endif %}
-    </ul>
-{% endif %}
-<!--\ пагінация -->
-</div>
+            {% for p in data.list_page %}
+            {% if data.page_num == p %}
+            <li class="page-item active">
+                <span class="page-link">
+                    <span>{{ p }}</spna>
+                        <span class="sr-only"></span>
+                    </span>
+            </li>
+            {% elif p >= data.page_num|add:-2 and p <= data.page_num|add:2 %} <li class="page-item"><a class="page-link"
+                    href="?page={{ p }}">{{ p }}</a></li>
+                {% endif %}
+                {% endfor %}
 
-<!-- spinner -->
-<script>
-    window.onload = (event) => {
-        document.getElementById('overlay').remove();
-    }
-</script>
-<!-- \spinner -->
+                {% if data.next != None %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ data.next }}">&raquo;</a>
+                </li>
+                {% endif %}
+        </ul>
+        {% endif %}
+        <!--\ пагінация -->
+    </div>
+
+    <!-- Footer -->
+    <footer class="position-relative">
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+
+        <div class="container">
+          <section class="mb-3">
+            <a href="#"><i class="fab">Команда TOPUS-shop</i></a>
+          </section>
+        </div>
+      
+          © 2023 Copyright:
+          <i>ZHMESHNECK</i>
+        </div>
+      </footer>
+
+    <!-- Візуальне завантаження сторінки -->
+    <script>
+        window.onload = (event) => {
+            document.getElementById('overlay').remove();
+        }
+    </script>
+    <!--\ Візуальне ... -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

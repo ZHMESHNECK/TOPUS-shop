@@ -4,7 +4,6 @@ from django.conf import settings
 from relations.views import AdToFavAPI, SearchViewSet, Main
 from products.views import ClothviewSet, GamingViewSet, HomeViewSet
 
-
 from django.urls import path
 
 router = SimpleRouter()

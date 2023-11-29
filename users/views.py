@@ -36,7 +36,7 @@ class ActivateUser(GenericAPIView):
         else:
             messages.error(
                 request, 'При створенні профілю сталася помилка')
-            return render(request, '404.html')
+            return Response(template_name='404.html', data={'message': 'Упс, цієї сторінки не існує'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class ChangePasswordUser(PasswordContextMixin, FormView):

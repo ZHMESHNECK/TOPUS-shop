@@ -227,6 +227,11 @@ select {
     cursor: pointer;
     transition: background-color 0.3s;
 }
+#btn_send:disabled {
+    background-color: rgb(200, 200, 200);
+    color: rgb(170, 170, 170);
+    cursor: not-allowed;
+}
 
 .center {
     display: flex;

@@ -59,6 +59,7 @@ function AddToFav(e) {
         item = e.target.value
     }
     let url = '/add_to_fav/' + item.toString()
+    // console.log(url)
 
     fetch(url, {
         'method': 'POST',
@@ -109,10 +110,27 @@ document.querySelector('#thumbs').addEventListener('click', function (event) {
 
 // Повідомлення про добавлення товару до кошика
 function Toast() {
-    var x = document.getElementById("snackbar");
-    x.className = "show";
+    var x = document.getElementById('snackbar');
+    x.className = 'show';
     let btn = document.getElementById('to_cart');
     btn.disabled = true;
-    setTimeout(function(){ x.className = x.className.replace("show", ""); btn.disabled = false;}, 3000);
+    setTimeout(function () { x.className = x.className.replace('show', ''); btn.disabled = false; }, 3000);
 
-  }
+}
+
+// Добавлення історії переглянутого
+document.addEventListener("DOMContentLoaded", function () {
+    let url = '/api/add_history/'
+    let data = { 'data': document.getElementById('to_cart').value }
+
+    fetch(url, {
+        'method': 'POST',
+        'headers': { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+        'body': document.getElementById('to_cart').value
+    })
+        .then(res => res.json())
+        .then(data => { })
+        .catch(error => {
+            console.log(error.data)
+        })
+})

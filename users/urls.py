@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import path, re_path, include
 from users.views import *
-
+from relations.views import FavouriteViewSet, HistoryAPI, HistoryView
 
 
 router = SimpleRouter()
@@ -23,6 +23,9 @@ urlpatterns = [
     path('login/', LoginUser.as_view(), name='login'),
     path('logout/', logout_user, name='logout'),
     path('forgot_password/', ForgotPassword.as_view(), name='forgot_pass'),
+    path('favourite/', FavouriteViewSet.as_view(), name='favourite'),
+    path('add_history/', HistoryAPI.as_view(), name='add_history'),
+    path('history/', HistoryView.as_view(), name='history')
 ]
 
 urlpatterns += router.urls

@@ -6,12 +6,14 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.views import APIView
 from rest_framework import status, renderers
 from django_filters.rest_framework import DjangoFilterBackend
-from django.shortcuts import get_object_or_404, redirect, render
-from django.db.models import F, Count, Q
+from django.shortcuts import get_object_or_404, redirect
+from django.db.models import F, Count, Q, Prefetch
 from relations.serializers import RelationSerializer
 from relations.models import Relation
 from products.serializers import SearchSerializer
 from products.models import MainModel
+from utils.pagination import Pagination
+from users.models import User
 
 
 class UserRelationViewSet(APIView):
@@ -24,7 +26,7 @@ class UserRelationViewSet(APIView):
     authentication_classes = [SessionAuthentication]
 
     def get(self, request, pk):
-        return render(request, '404.html', status=404)
+        return Response(template_name='403.html', data={'message': 'Немає доступу до цієї сторінки'}, status=status.HTTP_403_FORBIDDEN)
 
     def get_object(self):
         obj, _ = Relation.objects.get_or_create(
@@ -86,6 +88,7 @@ class SearchViewSet(ListAPIView):
     search_fields = ['title', 'description', 'brand']
     authentication_classes = [SessionAuthentication]
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+    pagination_class = Pagination
 
     def list(self, request):
         queryset = self.get_queryset()
@@ -96,3 +99,77 @@ class SearchViewSet(ListAPIView):
             serializer = SearchSerializer(data, many=True)
             return Response(data=({'data': serializer.data}), template_name='list_item_page.html', status=status.HTTP_200_OK)
         return redirect('home')
+
+
+class FavouriteViewSet(ListAPIView):
+    """Список доданого в улюблене
+
+    Args:
+        ListAPIView (_type_): _description_
+    """
+    queryset = MainModel.objects.filter(is_published=True)
+    serializer_class = SearchSerializer
+    authentication_classes = [SessionAuthentication]
+    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+    pagination_class = Pagination
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.queryset.filter(in_liked=request.user.id).prefetch_related(Prefetch('in_liked', queryset=User.objects.all().only(
+            'id'))).annotate(price_w_dis=F('price') - F('price') / 100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('-pk')
+
+        paginated_queryset = self.paginate_queryset(queryset)
+        serializer = SearchSerializer(paginated_queryset, many=True)
+        # Отримуемо відповідь від пагінації
+        paginated_response = self.get_paginated_response(serializer.data)
+        return Response(data=({'data': paginated_response.data}), template_name='list_item_page.html', status=status.HTTP_200_OK)
+
+
+class HistoryAPI(APIView):
+    """Додання товарів в історію переглянутого
+
+    Args:
+        APIView (_type_): _description_
+    """
+    authentication_classes = [SessionAuthentication]
+    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+
+    def post(self, request):
+        viewed_products = request.session.get('viewed_products', [])
+        if request.data not in viewed_products:
+            viewed_products.append(request.data)
+            request.session['viewed_products'] = viewed_products
+        return Response(status=status.HTTP_200_OK)
+
+
+class HistoryView(ListAPIView):
+    """Вивід списку історії переглянутих товарів
+
+    Args:
+        ListAPIView (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+
+    serializer_class = SearchSerializer
+    authentication_classes = [SessionAuthentication]
+    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+    pagination_class = Pagination
+
+    def get_queryset(self):
+        viewed_product_ids = self.request.session.get('viewed_products', [])
+        queryset = MainModel.objects.filter(id__in=viewed_product_ids, is_published=True).prefetch_related(
+            Prefetch('in_liked', queryset=User.objects.all().only('id'))
+        ).annotate(
+            price_w_dis=F('price') - F('price') / 100 * F('discount'),
+            views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))
+        ).order_by('-pk')
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        paginated_queryset = self.paginate_queryset(queryset)
+        serializer = SearchSerializer(paginated_queryset, many=True)
+        paginated_response = self.get_paginated_response(serializer.data)
+
+        return Response(data=({'data': paginated_response.data}), template_name='list_item_page.html', status=status.HTTP_200_OK)
