@@ -21,7 +21,20 @@
             <p>По-батькові:<span>{{ data.client_info.surname }}</span></p>
             <p>Телефон:<span>{{ data.client_info.phone_number }}</span></p>
             <p>Спосіб доставки:<span>{% for key in data.delivery.keys %} {{ key }} {% endfor %}</span></p>
-            <p>Адреса:<span>{% if 'До_замовника' in data.delivery %} {% for key, value in data.delivery.До_замовника.items %} <br> {{ key }}: {{ value }} {% endfor %} {% else %} {% for val in data.delivery.values %} {{ val }} {% endfor %} {% endif %}</span></p>
+            <p>Адреса:
+                    {% if 'До замовника' in data.delivery %}
+                    {% for dict in data.delivery.values %}
+                    <div class="product-detail">
+                        {% for key, value in dict.items %}
+                        <span class="left">{{ key }}:</span> <span class="right">{{ value }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    {% for val in data.delivery.values %}
+                        {{ val }}
+                    {% endfor %}
+                    {% endif %}</p>
             <p>Пошта:<span>{{ data.client_info.email }}</span></p>
         </div>
     </div>
@@ -29,22 +42,23 @@
     <div class="productBlock">
         <div class="ollcont">
             {% for item in products %}
-            <div class="container">
+            <div class="container1">
                 <p><span id="model">{{ item.Товар.title }}</p>
                 <p>Ціна: <span id="price">{{ item.Всього }} грн</span></p>
                 <p>Кількість: <span id="price">{{ item.Кількість }}</span></p>
             </div>
             {% endfor %}
             <div class="total">
-                {% if "До_замовника" in data.delivery %}
-                <p>До сплати: <span id="full_cart_price">{{ to_pay }}</span> грн <br>(100 грн за доставлення вже врахованні)
+                {% if "До замовника" in data.delivery %}
+                <p>До сплати: <span id="full_cart_price">{{ to_pay }}</span> грн <br>(100 грн за доставлення вже
+                    врахованні)
                 </p>
                 {% else %}
                 <p>До сплати: <span id="full_cart_price">{{ to_pay }}</span> грн</p>
                 {% endif %}
             </div>
         </div>
-        {% if data.pay == "На_сайті" %}
+        {% if data.how_to_pay == "На сайті" %}
         <!-- кнопка гугл якщо оплата на сайті -->
         <div class="google">
             <div id="container"></div>

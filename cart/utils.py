@@ -43,18 +43,20 @@ def create_customer_and_order(request):
             order.quantity = quantity
             order.pickup = list(data['delivery'].keys())[0]
             addres = ''
-            if list(data['delivery'].keys())[0] == 'До_замовника':
-                courier = data['delivery']['До_замовника']
+            if list(data['delivery'].keys())[0] == 'До замовника':
+                courier = data['delivery']['До замовника']
                 for key, value in courier.items():
                     addres += f'{key}: {value}\n'
-                order.city = data['delivery']['До_замовника'].get(
+                order.city = data['delivery']['До замовника'].get(
                     'Місто')
             else:
                 addres = f'{list(data["delivery"].keys())[0]} - {list(data["delivery"].values())[0]}'
             order.adress = addres
             order.how_to_pay = data['how_to_pay']
             order.is_pay = data['is_pay']
-            order.summ_of_pay = float(order.product.price - order.product.price / 100 * order.product.discount) * int(quantity)
+            order.item_price = float(
+                order.product.price - order.product.price / 100 * order.product.discount)
+            order.summ_of_pay = data['summ_of_pay']
             order.save()
     except:
         # print(traceback.format_exc())

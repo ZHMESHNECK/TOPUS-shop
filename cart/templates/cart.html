@@ -52,6 +52,7 @@
 <div class="all_total">
     <h3 id="full_cart_price">До сплати: {{ to_pay }} грн</h3>
 </div>
+{% if count > 0 %}
 <div class="center">
 <!-- Персональні данні-->
 <div class="delivery-contact">
@@ -166,7 +167,7 @@
                     <p>Вам потрібно вказати відділення нової пошти</p>
                 </div>
                 <label>Вкажіть номер відділення</label><br>
-                <input name="delivery" type="text" id="option3" value="" placeholder="№">
+                <input name="delivery" type="number" id="option3" value="" placeholder="№">
             </div>
         </div>
         <div id="self_f_ukr">
@@ -177,7 +178,7 @@
                     <p>Вам потрібно вказати відділення укр пошти</p>
                 </div>
                 <label>Вкажіть номер відділення</label><br>
-                <input name="delivery" type="text" id="option4" value="" placeholder="№">
+                <input name="delivery" type="number" id="option4" value="" placeholder="№">
             </div>
         </div>
     </div>
@@ -191,11 +192,11 @@
     </div>
     <p>Оплата</p>
     <div class="pay_later">
-        <label><input name="pay" type="radio" value="При_отриманні" onclick="show()">
+        <label><input name="pay" type="radio" value="При отриманні" onclick="show()">
             Оплата під час отримання товару</label>
     </div>
     <div class="pay_now">
-        <label><input name="pay" type="radio" id="google_pay" value="На_сайті" onclick="show()">
+        <label><input name="pay" type="radio" id="google_pay" value="На сайті" onclick="show()">
             Оплатити зараз через google pay</label>
     </div>
 </div>
@@ -204,8 +205,9 @@
 <form action="{% url 'check_order' %}" id="order" method="post">
     {% csrf_token %}
     <input type="hidden" name="data" value="" id="send_data">
-    <button {% if count <= 0 %} disabled {% endif %} type="submit" id="btn_send" >Замовити</button>
+    <button type="submit" id="btn_send" >Замовити</button>
 </form>
 </div>
+{% endif %}
 <script src="{% static 'js/script.js' %}"></script>
 {% endblock %}

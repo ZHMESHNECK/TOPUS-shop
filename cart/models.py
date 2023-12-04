@@ -50,7 +50,8 @@ class Cart(models.Model):
         """Перебір елементів у кошику та отримання продуктів із бази даних.
         """
         # Отримання товару та додання їх до кошика
-        products = MainModel.objects.filter(id__in=self.cart.keys())
+        products = MainModel.objects.filter(
+            id__in=self.cart.keys()).select_related('category')
         for product in products:
             self.cart[str(product.id)]['Товар'] = product
 
@@ -90,16 +91,16 @@ class Order(models.Model):
         ('Збирається', 'Збирається'),
         ('Відправлено', 'Відправлено'),
         ('Готове до видачі', 'Готове до видачі'),
+        ('Виконане', 'Виконане'),
         ('Відмінено', 'Відмінено')
     )
     PAY = (
-        ('-', '-'),
-        ('При_отриманні', 'При_отриманні'),
-        ('На_сайті', 'На_сайті'),
+        ('При отриманні', 'При отриманні'),
+        ('На сайті', 'На сайті'),
     )
 
     customer = models.ForeignKey(
-        Customer, on_delete=models.CASCADE, verbose_name='Користувач')
+        Customer, on_delete=models.CASCADE, verbose_name='Замовник')
     product = models.ForeignKey(
         MainModel, on_delete=models.CASCADE, verbose_name='Товар')
     pickup = models.CharField('Спосіб доставки', default='---', max_length=50)
@@ -111,8 +112,10 @@ class Order(models.Model):
     how_to_pay = models.CharField(
         'Спосіб оплати', max_length=50, choices=PAY, default='-')
     is_pay = models.BooleanField('Сплачено', default=False)
-    summ_of_pay = models.DecimalField(
+    item_price = models.DecimalField(
         'Вартість', max_digits=7, decimal_places=2, default=0)
+    summ_of_pay = models.DecimalField(
+        'Всього', max_digits=7, decimal_places=2, default=0)
     status = models.CharField('Статус',
                               max_length=50, choices=STATUS_ORDER, default='Прийнято')
 

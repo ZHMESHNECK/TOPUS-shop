@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{% static 'css/purchase_history.css' %}">
+</head>
+
+{% for purchase in data.results %}
+
+<div class="order-block">
+    <div class="top-left">
+        <p class="nomer">№{{ purchase.id }} від {{ purchase.ordered_date }}
+        </p>
+        {% if purchase.status == 'Прийнято' %}
+        Статус:<p class="Status1"> {{ purchase.status }}</p>
+        {% elif purchase.status == 'Збирається' %}
+        Статус: <p class="zborka"> {{ purchase.status }}</p>
+        {% elif purchase.status == 'Відправлено' %}
+        Статус:<p class="vidpavleno"> {{ purchase.status }}</p>
+        {% elif purchase.status == 'Готове до видачі' %}
+        Статус:<p class="GOTOV"> {{ purchase.status }}</p>
+        {% elif purchase.status == 'Виконане' %}
+        Статус:<p class="GOTOV"> {{ purchase.status }}</p>
+        {% elif purchase.status == 'Відмінено' %}
+        Статус:<p class="OTMENA"> {{ purchase.status }}</p>
+        {% endif %}
+
+    <div class="topL">
+        <p class="nomerINFO">Інформація про замовлення:</p>
+        <p>{{ purchase.pickup }}</p>
+        
+        <p>{{ purchase.fio }}</p>
+        <p>{{ purchase.phone_number}}</p>
+        <p>{{ purchase.email }}</p>
+    </div>
+    </div>
+    <div class="center">
+        <div class="left-column">
+            <div class="image-title">
+                <img src="{{ purchase.product_image }}" alt="картинка товара" width="100">
+                <p>{{ purchase.product_title }}</p>
+            </div>
+            <div class="info">
+                <div class="top-row">
+                    <p class="topPrise">Ціна</p>
+                    <p class="topHow">Кількість</p>
+                    <p class="topSum">Сума</p>
+                </div>
+                <div class="bottom-row">
+                    <p class="botPrise">{{ purchase.item_price }} грн</p>
+                    <p class="botHow">{{ purchase.quantity }} шт.</p>
+                    <p class="botSum">{{ purchase.summ_product }} грн</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="custom-hr">
+    <div class="right-column">
+        <div class="info-pair">
+            <p class="info-title">Оплата</p>
+            <p class="info-value">{{ purchase.how_to_pay }}</p>
+        </div>
+        <div class="info-pair">
+            <p class="info-title">Статус</p>
+            <p class="info-value">{% if purchase.is_pay %} <span class="GOTOV">Сплачено</span> {% else %} <span class="OTMENA">Не сплачено</span> {% endif %}</p>
+        </div>
+        <div class="info-pair">
+            <p class="info-title">Доставка</p>
+            <p class="info-value"><pre class="pre">{{ purchase.adress }}</pre></p>
+        </div>
+        <div class="info-pair">
+            <p class="info-title">Всього</p>
+            <p class="info-value">{{ purchase.summ_of_pay }} грн</p>
+        </div>
+    </div>
+    
+    
+</div>
+{% endfor %}
+{% endblock %}

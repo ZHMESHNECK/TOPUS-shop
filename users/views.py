@@ -1,6 +1,6 @@
 from phonenumber_field.phonenumber import PhoneNumber
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import renderers, status
@@ -12,6 +12,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.utils import IntegrityError
 from django.http import Http404
+from utils.pagination import Pagination
 from users.serializers import *
 from users.permission import *
 from users.models import User
@@ -159,7 +160,7 @@ def logout_user(request):
 class ProfileViewSet(ModelViewSet):
     """Сторінка відображення профіля юзера
     """
-    queryset = Profile.objects.all()
+    queryset = Profile.objects.select_related('user') # проверить
     serializer_class = ProfileSerializer
     permission_classes = [IsOwnerOrReadOnly, IsStaffOrReadOnly]
     authentication_classes = [SessionAuthentication]
@@ -168,7 +169,7 @@ class ProfileViewSet(ModelViewSet):
     def list(self, request):
         return Response(template_name='404.html', data={'message': 'Упс, цієї сторінки не існує'}, status=status.HTTP_404_NOT_FOUND)
 
-    def retrieve(self, request, pk: str = None):
+    def retrieve(self, request, pk: str):
         # pk = username
         try:
             user = self.queryset.get(user__username=pk)
@@ -239,3 +240,26 @@ class ProfileViewSet(ModelViewSet):
             except:
                 messages.error(request, 'Сталася помилка')
                 return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class PurchaseHistoryApiView(ListAPIView):
+    """Сторінка історії замовлень користувача
+
+    Args:
+        ListAPIView (_type_): _description_
+    """
+    serializer_class = PurchaseHistorySerializer
+    authentication_classes = [SessionAuthentication]
+    renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+    pagination_class = Pagination
+
+    def get_queryset(self):
+        queryset = Order.objects.filter(customer__profile__user__id=self.request.user.id).select_related('customer','product','customer__profile__user').order_by('-pk')
+        return queryset
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        paginated_queryset = self.paginate_queryset(queryset)
+        serializer = PurchaseHistorySerializer(paginated_queryset, many=True)
+        paginated_response = self.get_paginated_response(serializer.data)
+        return Response(data={'data': paginated_response.data}, template_name='purchase_history.html')

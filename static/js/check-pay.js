@@ -17,12 +17,18 @@ function getCookie(name) {
 const csrftoken = getCookie('csrftoken');
 
 let price = '0'
+// Чи враховувати доставку
+if ('До замовника' in JSON.parse(document.getElementById('hello-data').textContent)['delivery']) {
+    to_pay = true
+} else {
+    to_pay = false
+}
 
 // До сплати
 fetch('/cart/check_order', {
     'method': 'POST',
     'headers': { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-    'body': JSON.stringify({ to_pay: 'to_pay' })
+    'body': JSON.stringify({ to_pay: to_pay })
 })
     .then(res => res.json())
     .then(data => {
@@ -294,6 +300,7 @@ function send_order(google) {
     } else {
         data['is_pay'] = false
     }
+    data['summ_of_pay'] = price
     document.getElementById('send_data').value = JSON.stringify(data);
     document.getElementById('order').submit();
 }

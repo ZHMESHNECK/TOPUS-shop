@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework import status, renderers
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404, redirect
-from django.db.models import F, Count, Q, Prefetch
+from django.db.models import F, Count, Q, Prefetch, Case, When
 from relations.serializers import RelationSerializer
 from relations.models import Relation
 from products.serializers import SearchSerializer
@@ -114,7 +114,7 @@ class FavouriteViewSet(ListAPIView):
     pagination_class = Pagination
 
     def list(self, request, *args, **kwargs):
-        queryset = self.queryset.filter(in_liked=request.user.id).prefetch_related(Prefetch('in_liked', queryset=User.objects.all().only(
+        queryset = self.queryset.filter(in_liked=request.user.id).prefetch_related('category', Prefetch('in_liked', queryset=User.objects.all().only(
             'id'))).annotate(price_w_dis=F('price') - F('price') / 100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('-pk')
 
         paginated_queryset = self.paginate_queryset(queryset)
@@ -158,12 +158,15 @@ class HistoryView(ListAPIView):
 
     def get_queryset(self):
         viewed_product_ids = self.request.session.get('viewed_products', [])
-        queryset = MainModel.objects.filter(id__in=viewed_product_ids, is_published=True).prefetch_related(
-            Prefetch('in_liked', queryset=User.objects.all().only('id'))
-        ).annotate(
+        ordering_conditions = [When(id=id_val, then=pos) for pos, id_val in enumerate(
+            viewed_product_ids)] if viewed_product_ids else ''  # Якщо список товарів не пустий, інакше ""
+        queryset = MainModel.objects.filter(id__in=viewed_product_ids, is_published=True).prefetch_related('category',
+                                                                                                           Prefetch(
+                                                                                                               'in_liked', queryset=User.objects.only('id'))
+                                                                                                           ).annotate(
             price_w_dis=F('price') - F('price') / 100 * F('discount'),
             views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))
-        ).order_by('-pk')
+        ).order_by(-Case(*ordering_conditions) if ordering_conditions else 'pk')  # Сортування за переглядами якщо вони е, інакше за "pk"
         return queryset
 
     def list(self, request, *args, **kwargs):

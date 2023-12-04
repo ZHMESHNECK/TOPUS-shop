@@ -7,7 +7,7 @@ from relations.views import FavouriteViewSet, HistoryAPI, HistoryView
 
 
 router = SimpleRouter()
-router.register(r'profile', ProfileViewSet)
+router.register(r'profile', ProfileViewSet) # сменить на apiview
 
 urlpatterns = [
 
@@ -25,7 +25,9 @@ urlpatterns = [
     path('forgot_password/', ForgotPassword.as_view(), name='forgot_pass'),
     path('favourite/', FavouriteViewSet.as_view(), name='favourite'),
     path('add_history/', HistoryAPI.as_view(), name='add_history'),
-    path('history/', HistoryView.as_view(), name='history')
+    path('history/', HistoryView.as_view(), name='history'),
+    path('purchase_history/', PurchaseHistoryApiView.as_view(), name='purchase_history'),
+
 ]
 
 urlpatterns += router.urls

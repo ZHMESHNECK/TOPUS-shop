@@ -235,7 +235,7 @@ function sendform() {
     } else if (deliv_data.value == 'Кур\'єр') {
         let info = document.getElementsByClassName(deliv_data.id)[0]
         deliv_info = {
-            До_замовника: {
+            'До замовника': {
                 Місто: info.getElementsByTagName('input').item(0).value,
                 Вулиця: info.getElementsByTagName('input').item(1).value,
                 Будинок: info.getElementsByTagName('input').item(2).value,

@@ -23,11 +23,13 @@ class CartAPI(APIView):
         profile = None
         # Якщо юзер не анонім
         if not request.user.is_anonymous:
-            profile = Profile.objects.get(user_id=request.user.id)
+            profile = Profile.objects.select_related(
+                'user').get(user_id=request.user.id)
             # Підставляємо в input номер телефону користувача
             form = ProfileForm(
                 initial={'phone_number': profile.phone_number})
-            if len(profile.adress.split()) >= 3:
+            # Підставляємо адресу в поля " доставка кур'єром "
+            if len(profile.adress.split()) == 3:
                 adress = profile.adress.split()
                 profile.street = adress[0]
                 profile.num_street = adress[1]
@@ -80,12 +82,14 @@ class CheckCartAPI(APIView):
         cart = Cart(request)
         to_pay = cart.get_total_price()
         if 'to_pay' in request.data:
+            if request.data['to_pay'] == True:
+                return Response(data={'to_pay': str(to_pay+100)})
             return Response(data={'to_pay': str(to_pay)})
         try:
             data = json.loads(request.data['data'])
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        if 'До_замовника' in data['delivery']:
+        if 'До замовника' in data['delivery']:
             to_pay += 100  # + 100 грн за кур'єра
         return Response(data={'data': data, 'products': list(cart.__iter__()), 'to_pay': to_pay}, template_name='check_order.html', status=status.HTTP_200_OK)
 

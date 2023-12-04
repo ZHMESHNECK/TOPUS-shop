@@ -5,8 +5,8 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    /* padding-top: 100px; */
-    min-height: 90vh;
+    padding-top: 100px;
+    /* min-height: 90vh; */
 }
 
 .card {
