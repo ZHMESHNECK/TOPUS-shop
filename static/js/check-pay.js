@@ -293,9 +293,29 @@ function processPayment(paymentData) {
 }
 
 
-function send_order(google) {
+let card_data = document.getElementById('card-data');
+card_data.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formsData = new FormData(card_data)
+    let valid = true
+
+    for (let value of formsData.values()) {
+        if (!value) {
+            document.getElementById('error_card').style.display = 'block'
+            valid = false
+            break
+        } else {
+            document.getElementById('error_card').style.display = 'none'
+        }
+    }
+    if (valid) {
+        send_order(true)
+    }
+})
+
+function send_order(is_pay) {
     data = JSON.parse(document.getElementById('hello-data').textContent)
-    if (google) {
+    if (is_pay) {
         data['is_pay'] = true
     } else {
         data['is_pay'] = false

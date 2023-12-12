@@ -63,7 +63,6 @@ buttons.forEach((button) => {
             quantity: newNumber,
             overide_quantity: true
         }
-        // console.log(data)
         fetch(url, {
             'method': 'POST',
             'headers': { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
@@ -71,7 +70,6 @@ buttons.forEach((button) => {
         })
             .then(res => res.json())
             .then(data => {
-                // console.log(data)
                 document.getElementById('full_cart_price').textContent = 'До сплати: ' + formatNumberWithCommas(data.to_pay) + ' грн'
                 var price = document.getElementById('price_' + numberContainer.id).value
                 var correct_price = price.replace(/,/g, '.')
@@ -89,7 +87,7 @@ buttons.forEach((button) => {
 // 5200.00 -> 5,200.00 
 function formatNumberWithCommas(number) {
     return number.toLocaleString('en-US', { maximumFractionDigits: 2 }).replace(/,/g, ' ');
-  }
+}
 
 
 // Перевірка заповнення необхідних полів
@@ -135,7 +133,7 @@ formorder.addEventListener('submit', (e) => {
         }
     }
 
-    // Кур'ер - не обрано адрес
+    // кур'ер - не обрано адрес
     if (deliv_to_cstmr.querySelector('input[type="radio"]:checked')) {
         for (let val of document.getElementsByClassName('option2')[0].getElementsByTagName('input')) {
             if (!val.value) {
@@ -169,7 +167,6 @@ formorder.addEventListener('submit', (e) => {
             document.getElementById('message_pers').style.display = 'none'
         }
     }
-    // console.log(valid)
     if (valid) {
         let hid_in = document.getElementById('send_data')
         hid_in.value = sendform()
@@ -179,7 +176,7 @@ formorder.addEventListener('submit', (e) => {
     return valid
 });
 
-// Показ форм обраних параметрів
+// показ форм обраних параметрів
 let radios = document.querySelectorAll('input[type="radio"]');
 function show() {
     for (let radio of radios) {
@@ -194,12 +191,11 @@ function show() {
 };
 
 
-// Зберігання персональних даних
+// зберігання персональних даних
 const formElement = document.getElementById('personal_data');
 formElement.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(formElement);
-    // console.log(formData)
 
     let url = '/api/profile/' + document.getElementsByClassName('header-shadow__btn')[0].textContent + '/'
     let data = {
@@ -211,7 +207,6 @@ formElement.addEventListener('submit', (e) => {
         phone_number_1: formData.get('phone_number_1'),
         email: formData.get('email'),
     }
-    // console.log(data)
 
     fetch(url, {
         'method': 'POST',
