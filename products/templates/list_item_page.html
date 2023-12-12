@@ -4,58 +4,88 @@
 {% block content %}
 
 <head>
+    <link rel="stylesheet" href="{% static 'css/slider-price.css' %}">
     <link rel="stylesheet" href="{% static 'css/style_list_cate_item.css' %}">
 </head>
-<!-- {{data}} -->
 
-<div class="list-container">
-    {% for item in data.results %}
-    <div class="product-card">
-        <!-- in liked -->
-        <div class="to_fav">
-            {% if request.user.id in item.in_liked %}
-            <button class="heart-btn" style="color: #ff8d02;" id="{{ item.id }}"><i value="{{ item.id }}"
-                    class="fa-solid fa-heart fa-lg"></i></button>
-            {% else %}
-            <button class="heart-btn" style="color: #ff8d02;" id="{{ item.id }}"><i value="{{ item.id }}"
-                    class="fa-regular fa-heart fa-lg"></i></button>
-            {% endif %}
-        </div>
-        <!-- \ in liked -->
-
-        <a href="{{ item.absolute_url }}"><img src="{{ item.main_image }}" alt="Фото" class="product-image"></a>
-        <a href="{{ item.absolute_url }}">
-            <h2 class="product-title">{{ item.title|truncatechars:50 }}</h2>
-        </a>
-        <p class="product-description">Бренд: {{ item.brand }}</p>
-        {% if item.discount is not 0 %}
-        <div class="discount">
-            <div class="product-discount">Знижка: {{ item.discount }} %</div>
-            <div class="product-original-price"><del>{{ item.price }} грн</del></div>
-        </div>
-        <p class="product-discounted-price">{{ item.price_w_dis }} грн</p>
-        {% else %}
-        <p class="product-discounted-price">{{ item.price }} грн</p>
-        {% endif %}
-        <div class="container_rat">
-            <div class="rating">
-                <div class="rating__body">
-                    <div class="rating__active"></div>
-                    <div class="rating__items">
-                        <input type="radio" name="rating" class="rating__item" value="1">
-                        <input type="radio" name="rating" class="rating__item" value="2">
-                        <input type="radio" name="rating" class="rating__item" value="3">
-                        <input type="radio" name="rating" class="rating__item" value="4">
-                        <input type="radio" name="rating" class="rating__item" value="5">
-                    </div>
+<div class="produce_section">
+    <!-- Ordering -->
+    <div class="hid">
+        <div class="catalog-settings">
+            <form method="get" id="orderForm">
+                <select class="select-css" id="orderSelect" name="ordering" onchange="applyOrdering()">
+                    <option name="new" value="-date_created" onclick="applyOrdering()">Новинки</option>
+                    <option name="price" value="price" onclick="applyOrdering()">Від дешевих до дорогих</option>
+                    <option name="-price" value="-price" onclick="applyOrdering()">Від дорогих до дешевих</option>
+                    <option name="rate" value="-rating" onclick="applyOrdering()">За рейтингом</option>
+                </select>
+            </form>
+            <!-- Ordering price -->
+            <form id="PriceOrdering">
+                <div id="slider"></div>
+                <div class="or_in_pr">
+                    <input name="min_price" class="in_pr" type="text" id="input-with-keypress-0" value="" pattern="\d*">
+                    -
+                    <input name="max_price" class="in_pr" type="text" id="input-with-keypress-1" value="" pattern="\d*">
                 </div>
-                <div hidden class="rating__value">{{ item.rating }}</div>
-            </div>
+                <div class="btn_ord_price">
+                    <button type="submit">Ок</button>
+                </div>
+            </form>
+            <!--\ Orering price -->
         </div>
-        <div class="P_otziv">Відгуків: {{ item.views }}</div>
     </div>
-    {% endfor %}
-</div>
+    <!--\ Ordering -->
 
+    <div class="list-container">
+        {% for item in data.results %}
+        <div class="product-card">
+            <!-- in liked -->
+            <div class="to_fav">
+                {% if request.user.id in item.in_liked %}
+                <button class="heart-btn" style="color: #ff8d02;" id="{{ item.id }}"><i value="{{ item.id }}"
+                        class="fa-solid fa-heart fa-lg"></i></button>
+                {% else %}
+                <button class="heart-btn" style="color: #ff8d02;" id="{{ item.id }}"><i value="{{ item.id }}"
+                        class="fa-regular fa-heart fa-lg"></i></button>
+                {% endif %}
+            </div>
+            <!-- \ in liked -->
+
+            <a href="{{ item.absolute_url }}"><img src="{{ item.main_image }}" alt="Фото" class="product-image"></a>
+            <a href="{{ item.absolute_url }}">
+                <h2 class="product-title">{{ item.title|truncatechars:50 }}</h2>
+            </a>
+            <p class="product-description">Бренд: {{ item.brand }}</p>
+            {% if item.discount is not 0 %}
+            <div class="discount">
+                <div class="product-discount">Знижка: {{ item.discount }} %</div>
+                <div class="product-original-price"><del>{{ item.price|floatformat:"g" }} грн</del></div>
+            </div>
+            <p class="product-discounted-price">{{ item.price_w_dis|floatformat:"g" }} грн</p>
+            {% else %}
+            <p class="product-discounted-price">{{ item.price|floatformat:"g" }} грн</p>
+            {% endif %}
+            <div class="container_rat">
+                <div class="rating">
+                    <div class="rating__body">
+                        <div class="rating__active"></div>
+                        <div class="rating__items">
+                            <input type="radio" name="rating" class="rating__item" value="1">
+                            <input type="radio" name="rating" class="rating__item" value="2">
+                            <input type="radio" name="rating" class="rating__item" value="3">
+                            <input type="radio" name="rating" class="rating__item" value="4">
+                            <input type="radio" name="rating" class="rating__item" value="5">
+                        </div>
+                    </div>
+                    <div hidden class="rating__value">{{ item.rating }}</div>
+                </div>
+            </div>
+            <div class="P_otziv">Відгуків: {{ item.views }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<script src="{% static 'js/slider-price.js' %}"></script>
 <script src="{% static 'js/list_item.js' %}"></script>
 {% endblock %}

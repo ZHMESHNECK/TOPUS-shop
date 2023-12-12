@@ -61,8 +61,10 @@
 .product-page {
     position: relative;
     width: 70%;
+    min-width: 750px;
     margin: 0 auto;
     padding: 20px;
+    overflow-x: auto;
 }
 
 
@@ -356,4 +358,9 @@
   @keyframes fadeout {
     from {up: 30px; opacity: 1;}
     to {up: 0; opacity: 0;}
+}
+
+.materialboxed {
+    max-width: 600px;
+    max-height: 600px;
 }

@@ -48,7 +48,7 @@ class MainModel(models.Model):
     viewed = models.ManyToManyField(
         User, through=Relation, related_name='view')
     rating = models.DecimalField(
-        max_digits=2, decimal_places=1, default=None, null=True, verbose_name='Рейтинг')  # кэшуюче поле
+        max_digits=2, decimal_places=1, default=0, null=True, verbose_name='Рейтинг')  # кэшуюче поле
     in_liked = models.ManyToManyField(
         User, related_name='in_favourite', blank=True)
 

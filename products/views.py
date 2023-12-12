@@ -9,21 +9,29 @@ from django.contrib.messages import get_messages
 from django.db.models import F, Count, Q, Prefetch
 from products.serializers import *
 from products.models import *
-from products.utils import serial_code_randomizer
+from products.utils import serial_code_randomizer, ProductPriceFilter
 from relations.models import Relation
 from relations.utils import accept_post
 from utils.pagination import Pagination
 from users.models import User
+from cart.views import Cart
 
 price_with_discount = F('price') - F('price') / 100 * F('discount')
 
 
 class BaseItemViewSet(ModelViewSet):
+    """ Базова view для моделей
+    Args:
+        list: повертає сторінку зі списком товарів за категорією
+        retrieve: повертає сторінку товару
+
+    Returns:
+        Response
+    """
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['price']
+    filterset_class = ProductPriceFilter
     permission_classes = [IsAuthenticatedOrReadOnly]
-    search_fields = ['title', 'description', 'brand', 'model']
-    ordering_fields = ['title', 'brand', 'price', 'model']
+    ordering_fields = ['price', 'date_created', 'rating']
     ordering = ['-date_created']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
     authentication_classes = [SessionAuthentication]
@@ -67,7 +75,8 @@ class BaseItemViewSet(ModelViewSet):
                 'item', 'user').filter(parent__isnull=False, item_id=pk).only('item__id','user__id','rate','comment','user__username','parent__id','id')
             data_info = self.get_additional_info(response.data)
             parametrs = {'accept': True}
-            return Response({'data': response.data, 'images': images, 'relation': relation, 'answer': answer, 'parametrs': parametrs, 'info': data_info}, template_name='item_view.html')
+            in_cart = True if pk in Cart(request).cart else False
+            return Response({'data': response.data, 'images': images, 'relation': relation, 'answer': answer, 'parametrs': parametrs, 'info': data_info, 'in_cart': in_cart}, template_name='item_view.html')
         return response
 
     def get_gallery_objects(self, pk):

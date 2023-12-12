@@ -32,13 +32,13 @@
                     class="fas fa-plus-square fa-lg"></i></button>
             <!-- \ зміна кількості  -->
         </div>
-        <p>Ціна: {{ item.Ціна }} грн</p>
+        <p>Ціна: {{ item.Ціна|floatformat:"g" }} грн</p>
 
         <form method="post">
             {% csrf_token %}
             <button class="btn btn-primary" type="submit" name="remove" value="{{ item.Товар.id }}">Видалити</button>
         </form>
-        <div class="total"> Всього: <span id="span_{{ item.Товар.id }}">{{ item.Всього }}</span> грн</div>
+        <div class="total"> Всього: <span id="span_{{ item.Товар.id }}">{{ item.Всього|floatformat:"g" }}</span> грн</div>
     </div>
     <div hidden class="product">
         <input type="hidden" name="id" value="{{ item.Товар.id }}">
@@ -50,7 +50,7 @@
 <!-- \ блок товарів -->
 
 <div class="all_total">
-    <h3 id="full_cart_price">До сплати: {{ to_pay }} грн</h3>
+    <h3 id="full_cart_price">До сплати: {{ to_pay|floatformat:"g" }} грн</h3>
 </div>
 {% if count > 0 %}
 <div class="center">
@@ -128,7 +128,7 @@
                 Кур'єр на вашу адресу</label> (100 грн)
             <div class="option2">
                 <div id="eror_adress_del" style="display: none;">
-                    <p>Вам потрібно заповнити адрес доставки</p>
+                    <p class="error">Вам потрібно заповнити адрес доставки</p>
                 </div>
                 <input type="text" name="city" value="{{ profile.city }}" placeholder="Місто" maxlength="50">
                 <input type="text" name="street" value="{{ profile.street }}" placeholder="Вулиця" maxlength="50">
@@ -164,7 +164,7 @@
                 Самовивіз з відділення Нової пошти</label>
             <div class="option3">
                 <div id="eror_nova_del" style="display: none;">
-                    <p>Вам потрібно вказати відділення нової пошти</p>
+                    <p class="error">Вам потрібно вказати відділення нової пошти</p>
                 </div>
                 <label>Вкажіть номер відділення</label><br>
                 <input name="delivery" type="number" id="option3" value="" placeholder="№">
@@ -175,7 +175,7 @@
                 Самовивіз з відділення Укр пошти</label>
             <div class="option4">
                 <div id="eror_ukr_del" style="display: none;">
-                    <p>Вам потрібно вказати відділення укр пошти</p>
+                    <p class="error">Вам потрібно вказати відділення укр пошти</p>
                 </div>
                 <label>Вкажіть номер відділення</label><br>
                 <input name="delivery" type="number" id="option4" value="" placeholder="№">

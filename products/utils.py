@@ -1,8 +1,23 @@
-import random
-from string import ascii_uppercase, digits
-from products.models import MainModel
+from django_filters import FilterSet, NumberFilter
 from relations.models import Relation
+from products.models import MainModel
 from django.db.models import Avg, Count
+from string import ascii_uppercase, digits
+import random
+
+
+class ProductPriceFilter(FilterSet):
+    """ Сортування товару по цені від - до
+
+    Args:
+        FilterSet (_type_): _description_
+    """
+    min_price = NumberFilter(field_name='price', lookup_expr='gte')
+    max_price = NumberFilter(field_name='price', lookup_expr='lte')
+
+    class Meta:
+        model = MainModel
+        fields = []
 
 
 def gen_code(x: str) -> str:

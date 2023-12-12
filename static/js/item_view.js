@@ -114,23 +114,18 @@ function Toast() {
     x.className = 'show';
     let btn = document.getElementById('to_cart');
     btn.disabled = true;
-    setTimeout(function () { x.className = x.className.replace('show', ''); btn.disabled = false; }, 3000);
+    setTimeout(function () { x.className = x.className.replace('show', ''); }, 3000);
 
 }
 
 // Добавлення історії переглянутого
 document.addEventListener("DOMContentLoaded", function () {
     let url = '/api/add_history/'
-    let data = { 'data': document.getElementById('to_cart').value }
+    let data =  document.getElementById('to_cart').value 
 
     fetch(url, {
         'method': 'POST',
         'headers': { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-        'body': document.getElementById('to_cart').value
+        'body': data
     })
-        .then(res => res.json())
-        .then(data => { })
-        .catch(error => {
-            console.log(error.data)
-        })
 })

@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
+{% load tags %}
 {% block content %}
 
 <head>
     <link rel="stylesheet" type="text/css" href="{% static 'css/item_view.css' %}">
+    <title>{{ data.title }}</title>
 </head>
 
 <div id="snackbar">Добавлено у кошик!</div>
@@ -24,7 +26,7 @@
         <div class="product-details">
             <div class="product-detail">
                 <span class="left">Ціна:</span>
-                <span class="right">{{ data.price }} грн</span>
+                <span class="right">{{ data.price|floatformat:"g" }} грн</span>
             </div>
             <!-- discount -->
             {% if data.discount > 0 %}
@@ -34,7 +36,7 @@
             </div>
             <div class="product-detail">
                 <span class="left">Ціна зі знижкою:</span>
-                <span class="right">{{ data.price_w_dis }} грн</span>
+                <span class="right">{{ data.price_w_dis|floatformat:"g" }} грн</span>
             </div>
             {% endif %}
             <!-- \ discount -->
@@ -63,9 +65,8 @@
         </div>
 
         <div class="buy">
-            <!-- auth -->
+            <!-- in liked -->
             {% if request.user.is_authenticated %}
-                <!-- in liked -->
                 {% if request.user.id in data.in_liked %}
                 <div class="add_to_fav">
                     <button class="button_view_page" style="color: #ff0080;" value="{{ data.id }}"><i value="{{ data.id }}"
@@ -77,18 +78,22 @@
                             id="to_fav" class="fa-regular fa-heart fa-lg"></i></button>
                 </div>
                 {% endif %}
-                <!-- \ in liked -->
-            {% else %}
-            <div class="add_to_fav">
-                <button disabled class="button_view_page" style="color: #ff0080;" value="{{ data.id }}"><i
+                {% else %}
+                <div class="add_to_fav">
+                    <button disabled class="button_view_page" style="color: #ff0080;" value="{{ data.id }}"><i
                         value="{{ data.id }}" id="to_fav" class="fa-regular fa-heart fa-lg"></i></button>
-            </div>
-            {% endif %}
-            <!-- \ auth -->
-
+                    </div>
+                    {% endif %}
+            <!-- \ in liked -->
+            {% if in_cart == False %}
             <div class="add_to_cart_btn">
                 <button value="{{ data.id }}" class="button_view_page" id="to_cart" onclick="Toast()">Придбати</button>
             </div>
+            {% else %}
+            <div class="add_to_cart_btn">
+                <button disabled value="{{ data.id }}" class="button_view_page" id="to_cart">У кошику!</button>
+            </div>
+            {% endif %}
         </div>
 
     </div>

@@ -4,7 +4,6 @@
 <html lang="uk">
 
 <head>
-    <title>{{ title }}</title>
     <meta charset="utf-8">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -12,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
-
+    <link rel="shortcut icon" href="{% static 'images/Octopus_2_white.png' %}" type="image/x-icon">
 </head>
 
 <body>
@@ -122,22 +121,57 @@
     <footer class="position-relative">
         <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
 
-        <div class="container">
-          <section class="mb-3">
-            <a href="#"><i class="fab">Команда TOPUS-shop</i></a>
-          </section>
-        </div>
-      
-          © 2023 Copyright:
-          <i>ZHMESHNECK</i>
-        </div>
-      </footer>
+            <div class="container">
+                <section class="mb-3">
+                    <a href="{% url 'topus_team' %}"><i>Команда </i><i class="fab">TOPUS-SHOP</i></a>
+                </section>
+            </div>
 
-    <!-- Візуальне завантаження сторінки -->
+            © 2023 Copyright:
+            <i>ZHMESHNECK</i>
+        </div>
+    </footer>
+
+    <!-- Історія \ Обране -->
+    <div class="bottom-goods-menu">
+        <ul class="bottom-goods-bar">
+            <a href="{% url 'history' %}" class="goods-bar-section h">Історія <span class="badge text-bg-primary">{% len_history request %}</span></a>
+            <a href="{% url 'favourite' %}"
+                class="goods-bar-section {% if request.user.is_anonymous %} disabled-section {% endif %} o">Обране <span
+                    class="badge text-bg-primary">{% len_favourite request %}</span></a>
+        </ul>
+    </div>
+    <!--\ Історія \ Обране -->
+
+    <!-- Візуальне завантаження сторінки та сортування -->
     <script>
         window.onload = (event) => {
             document.getElementById('overlay').remove();
+
+            // Якщо значення сортування існує, модифікуємо посилання пагінації
+            var storedSorting = localStorage.getItem('selectedSorting');
+            var storedMinPrce = localStorage.getItem('min_price');
+            var storedMaxPrice = localStorage.getItem('max_price');
+
+            if (storedSorting && storedMinPrce && window.location.href.includes('ordering') && (window.location.href.includes('min_price') || window.location.href.includes('max_price'))) {
+                var pageLinks = document.querySelectorAll('.page-link');
+                pageLinks.forEach(function (link) {
+                    link.href = link.href + '&ordering=' + storedSorting + '&min_price=' + storedMinPrce + '&max_price=' + storedMaxPrice;
+                });
+            } else if (storedSorting && window.location.href.includes('ordering')) {
+                var pageLinks = document.querySelectorAll('.page-link');
+                pageLinks.forEach(function (link) {
+                    link.href = link.href + '&ordering=' + storedSorting;
+                });
+            } else if (storedMinPrce && (window.location.href.includes('min_price') || window.location.href.includes('max_price'))) {
+                var pageLinks = document.querySelectorAll('.page-link');
+                pageLinks.forEach(function (link) {
+                    link.href = link.href + '&min_price=' + storedMinPrce + '&max_price=' + storedMaxPrice;
+                });
+            }
         }
+
+
     </script>
     <!--\ Візуальне ... -->
 

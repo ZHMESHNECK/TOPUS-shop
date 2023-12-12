@@ -72,10 +72,10 @@ buttons.forEach((button) => {
             .then(res => res.json())
             .then(data => {
                 // console.log(data)
-                document.getElementById('full_cart_price').textContent = 'До сплати: ' + data.to_pay.toFixed(2) + ' грн'
+                document.getElementById('full_cart_price').textContent = 'До сплати: ' + formatNumberWithCommas(data.to_pay) + ' грн'
                 var price = document.getElementById('price_' + numberContainer.id).value
                 var correct_price = price.replace(/,/g, '.')
-                document.getElementById('span_' + numberContainer.id).textContent = (Number(correct_price) * newNumber).toFixed(2)
+                document.getElementById('span_' + numberContainer.id).textContent = formatNumberWithCommas(Number(correct_price) * newNumber)
                 document.getElementById('quantity_' + numberContainer.id).value = data.len
                 document.getElementById('num_of_cart').innerHTML = data.len
                 document.getElementById('count_in_cart').innerHTML = data.len
@@ -86,6 +86,10 @@ buttons.forEach((button) => {
             })
     });
 });
+// 5200.00 -> 5,200.00 
+function formatNumberWithCommas(number) {
+    return number.toLocaleString('en-US', { maximumFractionDigits: 2 }).replace(/,/g, ' ');
+  }
 
 
 // Перевірка заповнення необхідних полів

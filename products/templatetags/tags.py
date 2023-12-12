@@ -1,7 +1,6 @@
 from django import template
-from products.models import Category
+from products.models import Category, MainModel
 from cart.models import Cart
-
 
 register = template.Library()
 
@@ -23,3 +22,16 @@ def show_count_cart(request):
 @register.simple_tag()
 def pagination_range(number):
     return list(range(number))
+
+
+@register.simple_tag()
+def len_history(request):
+    return len(request.session.get('viewed_products', []))
+
+
+@register.simple_tag()
+def len_favourite(request):
+    if not request.user.is_anonymous:
+        return len(MainModel.objects.filter(is_published=True, in_liked=request.user.id).only('id'))
+    else:
+        return 0

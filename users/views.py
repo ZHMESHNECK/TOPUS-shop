@@ -160,7 +160,7 @@ def logout_user(request):
 class ProfileViewSet(ModelViewSet):
     """Сторінка відображення профіля юзера
     """
-    queryset = Profile.objects.select_related('user') # проверить
+    queryset = Profile.objects.select_related('user')
     serializer_class = ProfileSerializer
     permission_classes = [IsOwnerOrReadOnly, IsStaffOrReadOnly]
     authentication_classes = [SessionAuthentication]
@@ -254,12 +254,17 @@ class PurchaseHistoryApiView(ListAPIView):
     pagination_class = Pagination
 
     def get_queryset(self):
-        queryset = Order.objects.filter(customer__profile__user__id=self.request.user.id).select_related('customer','product','customer__profile__user').order_by('-pk')
+        queryset = Order.objects.filter(customer__profile__user__id=self.request.user.id).select_related(
+            'customer', 'product', 'customer__profile__user').order_by('-pk')
         return queryset
-    
+
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         paginated_queryset = self.paginate_queryset(queryset)
         serializer = PurchaseHistorySerializer(paginated_queryset, many=True)
         paginated_response = self.get_paginated_response(serializer.data)
         return Response(data={'data': paginated_response.data}, template_name='purchase_history.html')
+
+
+def view_topus_team(request):
+    return render(request, template_name='TOPUS-team.html')

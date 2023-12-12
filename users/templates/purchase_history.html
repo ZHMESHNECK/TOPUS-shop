@@ -47,9 +47,9 @@
                     <p class="topSum">Сума</p>
                 </div>
                 <div class="bottom-row">
-                    <p class="botPrise">{{ purchase.item_price }} грн</p>
+                    <p class="botPrise">{{ purchase.item_price|floatformat:"g" }} грн</p>
                     <p class="botHow">{{ purchase.quantity }} шт.</p>
-                    <p class="botSum">{{ purchase.summ_product }} грн</p>
+                    <p class="botSum">{{ purchase.summ_product|floatformat:"g" }} грн</p>
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@
         </div>
         <div class="info-pair">
             <p class="info-title">Всього</p>
-            <p class="info-value">{{ purchase.summ_of_pay }} грн</p>
+            <p class="info-value">{{ purchase.summ_of_pay|floatformat:"g" }} грн</p>
         </div>
     </div>
     
