@@ -95,6 +95,9 @@ h4 {
     color: red;
     font-size: x-large;
 }
+.error-pers {
+    color: red;
+}
 
 .icon {
     user-select: none;

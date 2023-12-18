@@ -3,14 +3,11 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-
-}
-
-body {
     font-family: 'Comfortaa', sans-serif;
     background-color: aliceblue;
     background-repeat: no-repeat;
     background-size: cover;
+
 }
 
 
@@ -216,13 +213,14 @@ a {
 /* кнопки снизу-справа */
 .bottom-goods-menu {
     display: block;
-    opacity: 1;
+    /* opacity: 1; */
     bottom: 0px;
     position: fixed;
-    left: 0px;
+    /* left: 0px; */
+    width: auto;
     right: 0px;
     z-index: 10000;
-    transition: opacity 0.2s ease 0s;
+    /* transition: opacity 0.2s ease 0s; */
 }
 
 .bottom-goods-bar {
@@ -230,6 +228,7 @@ a {
     height: 36px;
     float: right;
     bottom: -16px;
+    width: auto;
 }
 .goods-bar-section {
     padding: 14px 30px 10px;

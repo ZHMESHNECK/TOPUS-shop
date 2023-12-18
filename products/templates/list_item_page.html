@@ -39,9 +39,23 @@
 
     <div class="list-container">
         {% for item in data.results %}
+        <a href="{{ item.absolute_url }}">
         <div class="product-card">
-            <!-- in liked -->
+            <!-- збережене -->
             <div class="to_fav">
+                {% if request.user.is_anonymous %}
+                <!-- анонім -->
+                {% if item.id in request.session.favourite_products %}
+                <button class="heart-btn" style="color: #ff8d02;" id="{{ item.id }}"><i value="{{ item.id }}"
+                        class="fa-solid fa-heart fa-lg"></i></button>
+                {% else %}
+                <button class="heart-btn" style="color: #ff8d02;" id="{{ item.id }}"><i value="{{ item.id }}"
+                        class="fa-regular fa-heart fa-lg"></i></button>
+                {% endif %}
+                <!--\ анонім -->
+
+                {% else %}
+                <!-- авторизований юзер -->
                 {% if request.user.id in item.in_liked %}
                 <button class="heart-btn" style="color: #ff8d02;" id="{{ item.id }}"><i value="{{ item.id }}"
                         class="fa-solid fa-heart fa-lg"></i></button>
@@ -49,13 +63,13 @@
                 <button class="heart-btn" style="color: #ff8d02;" id="{{ item.id }}"><i value="{{ item.id }}"
                         class="fa-regular fa-heart fa-lg"></i></button>
                 {% endif %}
+                <!--\ авторизований юзер -->
+                {% endif %}
             </div>
-            <!-- \ in liked -->
+            <!--\ збережене -->
 
-            <a href="{{ item.absolute_url }}"><img src="{{ item.main_image }}" alt="Фото" class="product-image"></a>
-            <a href="{{ item.absolute_url }}">
-                <h2 class="product-title">{{ item.title|truncatechars:50 }}</h2>
-            </a>
+            <img src="{{ item.main_image }}" alt="Фото" class="product-image">
+            <h2 class="product-title">{{ item.title|truncatechars:50 }}</h2>
             <p class="product-description">Бренд: {{ item.brand }}</p>
             {% if item.discount is not 0 %}
             <div class="discount">
@@ -82,6 +96,19 @@
                 </div>
             </div>
             <div class="P_otziv">Відгуків: {{ item.views }}</div>
+        </div>
+    </a>
+        {% empty %}
+
+        <head>
+            <link rel="stylesheet" href="{% static 'css/errors.css' %}">
+        </head>
+
+        <div class="error-container">
+            <div class="image-container">
+                <img id="alert_img" class="error-image" src="{% static 'images/404.png' %}" alt="Error 404" width="400">
+            </div>
+            <p id="alert_text" class="text"></p>
         </div>
         {% endfor %}
     </div>

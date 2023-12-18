@@ -34,4 +34,4 @@ def len_favourite(request):
     if not request.user.is_anonymous:
         return len(MainModel.objects.filter(is_published=True, in_liked=request.user.id).only('id'))
     else:
-        return 0
+        return len(request.session.get('favourite_products', []))

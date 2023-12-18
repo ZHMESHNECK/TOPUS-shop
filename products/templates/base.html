@@ -42,10 +42,10 @@
                 </a>
             </div>
             <div class="header-search">
-                <form method="get" action="{% url 'search' %}">
+                <form method="get" action="{% url 'search' %}" onsubmit="return Search()">
                     <div class="header-container">
-                        <input type="search" name="search" class="header-input" placeholder="Пошук ">
-                        <button class="header-search__btn">
+                        <input type="search" name="search" class="header-input" placeholder="Пошук" id="searchInput" minlength="2">
+                        <button type="submit" class="header-search__btn">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22">
                                 <path
                                     d="M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z"
@@ -89,27 +89,27 @@
         <!-- Пагінация -->
         {% if data.count_page %}
         <ul class="pagination justify-content-center">
-            {% if data.previous != None %}
+            {% if data.list_page.previous_url != None %}
             <li class="page-item">
-                <a href="{{ data.previous }}"><span class="page-link">&laquo;</span></a>
+                <a href="{{ data.list_page.previous_url }}"><span class="page-link">&laquo;</span></a>
             </li>
             {% endif %}
-            {% for p in data.list_page %}
-            {% if data.page_num == p %}
+            {% for page in data.list_page.page_links %}
+            {% if data.page_num == page.number %}
             <li class="page-item active">
                 <span class="page-link">
-                    <span>{{ p }}</spna>
+                    <span>{{ page.number }}</span>
                         <span class="sr-only"></span>
                     </span>
             </li>
-            {% elif p >= data.page_num|add:-2 and p <= data.page_num|add:2 %} <li class="page-item"><a class="page-link"
-                    href="?page={{ p }}">{{ p }}</a></li>
+            {% elif page.number >= data.page_num|add:-2 and page.number <= data.page_num|add:2 %} <li class="page-item"><a class="page-link"
+                    href="{{ page.url }}">{{ page.number }}</a></li>
                 {% endif %}
                 {% endfor %}
 
-                {% if data.next != None %}
+                {% if data.list_page.next_url != None %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ data.next }}">&raquo;</a>
+                    <a class="page-link" href="{{ data.list_page.next_url }}">&raquo;</a>
                 </li>
                 {% endif %}
         </ul>
@@ -137,7 +137,7 @@
         <ul class="bottom-goods-bar">
             <a href="{% url 'history' %}" class="goods-bar-section h">Історія <span class="badge text-bg-primary">{% len_history request %}</span></a>
             <a href="{% url 'favourite' %}"
-                class="goods-bar-section {% if request.user.is_anonymous %} disabled-section {% endif %} o">Обране <span
+                class="goods-bar-section o">Обране <span
                     class="badge text-bg-primary">{% len_favourite request %}</span></a>
         </ul>
     </div>
@@ -147,31 +147,14 @@
     <script>
         window.onload = (event) => {
             document.getElementById('overlay').remove();
-
-            // Якщо значення сортування існує, модифікуємо посилання пагінації
-            var storedSorting = localStorage.getItem('selectedSorting');
-            var storedMinPrce = localStorage.getItem('min_price');
-            var storedMaxPrice = localStorage.getItem('max_price');
-
-            if (storedSorting && storedMinPrce && window.location.href.includes('ordering') && (window.location.href.includes('min_price') || window.location.href.includes('max_price'))) {
-                var pageLinks = document.querySelectorAll('.page-link');
-                pageLinks.forEach(function (link) {
-                    link.href = link.href + '&ordering=' + storedSorting + '&min_price=' + storedMinPrce + '&max_price=' + storedMaxPrice;
-                });
-            } else if (storedSorting && window.location.href.includes('ordering')) {
-                var pageLinks = document.querySelectorAll('.page-link');
-                pageLinks.forEach(function (link) {
-                    link.href = link.href + '&ordering=' + storedSorting;
-                });
-            } else if (storedMinPrce && (window.location.href.includes('min_price') || window.location.href.includes('max_price'))) {
-                var pageLinks = document.querySelectorAll('.page-link');
-                pageLinks.forEach(function (link) {
-                    link.href = link.href + '&min_price=' + storedMinPrce + '&max_price=' + storedMaxPrice;
-                });
-            }
         }
-
-
+        function Search() {
+            var searchInput = document.getElementById("searchInput").value;
+            if (searchInput.trim() === '') {
+                return false;
+            }
+            return true;
+        }
     </script>
     <!--\ Візуальне ... -->
 
@@ -181,5 +164,4 @@
     <script src="https://kit.fontawesome.com/74065038c5.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
-
 </html>

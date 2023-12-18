@@ -7,11 +7,13 @@ from rest_framework.views import APIView
 from rest_framework import status, renderers
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 from django.db.models import F, Count, Q, Prefetch, Case, When
 from relations.serializers import RelationSerializer
 from relations.models import Relation
 from products.serializers import SearchSerializer
 from products.models import MainModel
+from products.utils import ProductPriceFilter
 from utils.pagination import Pagination
 from users.models import User
 
@@ -51,25 +53,44 @@ class SearchViewSet(ListAPIView):
     Returns:
         Response: data
     """
-    queryset = MainModel.objects.filter(is_published=True).annotate(price_w_dis=F('price')-F('price') /
-                                                                    100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('-id')
-    serializer_class = SearchSerializer
+    queryset = MainModel.objects.filter(is_published=True).prefetch_related(Prefetch('in_liked', queryset=User.objects.all().only('id'))).annotate(
+        price_w_dis=F('price') - F('price') / 100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    serializer_class = SearchSerializer
+    filterset_class = ProductPriceFilter
     search_fields = ['title', 'description', 'brand']
-    authentication_classes = [SessionAuthentication]
+    ordering_fields = ['price', 'date_created', 'rating']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
+    authentication_classes = [SessionAuthentication]
     pagination_class = Pagination
 
+    def get_queryset(self, ordering):
+        queryset = super().get_queryset().order_by(ordering)
+        return queryset
+
     def list(self, request):
-        queryset = self.get_queryset()
         query = self.request.query_params.get('search')
+        # якщо є заданий параметр сортування то зберігаємо його, інакше за дефолтом ( новинки )
+        ordering = self.request.query_params.get('ordering', '-pk')
+        queryset = self.get_queryset(ordering)
+
+        # сортування за ціною ( від - до )
+        filterset = self.filterset_class(
+            self.request.query_params, queryset=queryset)
+        queryset = filterset.qs
+
         if query:
-            data = queryset.filter(
-                Q(title__icontains=query) | Q(description__icontains=query) | Q(brand__icontains=query))
+            if len(query) >= 3:
+                data = queryset.filter(
+                    Q(title__icontains=query) | Q(description__icontains=query) | Q(brand__icontains=query))
+            else:
+                data = queryset.filter(
+                    Q(title__icontains=query) | Q(brand__icontains=query))
             paginated_queryset = self.paginate_queryset(data)
             serializer = SearchSerializer(paginated_queryset, many=True)
             paginated_response = self.get_paginated_response(serializer.data)
             return Response(data=({'data': paginated_response.data}), template_name='list_item_page.html', status=status.HTTP_200_OK)
+        messages.error(request, 'При пошуку сталася помилка')
         return redirect('home')
 
 
@@ -85,12 +106,12 @@ class AdToFavAPI(APIView):
         Response: True - Додано до бажаного, False - видалено з бажаного
     """
 
-    permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication]
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
 
     def post(self, request, pk, **kwargs):
 
+        # для авторизованих користувачів ( зберігаемо в БД )
         if request.user.is_authenticated:
             item = get_object_or_404(MainModel, pk=pk)
             if item.in_liked.filter(pk=request.user.id).exists():
@@ -99,8 +120,18 @@ class AdToFavAPI(APIView):
             else:
                 item.in_liked.add(request.user)
                 return Response(data={'data': True, 'id': pk}, status=status.HTTP_202_ACCEPTED)
-
-        return redirect('login')
+        # зберігаемо в сессии
+        else:
+            liked_products = request.session.get('favourite_products', [])
+            item = get_object_or_404(MainModel, pk=pk)
+            if pk in liked_products:
+                request.session['favourite_products'].remove(pk)
+                request.session['favourite_products'] = liked_products
+                return Response(data={'data': False, 'id': pk}, status=status.HTTP_202_ACCEPTED)
+            else:
+                liked_products.insert(0, pk)
+                request.session['favourite_products'] = liked_products
+                return Response(data={'data': True, 'id': pk}, status=status.HTTP_202_ACCEPTED)
 
 
 class FavouriteViewSet(ListAPIView):
@@ -114,16 +145,23 @@ class FavouriteViewSet(ListAPIView):
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
     pagination_class = Pagination
 
-    def get_queryset(self):
-        queryset = MainModel.objects.filter(is_published=True, in_liked=self.request.user.id).prefetch_related('category', Prefetch('in_liked', queryset=User.objects.all().only(
-            'id'))).annotate(price_w_dis=F('price') - F('price') / 100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('-pk')
+    def get_queryset(self, request):
+        list_id_product = request.session.get('favourite_products', [])
+        ordering_conditions = [When(id=id_val, then=pos) for pos, id_val in enumerate(
+            list_id_product)] if list_id_product else ''
+        if request.user.is_anonymous:
+            queryset = MainModel.objects.filter(is_published=True, pk__in=list_id_product).prefetch_related('category', Prefetch('in_liked', queryset=User.objects.all().only(
+                'id'))).annotate(price_w_dis=F('price') - F('price') / 100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by(Case(*ordering_conditions) if ordering_conditions else 'pk')
+        else:
+            queryset = MainModel.objects.filter(is_published=True, in_liked=self.request.user.id).prefetch_related('category', Prefetch('in_liked', queryset=User.objects.all().only(
+                'id'))).annotate(price_w_dis=F('price') - F('price') / 100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by(Case(*ordering_conditions) if ordering_conditions else 'pk')
         return queryset
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.get_queryset(request)
         paginated_queryset = self.paginate_queryset(queryset)
         serializer = SearchSerializer(paginated_queryset, many=True)
-        # Отримуемо відповідь від пагінації
+        # Отримуємо відповідь від пагінації
         paginated_response = self.get_paginated_response(serializer.data)
         return Response(data=({'data': paginated_response.data}), template_name='list_item_page.html', status=status.HTTP_200_OK)
 

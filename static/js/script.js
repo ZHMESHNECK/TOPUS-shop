@@ -84,9 +84,9 @@ buttons.forEach((button) => {
             })
     });
 });
-// 5200.00 -> 5,200.00 
+// 5200.00 -> 5 200,00 
 function formatNumberWithCommas(number) {
-    return number.toLocaleString('en-US', { maximumFractionDigits: 2 }).replace(/,/g, ' ');
+    return number.toLocaleString('en-US', { maximumFractionDigits: 1 }).replace(/,/g, ' ').replace('.', ',');
 }
 
 
@@ -167,6 +167,34 @@ formorder.addEventListener('submit', (e) => {
             document.getElementById('message_pers').style.display = 'none'
         }
     }
+    // перевірка валідності персональних данних 
+    if (formData.get('first_name').length >= 2 && /^[a-zA-Zа-яА-Я]+$/.test(formData.get('first_name'))) {
+        document.getElementById('firstNameError').innerHTML = ''
+    } else {
+        document.getElementById('firstNameError').innerHTML = "Введіть коректне ім'я"
+        valid = false
+    }
+
+    if (formData.get('last_name').length >= 2 && /^[a-zA-Zа-яА-Я]+$/.test(formData.get('last_name'))) {
+        document.getElementById('lastNameError').innerHTML = ''
+    } else {
+        document.getElementById('lastNameError').innerHTML = 'Введіть коректне прізвище'
+        valid = false
+    }
+    if (formData.get('surname').length >= 2 && /^[a-zA-Z-яА-Я]+$/.test(formData.get('surname'))) {
+        document.getElementById('surnameError').innerHTML = ''
+    } else {
+        document.getElementById('surnameError').innerHTML = 'Введіть коректне по батькові'
+        valid = false
+    }
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.get('email'))) {
+        document.getElementById('emailError').innerHTML = ''
+    } else {
+        document.getElementById('emailError').innerHTML = 'Введіть коректну пошту'
+        valid = false
+    }
+
+    // якщо все валідне, то відправляємо форму
     if (valid) {
         let hid_in = document.getElementById('send_data')
         hid_in.value = sendform()
@@ -191,37 +219,10 @@ function show() {
 };
 
 
-// зберігання персональних даних
-const formElement = document.getElementById('personal_data');
-formElement.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const formData = new FormData(formElement);
-
-    let url = '/api/profile/' + document.getElementsByClassName('header-shadow__btn')[0].textContent + '/'
-    let data = {
-        cart: true,
-        first_name: formData.get('first_name'),
-        last_name: formData.get('last_name'),
-        surname: formData.get('surname'),
-        phone_number_0: formData.get('phone_number_0'),
-        phone_number_1: formData.get('phone_number_1'),
-        email: formData.get('email'),
-    }
-
-    fetch(url, {
-        'method': 'POST',
-        'headers': { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-        'body': JSON.stringify(data)
-    })
-        .then(res => { res.json(), location.reload(true) })
-        .catch(error => {
-            console.log(error)
-        })
-});
-
 // форма відправки данних
 function sendform() {
-    let pers_data = document.getElementById('personal_data')
+    let pers_data = new FormData(document.getElementById('personal_data'))
+    console.log(pers_data)
     let deliv_data = document.getElementsByClassName('delivery-block')[0].querySelector('input[type="radio"]:checked')
     let pay_info = document.getElementsByClassName('pay-block')[0].querySelector('input[type="radio"]:checked').value
     let product_data = document.getElementsByClassName('product')
@@ -261,19 +262,18 @@ function sendform() {
 
     let data = {
         client_info: {
-            profile: pers_data.querySelector('input[name="profile"]').value,
-            first_name: pers_data.querySelector('input[name="first_name"]').value,
-            last_name: pers_data.querySelector('input[name="last_name"]').value,
-            surname: pers_data.querySelector('input[name="surname"]').value,
-            phone_number: pers_data.querySelector('select[name="phone_number_0"]').selectedOptions[0].innerHTML.split(' ')[1] + pers_data.querySelector('input[name="phone_number_1"]').value,
-            email: pers_data.querySelector('input[name="email"]').value,
+            profile: pers_data.get('profile'),
+            first_name: pers_data.get('first_name'),
+            last_name: pers_data.get('last_name'),
+            surname: pers_data.get('surname'),
+            phone_number: document.querySelector('select[name="phone_number_0"]').selectedOptions[0].innerHTML.split(' ')[1] + pers_data.get('phone_number_1'),
+            email: pers_data.get('email'),
         },
         delivery: deliv_info,
         how_to_pay: pay_info,
         product: product_info
     };
 
-    // console.log(data)
     return JSON.stringify(data)
 };
 
@@ -285,7 +285,7 @@ if (myList.length > 0) {
 }
 
 
-// //  input - number phone
+//  input - phonenumber
 var backspacePressedLast = false;
 
 document.addEventListener('keydown', function (e) {

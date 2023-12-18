@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+body {
+    font-family: 'Comfortaa', sans-serif;
+    
+
+}
+
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+}
+
+
+.title img {
+    display: block;
+    margin: 0 auto;
+    border-radius: 10px;
+    height: 60px;
+    padding: 10px;
+}
+
+
+.order, .order-items, .delivery {
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    background-color: #af9eba;
+    padding: 5px 15px;
+}
+
+.main-text {
+    margin: 5px;
+    font-size: 25px;
+    text-align: center;
+}
+
+.main-text2 {
+    margin: 10px 0px 10px 15px;
+    font-size: 25px;
+}
+
+
+.line {
+    border-bottom: 1px dashed #cccccc;
+    height: 1px;
+    width: 100%;
+    margin: 0;
+}
+
+.order-item {
+    display: inline-flex;
+    margin: 15px;
+    width: calc(100% - 30px);
+}
+
+.image-item {
+    margin-right: 30px;
+}
+
+
+.item-info {
+    /* display: flex; */
+    flex-direction: column;
+    width: calc(100% - 140px); /* Ширина минус ширина изображения и отступа */
+}
+
+.item-title {
+    color: #d100d1;
+    font-size: 18px;
+    margin: 5px 5px auto;
+    margin-bottom: auto;
+}
+
+.item-option {
+    margin: 5px;
+}
+
+.item-option-param {
+    color: black;
+}
+
+
+.in_all {
+    font-size: 25px;
+    display: block;
+    text-align: center;
+    margin: 15px;
+}
+
+
+.left {
+    margin-right: -50%;
+    margin-left: 15px;
+    width: 25%;
+    vertical-align: top;
+    overflow: hidden;
+    display: inline-block;
+    letter-spacing: normal
+
+}
+
+.right {
+    display: inline-block;
+    letter-spacing: normal;
+    padding-left: 3px;
+    width: 70%;
+    vertical-align: bottom;
+}
+
+.product-detail {
+    letter-spacing: -1ex;
+    margin: 15px 0;
+}
+    </style>
+
+</head>
+
+<body>
+    <a href="#">
+        <div class="title"><img src="#" alt=""></div>
+    </a>
+    <div class="container">
+        <div class="order">
+            <p class="main-text">Замовленння</p>
+            <p class="main-text">№ {{ order_ids }} від {{ order_data }}</p>
+        </div>
+        <div class="order-items">
+            <p class="main-text2">Склад замовлення</p>
+            <div class="line"></div>
+            {% for item in data %}
+            <div class="order-item">
+                <img class="image-item" src="{{ item.product_image }}" alt="{{ item.product_title }}" width="110">
+                <div class="item-info">
+                    <p class="item-title">{{ item.product_title }}</p>
+                    <p class="item-option">Кількість: <strong>{{ item.quantity }} шт.</strong></p>
+                    <p class="item-option">Сума: <strong>{{ item.summ_product|floatformat:"g" }} грн</strong></p>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="line"></div>
+            <strong class="in_all">Разом: {{ summ_of_pay|floatformat:"g" }} грн</strong>
+        </div>
+        <div class="delivery">
+            <p class="main-text2">Доставка</p>
+            <div class="line"></div>
+            <div class="product-details">
+                <div class="product-detail">
+                    <span class="left"><strong>Номер замовлення</strong></span>
+                    <span class="right">№ {{ order_ids }}</span>
+                </div>
+                <div class="product-detail">
+                    <span class="left"><strong>ПІБ</strong></span>
+                    <span class="right">{{ user.first_name }} {{ user.last_name }} {{ user.surname }}</span>
+                </div>
+                <div class="product-detail">
+                    <span class="left"><strong>Доставка</strong></span>
+                    <span class="right">{{ delivery.0 }} </span>
+                </div>
+                <div class="product-detail">
+                    <span class="left"><strong>Адреса/відділення</strong></span>
+                    <span class="right">{{ delivery.1 }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

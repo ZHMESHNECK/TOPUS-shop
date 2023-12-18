@@ -32,9 +32,9 @@ class Cart(models.Model):
                 "Ціна": float(product.price) if not product.discount else float(product.price - product.price / 100 * product.discount)
             }
         if overide_quantity:
-            self.cart[str(product.id)]["Кількість"] = quantity
+            self.cart[str(product.id)]['Кількість'] = quantity
         else:
-            self.cart[str(product.id)]["Кількість"] += quantity
+            self.cart[str(product.id)]['Кількість'] += quantity
         self.save()
 
     def remove(self, product):
@@ -57,7 +57,7 @@ class Cart(models.Model):
 
         for item in self.cart.values():
             item['Ціна'] = item['Ціна']
-            item['Всього'] = round(item['Ціна'] * item['Кількість'], 2)
+            item['Всього'] = round(item['Ціна'] * item['Кількість'], 1)
 
             yield item
 
@@ -67,7 +67,7 @@ class Cart(models.Model):
         return sum(item['Кількість'] for item in self.cart.values())
 
     def get_total_price(self):
-        return round(sum(item['Ціна'] * item['Кількість'] for item in self.cart.values()), 2)
+        return round(sum(item['Ціна'] * item['Кількість'] for item in self.cart.values()), 1)
 
     def clear(self):
         # Видалення кошика з сесії

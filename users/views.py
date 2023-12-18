@@ -9,7 +9,9 @@ from django.contrib.auth import logout
 from django.views.generic.edit import FormView
 from django.views.generic import CreateView, TemplateView
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.db.utils import IntegrityError
 from django.http import Http404
 from utils.pagination import Pagination
@@ -17,11 +19,15 @@ from users.serializers import *
 from users.permission import *
 from users.models import User
 from users.forms import *
+
+from cart.models import Customer
 import requests
-import traceback
+from TOPUS.settings import EMAIL_HOST_USER
 
 
 # from django.contrib.auth.views import LoginView - need test !!!!!
+
+
 class ActivateUser(GenericAPIView):
 
     def get(self, request, uid, token, format=None):
@@ -38,6 +44,32 @@ class ActivateUser(GenericAPIView):
             messages.error(
                 request, 'При створенні профілю сталася помилка')
             return Response(template_name='404.html', data={'message': 'Упс, цієї сторінки не існує'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ForgotPassword(PasswordResetView):
+    """Сторінка вводу пошти для зміни пароля
+    """
+    form_class = ForgotPasswordForm
+    template_name = 'send_change_pass.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Змінити пароль'
+        return context
+
+    def post(self, request, *args, **kwargs):
+        try:
+            data = {'email': request.POST['email']}
+            url = 'http://localhost:8000/api/auth/users/reset_password/'
+            response = requests.post(url, data=data)
+            if response.status_code != 204:
+                return render(request,  '404.html')
+            messages.info(
+                request, 'На пошту було відправлено лист для зміни пароля')
+            return redirect('home')
+        except:
+            messages.error(request, 'Сталася помилка :(')
+            return render(request, template_name=self.template_name)
 
 
 class ChangePasswordUser(PasswordContextMixin, FormView):
@@ -65,32 +97,6 @@ class ChangePasswordUser(PasswordContextMixin, FormView):
             return render(request, self.template_name, parametrs)
         messages.success(request, 'Пароль успішно змінено')
         return redirect('home')
-
-
-class ForgotPassword(PasswordResetView):
-    """Сторінка вводу пошти для зміни пароля
-    """
-    form_class = ForgotPasswordForm
-    template_name = 'send_change_pass.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Змінити пароль'
-        return context
-
-    def post(self, request, *args, **kwargs):
-        try:
-            data = {"email": request.POST['email']}
-            url = 'http://localhost:8000/api/auth/users/reset_password/'
-            response = requests.post(url, data=data)
-            if response.status_code != 204:
-                return render(request,  '404.html')
-            messages.info(
-                request, 'На пошту було відправлено лист для зміни пароля')
-            return redirect('home')
-        except:
-            messages.error(request, 'Сталася помилка :(')
-            return render(request, template_name=self.template_name)
 
 
 class RegisterView(CreateView):
@@ -154,7 +160,7 @@ class LoginUser(LoginView):
 
 def logout_user(request):
     logout(request)
-    return redirect('/')
+    return redirect('home')
 
 
 class ProfileViewSet(ModelViewSet):
@@ -196,50 +202,33 @@ class ProfileViewSet(ModelViewSet):
         """
         profile = self.queryset.get(user_id=request.user.id)
         data = request.data
-
-        # Зберігання даних з кошика
-        if request.data.get('cart'):
-            try:
-                profile.first_name = data.get('first_name')
-                profile.last_name = data.get('last_name')
-                profile.surname = data.get('surname')
-                number = PhoneNumber.from_string(
-                    data.get('phone_number_1'), region=data.get('phone_number_0'))
-                profile.phone_number = number
-                profile.save()
-                messages.success(request, 'Данні успішно збережено')
-                return Response(status=status.HTTP_202_ACCEPTED)
-            except:
-                messages.error(request, 'Сталася помилка')
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-
         # Зберігання даних з профілю
-        else:
-            try:
-                if profile.user.username != data.get('username'):
-                    user = profile.user
-                    user.username = data.get('username')
-                    user.save()
+        try:
+            # Чи змінено username
+            if profile.user.username != data.get('username'):
+                user = profile.user
+                user.username = data.get('username')
+                user.save()
 
-                profile.first_name = data.get('first_name')
-                profile.last_name = data.get('last_name')
-                profile.surname = data.get('surname')
-                number = PhoneNumber.from_string(
-                    data.get('phone_number_1'), region=data.get('phone_number_0'))
-                profile.phone_number = number
-                profile.department = data.get('department')
-                profile.city = data.get('city')
-                profile.adress = data.get('adress')
-                profile.save()
-                profile.refresh_from_db()
-                messages.success(request, 'Данні успішно збережено')
-                return Response(data={'username': profile.user.username}, status=status.HTTP_202_ACCEPTED)
-            except IntegrityError:
-                messages.error(request, 'Юзер з таким нікнеймом вже існує')
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-            except:
-                messages.error(request, 'Сталася помилка')
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+            profile.first_name = data.get('first_name')
+            profile.last_name = data.get('last_name')
+            profile.surname = data.get('surname')
+            number = PhoneNumber.from_string(
+                data.get('phone_number_1'), region=data.get('phone_number_0'))
+            profile.phone_number = number
+            profile.department = data.get('department')
+            profile.city = data.get('city')
+            profile.adress = data.get('adress')
+            profile.save()
+            profile.refresh_from_db()
+            messages.success(request, 'Данні успішно збережено')
+            return Response(data={'username': profile.user.username}, status=status.HTTP_202_ACCEPTED)
+        except IntegrityError:
+            messages.error(request, 'Юзер з таким нікнеймом вже існує')
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            messages.error(request, 'Сталася помилка')
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class PurchaseHistoryApiView(ListAPIView):
@@ -264,6 +253,37 @@ class PurchaseHistoryApiView(ListAPIView):
         serializer = PurchaseHistorySerializer(paginated_queryset, many=True)
         paginated_response = self.get_paginated_response(serializer.data)
         return Response(data={'data': paginated_response.data}, template_name='purchase_history.html')
+
+
+def send_fiscal_check(request):
+    """Відправка на пошту фіскального чеку
+
+    Args:
+        request: request['order'], request['customer']
+    """
+    order_id = request['order']
+    order_owner = request['customer']
+    queryset = Order.objects.filter(id__in=order_id).select_related(
+        'customer', 'product', 'customer__profile__user').order_by('-pk')
+
+    data = EmailPurchaseSerializer(queryset, many=True).data
+
+    context = {
+        'order_ids': [item.get('id') for item in data],
+        'order_data': data[0].get('ordered_date'),
+        'summ_of_pay': sum([float(item.get('summ_product')) for item in data]),
+        'user': order_owner,
+        'delivery': [data[0].get('pickup'), data[0].get('adress')],
+        'data': data
+    }
+    html_content = render_to_string('fiscal_check.html', context)
+
+    # Надсилання електронного листа
+    try:
+        send_mail(subject='Фіскальний чек', message='Text message', from_email=EMAIL_HOST_USER,
+                  recipient_list=[order_owner.email], html_message=html_content,)
+    except:
+        messages.error(request, 'Помилка при відсиланні чеку')
 
 
 def view_topus_team(request):

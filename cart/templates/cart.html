@@ -58,7 +58,6 @@
 <div class="delivery-contact">
 
     <form id="personal_data">
-        {% csrf_token %}
         <p>Персональні данні</p>
         <div id="message_pers" style="display: none;">
             <p id="p_message" class="error">Потрібно заповнити всю форму</p>
@@ -72,14 +71,17 @@
             <div class="inputs-group">
                 <label>Ім'я</label>
                 <input type="text" name="first_name" value="{{ profile.first_name }}" required>
+                <span id="firstNameError" class="error-pers"></span>
             </div>
             <div class="inputs-group">
                 <label>Прізвище</label>
                 <input type="text" name="last_name" value="{{ profile.last_name }}" required>
+                <span id="lastNameError" class="error-pers"></span>
             </div>
             <div class="inputs-group">
                 <label>По батькові</label>
                 <input type="text" name="surname" value="{{ profile.surname }}" required>
+                <span id="surnameError" class="error-pers"></span>
             </div>
         </div>
         <div class="input-row">
@@ -90,14 +92,8 @@
             <div class="inputs-group">
                 <label>Пошта</label>
                 <input type="email" name="email" value="{{ profile.user.email }}" required>
+                <span id="emailError" class="error-pers"></span>
             </div>
-        </div>
-        <div class="input-row">
-            {% if request.user.is_authenticated %}
-            <p><button type="submit">Зберегти</button></p>
-            {% else %}
-            <p><button disabled type="submit">Зберегти</button></p>
-            {% endif %}
         </div>
     </form>
 </div>

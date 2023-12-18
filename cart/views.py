@@ -9,7 +9,9 @@ from users.models import Profile
 from cart.models import Cart
 from cart.utils import create_customer_and_order
 from users.forms import ProfileForm
+from users.views import send_fiscal_check
 import json
+
 
 class CartAPI(APIView):
     """
@@ -111,10 +113,14 @@ class AcceptCartAPI(APIView):
         return Response(template_name='403.html', data={'message': 'Немає доступу до цієї сторінки'}, status=status.HTTP_403_FORBIDDEN)
 
     def post(self, request):
-        if create_customer_and_order(request):
-            cart = Cart(request)
+
+        cart = Cart(request)
+        order = create_customer_and_order(request)
+
+        if order:
+            send_fiscal_check(order)
             cart.clear()
             messages.success(
-                request, 'Замовлення успішно створено')
+                request, 'Замовлення успішно створено, перевірте свою пошту')
             return redirect('home', permanent=True)
         return Response(template_name='404.html', data={'message': 'При створенні замовлення сталася помилка'}, status=status.HTTP_404_NOT_FOUND)

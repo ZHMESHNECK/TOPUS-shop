@@ -57,6 +57,7 @@ ad_fav.forEach(btn => {
 })
 
 function AddToFav(e) {
+    e.preventDefault()
     item = e.srcElement.attributes.value.value
     let url = '/add_to_fav/' + item.toString()
 
@@ -111,24 +112,19 @@ function applyOrdering() {
     var match = currentUrl.match(regex);
 
     if (match) {
-        // Заменяем значение параметра
         var newUrl = currentUrl.replace(regex, 'ordering=' + selectedValue + '$2');
 
-        // Изменяем URL
         window.location.href = newUrl;
     } else {
-        // Если параметр не найден, добавляем его к URL
+        // Якщо параметр не знайдено, додаемо його до URL
         var separator = currentUrl.includes('?') ? '&' : '?';
         var newUrl = currentUrl + separator + 'ordering=' + selectedValue;
 
-        // Изменяем URL
         window.location.href = newUrl;
     }
 }
 
 // ordering price
-
-
 document.addEventListener('DOMContentLoaded', () => {
     var stepsSlider = document.getElementById('slider');
     var input0 = document.getElementById('input-with-keypress-0');
@@ -209,4 +205,15 @@ priceform.addEventListener('submit', function (e) {
 
     e.preventDefault()
 
+})
+
+// Відображення тексту пустої сторінки
+document.addEventListener('DOMContentLoaded', () => {
+    let alert_text = document.getElementById('alert_text')
+    let url = window.location.href
+    if (alert_text && url.includes('favourite')) {
+        alert_text.innerHTML = 'Ви нічого не додали в улюблене'
+    } else if (alert_text && url.includes('history')) {
+        alert_text.innerHTML = 'Ви нічого не продивились'
+    }
 })

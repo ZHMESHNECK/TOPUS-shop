@@ -59,7 +59,6 @@ function AddToFav(e) {
         item = e.target.value
     }
     let url = '/add_to_fav/' + item.toString()
-    // console.log(url)
 
     fetch(url, {
         'method': 'POST',
@@ -100,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-//   Труш - доп. фото
+// Труш - доп. фото
 document.querySelector('#thumbs').addEventListener('click', function (event) {
     event.preventDefault();
     let link = event.target.closest('a');

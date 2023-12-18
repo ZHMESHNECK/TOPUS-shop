@@ -13,6 +13,9 @@ def create_customer_and_order(request):
     Returns:
         Bool: True / False
     """
+    # Зберігаємо данні для надсилання фіскального чеку
+    order_data = {}
+    order_data['order'] = []
     try:
         data = request.data['data']
         if isinstance(data, str):
@@ -30,6 +33,7 @@ def create_customer_and_order(request):
         customer.email = data['client_info'].get('email')
         customer.save()
 
+        order_data['customer'] = customer
     except:
         # print(traceback.format_exc())
         return False
@@ -56,10 +60,12 @@ def create_customer_and_order(request):
             order.is_pay = data['is_pay']
             order.item_price = float(
                 order.product.price - order.product.price / 100 * order.product.discount)
-            order.summ_of_pay = data['summ_of_pay']
+            order.summ_of_pay = order.item_price * int(quantity)
             order.save()
+
+            order_data['order'].append(order.id)
     except:
-        # print(traceback.format_exc())
+        print(traceback.format_exc())
         return False
 
-    return True
+    return order_data

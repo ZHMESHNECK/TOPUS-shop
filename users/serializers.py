@@ -75,6 +75,21 @@ class PurchaseHistorySerializer(ModelSerializer):
 
     def get_fio(self, obj):
         return f'{obj.customer.last_name} {obj.customer.first_name} {obj.customer.surname}'
-    
+
+    def get_summ_product(self, obj):
+        return f'{obj.item_price*obj.quantity}'
+
+
+class EmailPurchaseSerializer(ModelSerializer):
+    product_image = serializers.ImageField(source='product.main_image')
+    product_title = serializers.CharField(source='product.title')
+    ordered_date = serializers.DateTimeField(format='%d-%m-%Y', read_only=True)
+    summ_product = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Order
+        fields = ('id', 'product_image', 'product_title',
+                  'summ_product', 'ordered_date', 'quantity', 'pickup', 'adress')
+
     def get_summ_product(self, obj):
         return f'{obj.item_price*obj.quantity}'

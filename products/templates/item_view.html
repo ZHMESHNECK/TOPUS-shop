@@ -32,7 +32,7 @@
             {% if data.discount > 0 %}
             <div class="product-detail">
                 <span class="left">Знижка:</span>
-                <span class="right">{{ data.discount }} %</span>
+                <span class="right product-discount">{{ data.discount }} %</span>
             </div>
             <div class="product-detail">
                 <span class="left">Ціна зі знижкою:</span>
@@ -65,7 +65,8 @@
         </div>
 
         <div class="buy">
-            <!-- in liked -->
+            <!-- збережене -->
+            <!-- авторизований юзер -->
             {% if request.user.is_authenticated %}
                 {% if request.user.id in data.in_liked %}
                 <div class="add_to_fav">
@@ -78,13 +79,23 @@
                             id="to_fav" class="fa-regular fa-heart fa-lg"></i></button>
                 </div>
                 {% endif %}
+                <!--\ авторизований юзер -->
+            {% else %}
+            <!-- анонім -->
+                {% if data.id in request.session.favourite_products %}
+                <div class="add_to_fav">
+                    <button class="button_view_page" style="color: #ff0080;" value="{{ data.id }}"><i value="{{ data.id }}"
+                            id='to_fav' class="fa-solid fa-heart fa-lg"></i></button>
+                </div>
                 {% else %}
                 <div class="add_to_fav">
-                    <button disabled class="button_view_page" style="color: #ff0080;" value="{{ data.id }}"><i
-                        value="{{ data.id }}" id="to_fav" class="fa-regular fa-heart fa-lg"></i></button>
-                    </div>
-                    {% endif %}
-            <!-- \ in liked -->
+                    <button class="button_view_page" style="color: #ff0080;" value="{{ data.id }}"><i value="{{ data.id }}"
+                            id="to_fav" class="fa-regular fa-heart fa-lg"></i></button>
+                </div>
+                {% endif %}
+                <!--\ анонім -->
+            {% endif %}
+            <!--\ збережене -->
             {% if in_cart == False %}
             <div class="add_to_cart_btn">
                 <button value="{{ data.id }}" class="button_view_page" id="to_cart" onclick="Toast()">Придбати</button>

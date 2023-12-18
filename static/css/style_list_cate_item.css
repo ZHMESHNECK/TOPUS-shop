@@ -24,7 +24,13 @@ a {
     margin: 15px;
     height: 520px;
     position: relative;
+    transition: transform 0.3s;
 }
+
+.product-card:hover {
+    transform: scale(1.05);
+}
+
 
 .product-image {
     width: 200px;

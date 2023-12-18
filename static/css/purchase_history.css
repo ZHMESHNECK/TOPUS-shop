@@ -8,7 +8,7 @@
   padding: 20px;
   border-radius: 10px;
   background-color: rgb(227, 226, 223);
-  margin-bottom: 20px;
+  margin: 20px 0px;
 }
 
 .top-left {
@@ -142,13 +142,6 @@ color: rgb(169, 126, 209);
   margin-left: 10%;
 }
 
-
-
-
-
-
-
-
 .right-column {
   display: flex;
   flex-direction: column;
@@ -163,16 +156,26 @@ color: rgb(169, 126, 209);
   flex: 1;
 }
 
-
-
-
-
 .pre {
     font-family: 'Comfortaa', sans-serif;
 }
 
+.title {
+    font-size: 30px;
+    background-color: #662d91;
+    color: white;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+}
 
-
+.container {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+}
 
 
 
