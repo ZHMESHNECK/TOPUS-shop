@@ -1,11 +1,12 @@
 from phonenumber_field.phonenumber import PhoneNumber
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import AllowAny
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import renderers, status
 from django.contrib.auth.views import *
-from django.contrib.auth import logout
+from django.contrib.auth import logout, authenticate, login
 from django.views.generic.edit import FormView
 from django.views.generic import CreateView, TemplateView
 from django.shortcuts import render, redirect
@@ -19,10 +20,8 @@ from users.serializers import *
 from users.permission import *
 from users.models import User
 from users.forms import *
-
-from cart.models import Customer
-import requests
 from TOPUS.settings import EMAIL_HOST_USER
+import requests
 
 
 # from django.contrib.auth.views import LoginView - need test !!!!!
@@ -43,7 +42,7 @@ class ActivateUser(GenericAPIView):
         else:
             messages.error(
                 request, 'При створенні профілю сталася помилка')
-            return Response(template_name='404.html', data={'message': 'Упс, цієї сторінки не існує'}, status=status.HTTP_404_NOT_FOUND)
+        return redirect('home', permanent=True)
 
 
 class ForgotPassword(PasswordResetView):
@@ -116,10 +115,16 @@ class RegisterView(CreateView):
 
         form = UserRegistrationForm(request.POST)
 
-        data = {"email": request.POST['email'], "username": request.POST['username'],
-                "password": request.POST['password'], "re_password": form.clean_password2()}
+        data = {
+            "email": request.POST['email'],
+            "username": request.POST['username'],
+            "password": request.POST['password'],
+            "re_password": form.clean_password2()
+        }
+
         url = 'http://localhost:8000/api/auth/users/'
         response = requests.post(url, data=data)
+
         if not response.status_code == 201:
             form.error_400(response.content.decode())
 
@@ -244,7 +249,9 @@ class PurchaseHistoryApiView(ListAPIView):
 
     def get_queryset(self):
         queryset = Order.objects.filter(customer__profile__user__id=self.request.user.id).select_related(
-            'customer', 'product', 'customer__profile__user').order_by('-pk')
+            'customer', 'customer__profile__user').prefetch_related(
+            'orderproduct_set__product'
+        ).order_by('-pk')
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -263,18 +270,20 @@ def send_fiscal_check(request):
     """
     order_id = request['order']
     order_owner = request['customer']
-    queryset = Order.objects.filter(id__in=order_id).select_related(
-        'customer', 'product', 'customer__profile__user').order_by('-pk')
+    queryset = Order.objects.filter(id=order_id, customer=order_owner).first()
 
-    data = EmailPurchaseSerializer(queryset, many=True).data
+    if not queryset:
+        return Response({'error': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    data = EmailPurchaseSerializer(queryset).data
 
     context = {
-        'order_ids': [item.get('id') for item in data],
-        'order_data': data[0].get('ordered_date'),
-        'summ_of_pay': sum([float(item.get('summ_product')) for item in data]),
+        'order_ids': data['id'],
+        'order_data': data['ordered_date'],
+        'summ_of_pay': float(data['summ_of_pay']),
         'user': order_owner,
-        'delivery': [data[0].get('pickup'), data[0].get('adress')],
-        'data': data
+        'delivery': [data['pickup'], data['address']],
+        'data': data['products']
     }
     html_content = render_to_string('fiscal_check.html', context)
 
@@ -288,3 +297,8 @@ def send_fiscal_check(request):
 
 def view_topus_team(request):
     return render(request, template_name='TOPUS-team.html')
+
+
+def render404(request):
+    message = request.GET.get('message', '')
+    return render(request, template_name='404.html', context={'message': message})

@@ -12,8 +12,7 @@ class ClothSerializer(ModelSerializer):
 
     class Meta:
         model = Clothes
-        # fields = '__all__'
-        exclude = ('owner', 'viewed', 'is_published', 'category')
+        exclude = ('owner', 'viewed', 'is_published')
 
     def get_absolute_url(self, obj):
         return obj.get_absolute_url()
@@ -27,8 +26,7 @@ class GamingSerializer(ModelSerializer):
 
     class Meta:
         model = Gaming
-        # fields = '__all__'
-        exclude = ('owner', 'viewed', 'is_published', 'category')
+        exclude = ('owner', 'viewed', 'is_published')
 
     def get_absolute_url(self, obj):
         return obj.get_absolute_url()
@@ -42,8 +40,7 @@ class HomeSerializer(ModelSerializer):
 
     class Meta:
         model = Home
-        # fields = '__all__'
-        exclude = ('owner', 'viewed', 'is_published', 'category')
+        exclude = ('owner', 'viewed', 'is_published')
 
     def get_absolute_url(self, obj):
         return obj.get_absolute_url()
@@ -57,7 +54,6 @@ class SearchSerializer(ModelSerializer):
 
     class Meta:
         model = MainModel
-        # fields = '__all__'
         exclude = ('owner', 'viewed', 'is_published', 'category')
 
     def get_absolute_url(self, obj):

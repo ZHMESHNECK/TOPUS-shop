@@ -26,7 +26,7 @@
         <div class="product-details">
             <div class="product-detail">
                 <span class="left">Ціна:</span>
-                <span class="right">{{ data.price|floatformat:"g" }} грн</span>
+                <span class="right">{{ data.price|floatformat:"2g" }} грн</span>
             </div>
             <!-- discount -->
             {% if data.discount > 0 %}
@@ -36,7 +36,7 @@
             </div>
             <div class="product-detail">
                 <span class="left">Ціна зі знижкою:</span>
-                <span class="right">{{ data.price_w_dis|floatformat:"g" }} грн</span>
+                <span class="right">{{ data.price_w_dis|floatformat:"2g" }} грн</span>
             </div>
             {% endif %}
             <!-- \ discount -->

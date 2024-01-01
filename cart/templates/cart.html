@@ -32,13 +32,13 @@
                     class="fas fa-plus-square fa-lg"></i></button>
             <!-- \ зміна кількості  -->
         </div>
-        <p>Ціна: {{ item.Ціна|floatformat:"g" }} грн</p>
+        <p>Ціна: {{ item.Ціна|floatformat:"2g" }} грн</p>
 
         <form method="post">
             {% csrf_token %}
             <button class="btn btn-primary" type="submit" name="remove" value="{{ item.Товар.id }}">Видалити</button>
         </form>
-        <div class="total"> Всього: <span id="span_{{ item.Товар.id }}">{{ item.Всього|floatformat:"g" }}</span> грн</div>
+        <div class="total"> Всього: <span id="span_{{ item.Товар.id }}">{{ item.Всього|floatformat:"2g" }}</span> грн</div>
     </div>
     <div hidden class="product">
         <input type="hidden" name="id" value="{{ item.Товар.id }}">
@@ -50,7 +50,7 @@
 <!-- \ блок товарів -->
 
 <div class="all_total">
-    <h3 id="full_cart_price">До сплати: {{ to_pay|floatformat:"g" }} грн</h3>
+    <h3 id="full_cart_price">До сплати: {{ to_pay|floatformat:"2g" }} грн</h3>
 </div>
 {% if count > 0 %}
 <div class="center">

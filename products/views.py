@@ -1,5 +1,4 @@
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -13,6 +12,7 @@ from products.utils import serial_code_randomizer, ProductPriceFilter
 from relations.models import Relation
 from relations.utils import accept_post
 from utils.pagination import Pagination
+from users.permission import IsStaffOrReadOnly
 from users.models import User
 from cart.views import Cart
 
@@ -30,7 +30,7 @@ class BaseItemViewSet(ModelViewSet):
     """
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductPriceFilter
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsStaffOrReadOnly]
     ordering_fields = ['price', 'date_created', 'rating']
     ordering = ['-date_created']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
@@ -47,9 +47,9 @@ class BaseItemViewSet(ModelViewSet):
         response = super(BaseItemViewSet, self).retrieve(request, pk)
         images = self.get_gallery_objects(pk)
         relation = Relation.objects.select_related(
-            'item', 'user').filter(parent__isnull=True, item_id=pk).only('item__id','user__id','rate','comment','user__username','parent__id','id')
+            'item', 'user').filter(parent__isnull=True, item_id=pk).only('item__id', 'user__id', 'rate', 'comment', 'user__username', 'parent__id', 'id')
         answer = Relation.objects.select_related(
-            'item', 'user').filter(parent__isnull=False, item_id=pk).only('item__id','user__id','rate','comment','user__username','parent__id','id')
+            'item', 'user').filter(parent__isnull=False, item_id=pk).only('item__id', 'user__id', 'rate', 'comment', 'user__username', 'parent__id', 'id')
         data_info = self.get_additional_info(response.data)
 
         # якщо це зміна існуючого відгуку, то блокується кнопка "надіслати"
@@ -70,9 +70,9 @@ class BaseItemViewSet(ModelViewSet):
         if request.accepted_renderer.format == 'html':
             images = self.get_gallery_objects(pk)
             relation = Relation.objects.select_related(
-                'item', 'user').filter(parent__isnull=True, item_id=pk).only('item__id','user__id','rate','created_at','comment','user__username','id')
+                'item', 'user').filter(parent__isnull=True, item_id=pk).only('item__id', 'user__id', 'rate', 'created_at', 'comment', 'user__username', 'id')
             answer = Relation.objects.select_related(
-                'item', 'user').filter(parent__isnull=False, item_id=pk).only('item__id','user__id','rate','comment','user__username','parent__id','id')
+                'item', 'user').filter(parent__isnull=False, item_id=pk).only('item__id', 'user__id', 'rate', 'comment', 'user__username', 'parent__id', 'id')
             data_info = self.get_additional_info(response.data)
             parametrs = {'accept': True}
             in_cart = True if pk in Cart(request).cart else False

@@ -44,22 +44,22 @@
             {% for item in products %}
             <div class="container1">
                 <p><span id="model">{{ item.Товар.title }}</p>
-                <p>Ціна: <span id="price">{{ item.Всього|floatformat:"g" }} грн</span></p>
+                <p>Ціна: <span id="price">{{ item.Всього|floatformat:"2g" }} грн</span></p>
                 <p>Кількість: <span id="price">{{ item.Кількість }}</span></p>
             </div>
             {% endfor %}
             <div class="total">
                 {% if "До замовника" in data.delivery %}
-                <p>До сплати: <span id="full_cart_price">{{ to_pay|floatformat:"g" }}</span> грн <br>(100 грн за доставлення вже
+                <p>До сплати: <span id="full_cart_price">{{ to_pay|floatformat:"2g" }}</span> грн <br>(100 грн за доставлення вже
                     врахованні)
                 </p>
                 {% else %}
-                <p>До сплати: <span id="full_cart_price">{{ to_pay|floatformat:"g" }}</span> грн</p>
+                <p>До сплати: <span id="full_cart_price">{{ to_pay|floatformat:"2g" }}</span> грн</p>
                 {% endif %}
             </div>
         </div>
         {% if data.how_to_pay == "На сайті" %}
-        <!-- кнопка гугл якщо оплата на сайті -->
+        <!-- оплата на сайті через Goole Pay -->
         <div class="google">
             <div id="container"></div>
         </div>
@@ -70,6 +70,7 @@
     </div>
 </div>
 {% if data.how_to_pay == "Карткою" %}
+<!-- оплата на сайті через заповнення форми банківської карти -->
 <div class="pay-card">
     <div class="payment-title">
         <h1>Payment Information</h1>
@@ -191,7 +192,7 @@
             </div>
             <div class="field-container">
                 <label for="cardnumber">Card Number</label><span id="generatecard">generate random</span>
-                <input name="number" id="cardnumber" type="text" pattern="[0-9]*" inputmode="numeric">
+                <input name="number" id="cardnumber" type="text" pattern="[0-9 ]*" inputmode="numeric">
                 <svg id="ccicon" class="ccicon" width="750" height="471" viewBox="0 0 750 471" version="1.1"
                     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 
@@ -199,7 +200,7 @@
             </div>
             <div class="field-container">
                 <label for="expirationdate">Expiration (mm/yy)</label>
-                <input name="date" id="expirationdate" type="text" pattern="[0-9]*" inputmode="numeric">
+                <input name="date" id="expirationdate" type="text" pattern="[0-1][0-9]\/[2-9][0-9]" inputmode="numeric">
             </div>
             <div class="field-container">
                 <label for="securitycode">Security Code</label>

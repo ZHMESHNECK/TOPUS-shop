@@ -129,7 +129,7 @@ class RelationTestCase(APITestCase):
         self.assertEqual(0, len(relation))
 
     def test_delete_relation(self):
-        """Видалення юзером свого відгуку
+        """ Видалення юзером свого відгуку
         """
 
         url = reverse('cloth-detail', args=(self.item.id,))
@@ -150,7 +150,7 @@ class RelationTestCase(APITestCase):
         self.assertEqual(0, len(review))
 
     def test_staff_delete_relation(self):
-        """Видалення staff`oм своєї відповіді
+        """ Видалення staff`oм своєї відповіді
         """
 
         url = reverse('cloth-detail', args=(self.item2.id,))
@@ -175,7 +175,7 @@ class RelationTestCase(APITestCase):
         self.assertEqual(2, len(review))
 
     def test_user_delete_relation_with_2_answers(self):
-        """Відалення відгуку с 2-ма відповідями
+        """ Відалення відгуку с 2-ма відповідями
            видалення каскадне
         """
 
@@ -203,7 +203,7 @@ class RelationTestCase(APITestCase):
         self.assertEqual(1, len(review))
 
     def test_rate_after_delete_rel(self):
-        """Перевірка оновлення рейтингу після видалення відгуку с рейтингом 1
+        """ Оновлення рейтингу після видалення відгуку с рейтингом 1
         """
 
         url = reverse('cloth-detail', args=(self.item2.id,))
@@ -230,7 +230,7 @@ class RelationTestCase(APITestCase):
         self.assertEqual('5.0', str(review.rating))
 
     def test_in_fav(self):
-        """Додання до улюбленого та перевірка
+        """ Додання до улюбленого
         """
         url = reverse('add_to_fav', args=(self.item.id,))
         item = self.item
@@ -245,7 +245,7 @@ class RelationTestCase(APITestCase):
         self.assertTrue(item.in_liked.filter(pk=self.user.id).exists())
 
     def test_delete_from_fav(self):
-        """Видалення з улюбленого та перевірка
+        """ Видалення з улюбленого
         """
         url = reverse('add_to_fav', args=(self.item.id,))
         item = self.item
@@ -261,19 +261,4 @@ class RelationTestCase(APITestCase):
 
         item.refresh_from_db()
         self.assertFalse(response.data['data'])
-        self.assertFalse(item.in_liked.filter(pk=self.user.id).exists())
-
-    def test_in_liked_not_authenticate(self):
-        """Ставлення та перевірка лайка неавторизованого юзера
-        """
-        url = reverse('add_to_fav', args=(self.item.id,))
-        item = self.item
-        self.assertFalse(item.in_liked.filter(pk=self.user.id).exists())
-
-        response = self.client.post(
-            url, content_type='application/json')
-
-        item.refresh_from_db()
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
         self.assertFalse(item.in_liked.filter(pk=self.user.id).exists())

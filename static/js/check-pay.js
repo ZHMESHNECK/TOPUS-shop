@@ -17,7 +17,7 @@ function getCookie(name) {
 const csrftoken = getCookie('csrftoken');
 
 let price = '0'
-// Чи враховувати доставку
+// // Чи враховувати доставку
 if ('До замовника' in JSON.parse(document.getElementById('hello-data').textContent)['delivery']) {
     to_pay = true
 } else {
@@ -294,25 +294,26 @@ function processPayment(paymentData) {
 
 
 let card_data = document.getElementById('card-data');
-card_data.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const formsData = new FormData(card_data)
-    let valid = true
+if (card_data) {
+    card_data.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formsData = new FormData(card_data)
+        let valid = true
 
-    for (let value of formsData.values()) {
-        if (!value) {
-            document.getElementById('error_card').style.display = 'block'
-            valid = false
-            break
-        } else {
-            document.getElementById('error_card').style.display = 'none'
+        for (let value of formsData.values()) {
+            if (!value) {
+                document.getElementById('error_card').style.display = 'block'
+                valid = false
+                break
+            } else {
+                document.getElementById('error_card').style.display = 'none'
+            }
         }
-    }
-    if (valid) {
-        send_order(true)
-    }
-})
-
+        if (valid) {
+            send_order(true)
+        }
+    })
+}
 function send_order(is_pay) {
     data = JSON.parse(document.getElementById('hello-data').textContent)
     if (is_pay) {

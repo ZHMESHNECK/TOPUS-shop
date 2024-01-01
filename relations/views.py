@@ -19,6 +19,15 @@ from users.models import User
 
 
 class UserRelationViewSet(APIView):
+    """Створення / змінення відгука на товар
+
+    Args:
+        APIView (_type_): _description_
+
+    Returns:
+        Response
+        Relation: obj
+    """
     permission_classes = [IsAuthenticated]
     queryset = Relation.objects.all()
     serializer_class = RelationSerializer
@@ -80,6 +89,7 @@ class SearchViewSet(ListAPIView):
         queryset = filterset.qs
 
         if query:
+            # якщо довжинна запиту більша за 2, робимо пошук й в опису
             if len(query) >= 3:
                 data = queryset.filter(
                     Q(title__icontains=query) | Q(description__icontains=query) | Q(brand__icontains=query))
@@ -89,7 +99,10 @@ class SearchViewSet(ListAPIView):
             paginated_queryset = self.paginate_queryset(data)
             serializer = SearchSerializer(paginated_queryset, many=True)
             paginated_response = self.get_paginated_response(serializer.data)
-            return Response(data=({'data': paginated_response.data}), template_name='list_item_page.html', status=status.HTTP_200_OK)
+            message = ''
+            if not paginated_response.data['results']:
+                message = 'За вашим запитом нічого не знайдено'
+            return Response(data=({'data': paginated_response.data, 'message': message}), template_name='list_item_page.html', status=status.HTTP_200_OK)
         messages.error(request, 'При пошуку сталася помилка')
         return redirect('home')
 

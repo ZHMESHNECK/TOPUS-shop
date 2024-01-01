@@ -28,7 +28,8 @@ urlpatterns = [
     path('history/', HistoryView.as_view(), name='history'),
     path('purchase_history/', PurchaseHistoryApiView.as_view(),
          name='purchase_history'),
-    path('topus_team/', view_topus_team, name='topus_team')
+    path('topus_team/', view_topus_team, name='topus_team'),
+    path('404/', render404, name='404')
 
 ]
 

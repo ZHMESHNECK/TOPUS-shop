@@ -8,7 +8,7 @@
 {% if request.user.is_authenticated %}
 
 <head>
-    <meta http-equiv="refresh" content="0;URL={% url '404' %}" />
+    <meta http-equiv="refresh" content="0;URL={% url '404' %}?message=Ви вже увійшли до профілю" />
 </head>
 {% else %}
 <div class="mains">

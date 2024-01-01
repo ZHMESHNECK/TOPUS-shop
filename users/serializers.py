@@ -1,6 +1,6 @@
-from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
 from rest_framework.serializers import ModelSerializer
+from rest_framework.validators import UniqueValidator
+from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from users.models import User, Profile
@@ -64,10 +64,8 @@ class PurchaseHistorySerializer(ModelSerializer):
     phone_number = serializers.CharField(
         source='customer.phone_number', read_only=True)
     fio = serializers.SerializerMethodField()
-    product_image = serializers.ImageField(source='product.main_image')
-    product_title = serializers.CharField(source='product.title')
+    products = serializers.SerializerMethodField()
     ordered_date = serializers.DateTimeField(format='%d-%m-%Y', read_only=True)
-    summ_product = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
@@ -76,20 +74,52 @@ class PurchaseHistorySerializer(ModelSerializer):
     def get_fio(self, obj):
         return f'{obj.customer.last_name} {obj.customer.first_name} {obj.customer.surname}'
 
-    def get_summ_product(self, obj):
-        return f'{obj.item_price*obj.quantity}'
+    def get_products(self, obj):
+
+        products_data = []
+    
+        for products in obj.orderproduct_set.all():
+            product = products.product
+            price = product.price
+            discount = product.discount
+
+            product_data = {
+                'product_image': product.main_image.url,
+                'product_title': product.title,
+                'product_quantity': products.quantity,
+                'product_price': float(price - price / 100 * discount),
+                'product_total': float(price - price / 100 * discount) * products.quantity
+            }
+            products_data.append(product_data)
+
+        return products_data
 
 
 class EmailPurchaseSerializer(ModelSerializer):
-    product_image = serializers.ImageField(source='product.main_image')
-    product_title = serializers.CharField(source='product.title')
+    products = serializers.SerializerMethodField()
     ordered_date = serializers.DateTimeField(format='%d-%m-%Y', read_only=True)
-    summ_product = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
-        fields = ('id', 'product_image', 'product_title',
-                  'summ_product', 'ordered_date', 'quantity', 'pickup', 'adress')
+        fields = ('id', 'ordered_date',
+                  'products', 'pickup', 'address', 'summ_of_pay')
 
-    def get_summ_product(self, obj):
-        return f'{obj.item_price*obj.quantity}'
+    def get_products(self, obj):
+
+        products_data = []
+    
+        for products in obj.orderproduct_set.all():
+            product = products.product
+            price = product.price
+            discount = product.discount
+
+            product_data = {
+                'product_image': product.main_image.url,
+                'product_title': product.title,
+                'product_quantity': products.quantity,
+                'product_price': float(price - price / 100 * discount),
+                'product_total': float(price - price / 100 * discount) * products.quantity
+            }
+            products_data.append(product_data)
+
+        return products_data

@@ -34,7 +34,9 @@ class Relation(models.Model):
         ordering = ['-created_at']
 
     def __str__(self) -> str:
-        return f'{self.user.username} -> {self.item.title}{" & "+str(self.parent) if self.parent else ""}'
+        parent_str = f" & {self.parent}" if self.parent else ""
+        return f'{self.id}) {self.user.username} -> {self.item.title}{parent_str}'
+
 
     def __init__(self, *args, **kwargs):
         super(Relation, self).__init__(*args, **kwargs)

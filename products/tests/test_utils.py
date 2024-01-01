@@ -5,7 +5,7 @@ from products.models import Clothes, Category
 
 class UtilsTestCase(TestCase):
 
-    def setUp(self) -> None:
+    def setUp(self):
 
         self.cat = Category.objects.create(cat_name='1', slug='1')
         self.cat2 = Category.objects.create(cat_name='2', slug='2')

@@ -35,10 +35,11 @@
     </div>
     </div>
     <div class="center">
+        {% for item in purchase.products %}
         <div class="left-column">
             <div class="image-title">
-                <img src="{{ purchase.product_image }}" alt="картинка товара" width="100">
-                <p>{{ purchase.product_title }}</p>
+                <img src="{{ item.product_image }}" alt="картинка товара" width="100">
+                <p>{{ item.product_title }}</p>
             </div>
             <div class="info">
                 <div class="top-row">
@@ -47,14 +48,16 @@
                     <p class="topSum">Сума</p>
                 </div>
                 <div class="bottom-row">
-                    <p class="botPrise">{{ purchase.item_price|floatformat:"g" }} грн</p>
-                    <p class="botHow">{{ purchase.quantity }} шт.</p>
-                    <p class="botSum">{{ purchase.summ_product|floatformat:"g" }} грн</p>
+                    <p class="botPrise">{{ item.product_price|floatformat:"2g" }} грн</p>
+                    <p class="botHow">{{ item.product_quantity }} шт.</p>
+                    <p class="botSum">{{ item.product_total|floatformat:"2g" }} грн</p>
                 </div>
             </div>
         </div>
+        <hr class="custom-hr">
+        {% endfor %}
     </div>
-    <hr class="custom-hr">
+    <!-- <hr class="custom-hr"> -->
     <div class="right-column">
         <div class="info-pair">
             <p class="info-title">Оплата</p>
@@ -66,11 +69,11 @@
         </div>
         <div class="info-pair">
             <p class="info-title">Доставка</p>
-            <p class="info-value"><pre class="pre">{{ purchase.adress }}</pre></p>
+            <p class="info-value"><pre class="pre">{{ purchase.address }}</pre></p>
         </div>
         <div class="info-pair">
             <p class="info-title">Всього</p>
-            <p class="info-value">{{ purchase.summ_of_pay|floatformat:"g" }} грн</p>
+            <p class="info-value">{{ purchase.summ_of_pay|floatformat:"2g" }} грн</p>
         </div>
     </div>
     

@@ -86,7 +86,7 @@ buttons.forEach((button) => {
 });
 // 5200.00 -> 5 200,00 
 function formatNumberWithCommas(number) {
-    return number.toLocaleString('en-US', { maximumFractionDigits: 1 }).replace(/,/g, ' ').replace('.', ',');
+    return number.toLocaleString('en-US', { maximumFractionDigits: 2 }).replace(/,/g, ' ').replace('.', ',');
 }
 
 

@@ -32,7 +32,7 @@ class Profile(models.Model):
     adress = models.CharField('Адреса', blank=True, max_length=100)
 
     def __str__(self):
-        return f'{self.user.username} Profile'
+        return f'{self.last_name} {self.first_name}'
 
     class Meta:
         verbose_name = 'Профіль'

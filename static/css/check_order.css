@@ -193,7 +193,7 @@ input {
     height: 38px;
     position: absolute;
     right: 6px;
-    top: calc(50% - 17px);
+    top: calc(50% - 5px);
     width: 60px;
 }
 

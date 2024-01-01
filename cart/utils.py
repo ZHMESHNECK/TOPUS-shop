@@ -1,7 +1,7 @@
 from products.models import MainModel
 from users.models import Profile, Customer
+from TOPUS.settings import env
 from cart.models import Order
-import traceback
 import json
 
 
@@ -15,7 +15,6 @@ def create_customer_and_order(request):
     """
     # Зберігаємо данні для надсилання фіскального чеку
     order_data = {}
-    order_data['order'] = []
     try:
         data = request.data['data']
         if isinstance(data, str):
@@ -35,37 +34,42 @@ def create_customer_and_order(request):
 
         order_data['customer'] = customer
     except:
-        # print(traceback.format_exc())
         return False
 
     # Створення замовлення
     try:
-        for id_product, quantity in data['product'].items():
-            order = Order()
-            order.customer = customer
-            order.product = MainModel.objects.get(id=id_product)
-            order.quantity = quantity
-            order.pickup = list(data['delivery'].keys())[0]
-            addres = ''
-            if list(data['delivery'].keys())[0] == 'До замовника':
-                courier = data['delivery']['До замовника']
-                for key, value in courier.items():
-                    addres += f'{key}: {value}\n'
-                order.city = data['delivery']['До замовника'].get(
-                    'Місто')
-            else:
-                addres = f'{list(data["delivery"].keys())[0]} - {list(data["delivery"].values())[0]}'
-            order.adress = addres
-            order.how_to_pay = data['how_to_pay']
-            order.is_pay = data['is_pay']
-            order.item_price = float(
-                order.product.price - order.product.price / 100 * order.product.discount)
-            order.summ_of_pay = order.item_price * int(quantity)
-            order.save()
+        order = Order()
+        order.customer = customer
+        order.pickup = list(data['delivery'].keys())[0]
+        address = ''
+        if list(data['delivery'].keys())[0] == 'До замовника':
+            order.summ_of_pay += int(env('DELIVERY_PRICE'))
+            courier = data['delivery']['До замовника']
+            for key, value in courier.items():
+                address += f'{key}: {value}\n'
+            order.city = data['delivery']['До замовника'].get('Місто')
+        else:
+            address = f'{list(data["delivery"].keys())[0]} - {list(data["delivery"].values())[0]}'
+        order.address = address
+        order.how_to_pay = data['how_to_pay']
+        order.is_pay = data['is_pay']
+        order.save()
 
-            order_data['order'].append(order.id)
+        product = MainModel.objects.filter(
+            id__in=[id for id in data['product'].keys()])
+
+        for id_product, quantity in data['product'].items():
+            quantity = int(quantity)
+            item = product.get(id=id_product)
+            price_w_dis = float(
+                item.price - item.price / 100 * item.discount)
+            order.products.add(item, through_defaults={
+                               'quantity': quantity or 1, 'total': price_w_dis * quantity})
+            order.summ_of_pay += price_w_dis * quantity
+
+        order.save()
+        order_data['order'] = order.id
     except:
-        print(traceback.format_exc())
         return False
 
     return order_data

@@ -140,13 +140,13 @@ body {
                 <img class="image-item" src="{{ item.product_image }}" alt="{{ item.product_title }}" width="110">
                 <div class="item-info">
                     <p class="item-title">{{ item.product_title }}</p>
-                    <p class="item-option">Кількість: <strong>{{ item.quantity }} шт.</strong></p>
-                    <p class="item-option">Сума: <strong>{{ item.summ_product|floatformat:"g" }} грн</strong></p>
+                    <p class="item-option">Кількість: <strong>{{ item.product_quantity }} шт.</strong></p>
+                    <p class="item-option">Сума: <strong>{{ item.product_total|floatformat:"2g" }} грн</strong></p>
                 </div>
             </div>
             {% endfor %}
             <div class="line"></div>
-            <strong class="in_all">Разом: {{ summ_of_pay|floatformat:"g" }} грн</strong>
+            <strong class="in_all">Разом: {{ summ_of_pay|floatformat:"2g" }} грн</strong>
         </div>
         <div class="delivery">
             <p class="main-text2">Доставка</p>

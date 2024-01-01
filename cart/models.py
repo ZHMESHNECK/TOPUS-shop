@@ -57,7 +57,7 @@ class Cart(models.Model):
 
         for item in self.cart.values():
             item['Ціна'] = item['Ціна']
-            item['Всього'] = round(item['Ціна'] * item['Кількість'], 1)
+            item['Всього'] = round(item['Ціна'] * item['Кількість'], 2)
 
             yield item
 
@@ -67,7 +67,7 @@ class Cart(models.Model):
         return sum(item['Кількість'] for item in self.cart.values())
 
     def get_total_price(self):
-        return round(sum(item['Ціна'] * item['Кількість'] for item in self.cart.values()), 1)
+        return round(sum(item['Ціна'] * item['Кількість'] for item in self.cart.values()), 2)
 
     def clear(self):
         # Видалення кошика з сесії
@@ -101,19 +101,16 @@ class Order(models.Model):
 
     customer = models.ForeignKey(
         Customer, on_delete=models.CASCADE, verbose_name='Замовник')
-    product = models.ForeignKey(
-        MainModel, on_delete=models.CASCADE, verbose_name='Товар')
+    products = models.ManyToManyField(
+        MainModel, through='OrderProduct', verbose_name='Товар')
     pickup = models.CharField('Спосіб доставки', default='---', max_length=50)
     city = models.CharField('Місто', blank=True,
                             max_length=100, default='Не вказано')
-    adress = models.TextField('Адресса', blank=True, max_length=100)
-    quantity = models.PositiveSmallIntegerField('Кількість', default=1)
+    address = models.TextField('Адресса', blank=True, max_length=100)
     ordered_date = models.DateTimeField('Дата', auto_now_add=True)
     how_to_pay = models.CharField(
         'Спосіб оплати', max_length=50, choices=PAY, default='-')
     is_pay = models.BooleanField('Сплачено', default=False)
-    item_price = models.DecimalField(
-        'Вартість', max_digits=7, decimal_places=2, default=0)
     summ_of_pay = models.DecimalField(
         'Всього', max_digits=7, decimal_places=2, default=0)
     status = models.CharField('Статус',
@@ -125,3 +122,12 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Замовлення'
         verbose_name_plural = 'Замовлення'
+
+
+class OrderProduct(models.Model):
+    """ Проміжна модель для замовлення
+    """
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(MainModel, on_delete=models.CASCADE)
+    quantity = models.PositiveSmallIntegerField(default=1)
+    total = models.DecimalField(max_digits=7, decimal_places=2, default=0)

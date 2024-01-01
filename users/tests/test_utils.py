@@ -8,7 +8,7 @@ class UserTestCase(TestCase):
             username='test', email='email1@email.email', is_staff=True)
         self.user2 = User.objects.create(
             username='test2', email='email2@email.email', is_staff=True)
-        
+
     def test_create_profile(self):
         dd = Profile.objects.all()
         self.assertEqual(len(dd), 2)
