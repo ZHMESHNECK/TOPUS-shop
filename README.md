@@ -18,29 +18,52 @@
 
 ## TOPUS-shop
 
-__
+Демонстраційний сайт з продажу речей
 
 
 ## Ідея
 
-__
+Написати Pet-проект, де реалізувати багато корисних функцій з Back-end
 
 
 ## Функціонал
 
-__
+### Google API
+    - Вхід \ реєстрація
+    - Google Pay
+### Djoser \ Simple JWT
+    - Вхід \ реєстрація
+### smtp.EmailBackend 
+    - Відправлення фіскального чека на пошту
+### Session
+    - Додання в улюблене, історія переглядів
+### JavaScript
+    - Візуальне покращення відображення функціонала сторінки
+### Docker
+    - Запуск сервера через контейнера
+### Postgres
+    - Зберігання даних 
 
 
 ## Вимоги
 - Python >= 3.9
-- PostgreSQL 14+
-
+- PostgreSQL >= 15
 
 
 ## Встановлення
 
-__
-
+Win10
+1) ```git clone https://github.com/ZHMESHNECK/TOPUS-shop.git```
+2) ```cd .\TOPUS\```
+3) ```python -m venv venv```
+4) ```python manage.py .\venv\Scripts\activate```
+5) create .env <br>
+![Alt text](static/images/env.png),
+6) ```pip install -r requirements.txt```
+7) ```python manage.py makemigrations```
+8) ```python manage.py migrate```
+9) ```python manage.py createsuperuser```
+10) ```python manage.py runserver```
 
 ## Що_у_планах
 
@@ -52,6 +75,7 @@ __
 - https://www.youtube.com/@SeniorPomidorDeveloper
 - https://www.youtube.com/@CodeWithClinton
 - https://www.youtube.com/@geekyshows
+- GPT
 
 
 
@@ -62,6 +86,14 @@ __
 
 
 ## Оновлення
+
+version 0.3.2
+- Рефакторінг коду за допомогою flake8
+- Додані файли для Docker
+- Змінене наслідування view для Profile ModelViewSet -> ApiView
+    - змінено url
+- Доповнено файл Readme.md
+- Написано тест PurchaseHistorySerializerTestCase
 
 version 0.3.1
 - Кількість цифр в ціні після коми збільшена до 2-х
@@ -84,7 +116,6 @@ version 0.3.0 (правки Біленко)
 - Посилання для пагінації тепер формується на django, без javascript
 - При створенні замовлення, на пошту користувача відправляется фіскальний чек ( без картинок )
     - EmailPurchaseSerializer
-
 
 version 0.2.9
 - Виправлена помилка при обраної оплати не через гугл

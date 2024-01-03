@@ -19,7 +19,8 @@ class RatingAdmin(admin.ModelAdmin):
 
     def product_info(self, obj):
         list_products = []
-        obj = Relation.objects.select_related('user').prefetch_related('item__category').get(id=obj.id)
+        obj = Relation.objects.select_related(
+            'user').prefetch_related('item__category').get(id=obj.id)
         product = obj.item
 
         if product.category.slug == 'cloth':
@@ -34,7 +35,7 @@ class RatingAdmin(admin.ModelAdmin):
 
         list_products.append(format_html(
             f'<a href="{link}">{obj.item.title} - {obj.item.brand}</a>'))
-        
+
         return format_html('<br>'.join(list_products))
-    
+
     product_info.short_description = 'Товар'

@@ -5,14 +5,14 @@ from products.utils import set_rating
 
 
 def accept_post(self, request, pk):
-    """ Приймає post запит відгука та обробляє його 
+    """ Приймає post запит відгука та обробляє його
 
     Args:
         request (_type_): запит
         pk (_type_): id товару
 
     Returns:
-        request, parametrs: 
+        request, parametrs:
     """
     fill_the_form = True   # чи потрібно автоматично заповняти форму
 

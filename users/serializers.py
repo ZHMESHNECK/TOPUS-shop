@@ -77,7 +77,7 @@ class PurchaseHistorySerializer(ModelSerializer):
     def get_products(self, obj):
 
         products_data = []
-    
+
         for products in obj.orderproduct_set.all():
             product = products.product
             price = product.price
@@ -85,6 +85,7 @@ class PurchaseHistorySerializer(ModelSerializer):
 
             product_data = {
                 'product_image': product.main_image.url,
+                'product_url': product.get_absolute_url(),
                 'product_title': product.title,
                 'product_quantity': products.quantity,
                 'product_price': float(price - price / 100 * discount),
@@ -107,7 +108,7 @@ class EmailPurchaseSerializer(ModelSerializer):
     def get_products(self, obj):
 
         products_data = []
-    
+
         for products in obj.orderproduct_set.all():
             product = products.product
             price = product.price

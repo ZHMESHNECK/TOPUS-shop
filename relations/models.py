@@ -37,7 +37,6 @@ class Relation(models.Model):
         parent_str = f" & {self.parent}" if self.parent else ""
         return f'{self.id}) {self.user.username} -> {self.item.title}{parent_str}'
 
-
     def __init__(self, *args, **kwargs):
         super(Relation, self).__init__(*args, **kwargs)
         self.old_rate = self.rate

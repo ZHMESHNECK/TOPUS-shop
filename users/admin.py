@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import admin
-from users.models import *
+from users.models import User, Profile, Customer
 
 from phonenumber_field.widgets import PhoneNumberPrefixWidget
 

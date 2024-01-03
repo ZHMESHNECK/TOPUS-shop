@@ -27,14 +27,13 @@ def gen_code(x: str) -> str:
          рандомні числа та букви
                     ↓
             (00)(00000000)
-              ↑           
-         category.id   
+              ↑
+         category.id
 
     Returns:
         str: серійний номер
     """
-    return x.zfill(2)+(''.join(random.choice([*
-                                              ascii_uppercase, *digits]) for _ in range(8)))
+    return x.zfill(2) + (''.join(random.choice([*ascii_uppercase, *digits]) for _ in range(8)))
 
 
 def serial_code_randomizer(args):
@@ -46,7 +45,7 @@ def serial_code_randomizer(args):
     Returns:
         str: Повертає рандомно згенеровану строку
     """
-    if args == None:
+    if args is None:
         args = '0'
     else:
         args = str(args.id)

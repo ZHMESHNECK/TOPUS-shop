@@ -32,12 +32,12 @@ class MainApiTestCase(APITestCase):
         Relation.objects.create(user=self.user, item=self.item, rate=4)
 
     def test_get(self):
-        """Перевірка зв'язку з сервером, створення 3-ох записів 
+        """ Перевірка зв'язку з сервером, створення 3-ох записів
         """
         url = reverse('cloth-list')
         response = self.client.get(url)
-        items = Clothes.objects.all().annotate(price_w_dis=F('price')-F('price') /
-                                               100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('-id')
+        items = Clothes.objects.all().annotate(price_w_dis=F('price') - F('price') /
+                                               100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('-id')
 
         serializer_data = ClothSerializer(items, many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
@@ -51,8 +51,8 @@ class MainApiTestCase(APITestCase):
         """Пошук по декількох полях
         """
         url = reverse('search')
-        items = Clothes.objects.filter(id__in=[self.item.id, self.item3.id]).annotate(price_w_dis=F('price')-F('price') /
-                                                                                      100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
+        items = Clothes.objects.filter(id__in=[self.item.id, self.item3.id]).annotate(price_w_dis=F('price') - F('price') /
+                                                                                      100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
         response = self.client.get(url, data={'search': 'test1'})
         serializer_data = ClothSerializer(
             items, many=True).data
@@ -66,8 +66,8 @@ class MainApiTestCase(APITestCase):
         url = reverse('cloth-list')
         response = self.client.get(url, data={'ordering': '-price'})
         items = Clothes.objects.filter(
-            id__in=[self.item.id, self.item2.id, self.item3.id]).annotate(price_w_dis=F('price')-F('price') /
-                                                                          100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('-price')
+            id__in=[self.item.id, self.item2.id, self.item3.id]).annotate(price_w_dis=F('price') - F('price') /
+                                                                          100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('-price')
         serializer_data = ClothSerializer(
             items, many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)

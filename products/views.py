@@ -6,8 +6,8 @@ from rest_framework import renderers
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.messages import get_messages
 from django.db.models import F, Count, Q, Prefetch
-from products.serializers import *
-from products.models import *
+from products.serializers import ClothSerializer, HomeSerializer, GamingSerializer
+from products.models import Clothes, Gaming, Home, Gallery_cloth, Gallery_gaming, Gallery_home
 from products.utils import serial_code_randomizer, ProductPriceFilter
 from relations.models import Relation
 from relations.utils import accept_post

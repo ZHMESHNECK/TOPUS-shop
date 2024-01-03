@@ -1,0 +1,36 @@
+{% if messages %}
+{% for message in messages %}
+{% if message.extra_tags == 'middle' %}
+<div class="alert alert-primary alert-dismissible fade show" role="alert">
+    {{ message|safe }}
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="rate" value="{{ parametrs.rate }}">
+        <input type="hidden" name="comment" value="{{ parametrs.comment }}">
+        <button class="btn btn-dark" type="submit" name="confirm" value="True"><i class="fa-solid fa-check fa-xl" style="color: #00ff00;"></i></button>
+        <button class="btn btn-dark"><a href="{{ requst.META.HTTP_REFERER }}"><i class="fa-solid fa-xmark fa-xl" style="color: #ff0000;"></i></a></button>
+    </form>
+</div>
+{% elif message.level_tag == 'success' %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ message|safe }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% elif message.level_tag == 'info' %}
+<div class="alert alert-primary alert-dismissible fade show" role="alert">
+    {{ message|safe }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% elif message.level_tag == 'warning' %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{ message|safe }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% elif message.level_tag == 'error' %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ message|safe }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}

@@ -19,6 +19,7 @@ def show_categories(sort=None):
 def show_count_cart(request):
     return Cart(request).__len__()
 
+
 @register.simple_tag()
 def pagination_range(number):
     return list(range(number))

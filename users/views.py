@@ -1,12 +1,11 @@
 from phonenumber_field.phonenumber import PhoneNumber
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.permissions import AllowAny
 from rest_framework.generics import GenericAPIView, ListAPIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import renderers, status
-from django.contrib.auth.views import *
-from django.contrib.auth import logout, authenticate, login
+from django.contrib.auth.views import PasswordResetView, PasswordContextMixin, LoginView
+from django.contrib.auth import logout
 from django.views.generic.edit import FormView
 from django.views.generic import CreateView, TemplateView
 from django.shortcuts import render, redirect
@@ -16,15 +15,13 @@ from django.core.mail import send_mail
 from django.db.utils import IntegrityError
 from django.http import Http404
 from utils.pagination import Pagination
-from users.serializers import *
-from users.permission import *
-from users.models import User
-from users.forms import *
+from users.serializers import UserCreateSerializer, UserLoginSerializer, ProfileSerializer, PurchaseHistorySerializer, EmailPurchaseSerializer
+from users.permission import IsOwnerOrReadOnly
+from users.models import User, Profile
+from users.forms import ForgotPasswordForm, SetPasswordForm, UserRegistrationForm, ProfileForm
+from cart.models import Order
 from TOPUS.settings import EMAIL_HOST_USER
 import requests
-
-
-# from django.contrib.auth.views import LoginView - need test !!!!!
 
 
 class ActivateUser(GenericAPIView):
@@ -62,7 +59,7 @@ class ForgotPassword(PasswordResetView):
             url = 'http://localhost:8000/api/auth/users/reset_password/'
             response = requests.post(url, data=data)
             if response.status_code != 204:
-                return render(request,  '404.html')
+                return render(request, '404.html')
             messages.info(
                 request, 'На пошту було відправлено лист для зміни пароля')
             return redirect('home')
@@ -168,22 +165,18 @@ def logout_user(request):
     return redirect('home')
 
 
-class ProfileViewSet(ModelViewSet):
+class ProfileViewSet(APIView):
     """Сторінка відображення профіля юзера
     """
     queryset = Profile.objects.select_related('user')
     serializer_class = ProfileSerializer
-    permission_classes = [IsOwnerOrReadOnly, IsStaffOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly, IsOwnerOrReadOnly]
     authentication_classes = [SessionAuthentication]
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
 
-    def list(self, request):
-        return Response(template_name='404.html', data={'message': 'Упс, цієї сторінки не існує'}, status=status.HTTP_404_NOT_FOUND)
-
-    def retrieve(self, request, pk: str):
-        # pk = username
+    def get(self, request, username: str):
         try:
-            user = self.queryset.get(user__username=pk)
+            user = self.queryset.get(user__username=username)
             if user.user_id != request.user.id:
                 raise Http404
         except:

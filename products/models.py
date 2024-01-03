@@ -77,7 +77,6 @@ class Clothes(MainModel):
         ('Весна', 'Весна'),
     )
 
-
     DEPART = (
         ('Жіноча', 'Жіноча'),
         ('Чоловіча', 'Чоловіча'),
@@ -129,7 +128,8 @@ class Home(MainModel):
     room_type = models.CharField('Для кімнат', max_length=50, blank=True)
     weight = models.DecimalField(
         'Вага', max_digits=5, decimal_places=1, blank=True)
-    dimensions = models.CharField('Розмір(ВхШхГ), см', max_length=30, blank=True)
+    dimensions = models.CharField(
+        'Розмір(ВхШхГ), см', max_length=30, blank=True)
 
     class Meta:
         verbose_name = 'Для дому'

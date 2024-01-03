@@ -13,7 +13,7 @@ time_zone = 2
 
 class ClothSerializerTestCase(TestCase):
     def test_ok(self):
-        """тест сериалайзера
+        """тест серіалайзера
         """
         user1 = User.objects.create(
             username='test1', is_staff=True, email='email1@email.email')
@@ -37,8 +37,8 @@ class ClothSerializerTestCase(TestCase):
         Relation.objects.update_or_create(user=user1, item=item2, rate=3)
         Relation.objects.update_or_create(user=user2, item=item2, rate=4)
 
-        items = Clothes.objects.all().annotate(price_w_dis=F('price')-F('price') /
-                                               100*F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('id')
+        items = Clothes.objects.all().annotate(price_w_dis=F('price') - F('price') /
+                                               100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('id')
         data = ClothSerializer(items, many=True).data
         # print(f'data {data}')
         # що чекаемо отримати, та що отримали
@@ -54,7 +54,7 @@ class ClothSerializerTestCase(TestCase):
                 'brand': '',
                 'main_image': '/media/category_photo/no-image-icon.png',
                 's_code': item.s_code,
-                'date_created': (item.date_created+timedelta(hours=time_zone)).strftime('%Y-%m-%d %H:%M'),
+                'date_created': (item.date_created + timedelta(hours=time_zone)).strftime('%Y-%m-%d %H:%M'),
                 'discount': 20,
                 'rating': '3.7',
                 'size': '',
@@ -74,7 +74,7 @@ class ClothSerializerTestCase(TestCase):
                 'brand': '',
                 'main_image': '/media/category_photo/no-image-icon.png',
                 's_code': item2.s_code,
-                'date_created': (item2.date_created+timedelta(hours=time_zone)).strftime('%Y-%m-%d %H:%M'),
+                'date_created': (item2.date_created + timedelta(hours=time_zone)).strftime('%Y-%m-%d %H:%M'),
                 'discount': 0,
                 'rating': '3.5',
                 'size': '',

@@ -1,6 +1,6 @@
 from django.utils.safestring import mark_safe
 from django.contrib import admin
-from products.models import *
+from products.models import Clothes, Gaming, Home, Category, Gallery_cloth, Gallery_gaming, Gallery_home
 from products.utils import serial_code_randomizer
 
 

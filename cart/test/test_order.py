@@ -1,6 +1,5 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
-from django.db.models import Q
 from django.urls import reverse
 from products.models import Clothes, Category, Gaming
 from users.models import User, Profile
@@ -53,7 +52,7 @@ class OrderTestCase(APITestCase):
             'is_pay': True
         }}
         json_data = json.dumps(data)
-        response = self.client.post(
+        self.client.post(
             url, data=json_data, content_type='application/json')
         self.assertEqual(900, Order.objects.last().summ_of_pay)
 
@@ -194,3 +193,4 @@ class OrderTestCase(APITestCase):
         self.assertEqual(1, Order.objects.count())
         self.assertEqual(
             'Місто: city\nВулиця: street\nБудинок: build\nКвартира: 54\nПоверх: -\nЛіфт: -\n', Order.objects.last().address)
+        self.assertEqual(Order.objects.last().summ_of_pay, 900)

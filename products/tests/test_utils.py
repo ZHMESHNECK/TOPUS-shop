@@ -1,6 +1,6 @@
-from django.test import TestCase
-from products.utils import serial_code_randomizer, gen_code
 from products.models import Clothes, Category
+from products.utils import serial_code_randomizer, gen_code
+from django.test import TestCase
 
 
 class UtilsTestCase(TestCase):
@@ -18,7 +18,7 @@ class UtilsTestCase(TestCase):
     def test_serial_code_randomizer(self):
         """тест рандомайзера коду
         """
-    
+
         self.item.s_code = serial_code_randomizer(self.item.category)
         self.item2.s_code = serial_code_randomizer(self.item2.category)
 

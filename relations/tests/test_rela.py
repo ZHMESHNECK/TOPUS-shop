@@ -1,5 +1,4 @@
 from rest_framework.test import APITestCase
-from rest_framework import status
 from django.urls import reverse
 from users.models import User
 from relations.models import Relation
@@ -44,7 +43,7 @@ class RelationTestCase(APITestCase):
         }
         json_data = json.dumps(data)
         self.client.force_authenticate(self.user2)
-        response = self.client.post(
+        self.client.post(
             url, data=json_data, content_type='application/json')
         relations = Relation.objects.filter(item_id=self.item)
         self.assertEqual(2, len(relations))
@@ -63,7 +62,7 @@ class RelationTestCase(APITestCase):
         }
         json_data = json.dumps(data)
         self.client.force_authenticate(self.user)
-        response = self.client.post(
+        self.client.post(
             url, data=json_data, content_type='application/json')
         relation = Relation.objects.get(user=self.user, item=self.item)
         self.assertEqual(relation.rate, 2)
@@ -80,7 +79,7 @@ class RelationTestCase(APITestCase):
         }
         json_data = json.dumps(data)
         self.client.force_authenticate(self.user)
-        response = self.client.post(
+        self.client.post(
             url, data=json_data, content_type='application/json')
 
         relation = Relation.objects.get(user=self.user, item_id=self.item)
@@ -99,7 +98,7 @@ class RelationTestCase(APITestCase):
         }
         json_data = json.dumps(data)
         self.client.force_authenticate(self.user)
-        response = self.client.post(
+        self.client.post(
             url, data=json_data, content_type='application/json')
         relation = Relation.objects.get(
             user=self.user, item_id=self.item, parent__isnull=False)
@@ -120,7 +119,7 @@ class RelationTestCase(APITestCase):
         }
         json_data = json.dumps(data)
         self.client.force_authenticate(self.user2)
-        response = self.client.post(
+        self.client.post(
             url, data=json_data, content_type='application/json')
 
         relation = Relation.objects.filter(
@@ -142,7 +141,7 @@ class RelationTestCase(APITestCase):
         }
         json_data = json.dumps(data)
         self.client.force_authenticate(self.user)
-        response = self.client.post(
+        self.client.post(
             url, data=json_data, content_type='application/json')
 
         review = Relation.objects.filter(item_id=self.item.id)
@@ -167,7 +166,7 @@ class RelationTestCase(APITestCase):
         }
         json_data = json.dumps(data)
         self.client.force_authenticate(self.user)
-        response = self.client.post(
+        self.client.post(
             url, data=json_data, content_type='application/json')
 
         review = Relation.objects.filter(item_id=self.item2.id)
@@ -196,7 +195,7 @@ class RelationTestCase(APITestCase):
         json_data = json.dumps(data)
         self.client.force_authenticate(self.user2)
 
-        response = self.client.post(
+        self.client.post(
             url, data=json_data, content_type='application/json')
 
         review = Relation.objects.filter(item_id=self.item2.id)
@@ -223,7 +222,7 @@ class RelationTestCase(APITestCase):
 
         json_data = json.dumps(data)
         self.client.force_authenticate(self.user)
-        response = self.client.post(
+        self.client.post(
             url, data=json_data, content_type='application/json')
 
         review.refresh_from_db()
