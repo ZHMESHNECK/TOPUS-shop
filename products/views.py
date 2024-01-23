@@ -51,13 +51,14 @@ class BaseItemViewSet(ModelViewSet):
         answer = Relation.objects.select_related(
             'item', 'user').filter(parent__isnull=False, item_id=pk).only('item__id', 'user__id', 'rate', 'comment', 'user__username', 'parent__id', 'id')
         data_info = self.get_additional_info(response.data)
+        in_cart = True if pk in Cart(request).cart else False
 
         # якщо це зміна існуючого відгуку, то блокується кнопка "надіслати"
         for message in get_messages(request):
             if message.extra_tags == '1':
                 parametrs['accept'] = False
 
-        return Response({'data': response.data, 'images': images, 'relation': relation, 'answer': answer, 'parametrs': parametrs, 'info': data_info}, template_name='item_view.html')
+        return Response({'data': response.data, 'images': images, 'relation': relation, 'answer': answer, 'parametrs': parametrs, 'info': data_info, 'in_cart': in_cart}, template_name='item_view.html')
 
     def list(self, request, *args, **kwargs):
         response = super(BaseItemViewSet, self).list(request, *args, **kwargs)
@@ -88,7 +89,7 @@ class BaseItemViewSet(ModelViewSet):
 
 class ClothviewSet(BaseItemViewSet):
     queryset = Clothes.objects.all().prefetch_related(Prefetch('in_liked', queryset=User.objects.all().only('id'))).filter(
-        is_published=True).annotate(price_w_dis=F('price') - F('price') / 100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
+        is_published=True).annotate(price_w_dis=price_with_discount, views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
     serializer_class = ClothSerializer
 
     def get_gallery_objects(self, pk):
@@ -96,15 +97,15 @@ class ClothviewSet(BaseItemViewSet):
 
     def get_additional_info(self, data):
         return {
-            'Пора року': data['season'],
-            'Для кого': data['department'],
-            'Розмір': data['size']
+            'Пора року': data['season'] if data['season'] else '-',
+            'Для кого': data['department'] if data['department'] else '-',
+            'Розмір': data['size'] if data['size'] else '-'
         }
 
 
 class GamingViewSet(BaseItemViewSet):
     queryset = Gaming.objects.all().prefetch_related(Prefetch('in_liked', queryset=User.objects.all().only('id'))).filter(
-        is_published=True).annotate(price_w_dis=F('price') - F('price') / 100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
+        is_published=True).annotate(price_w_dis=price_with_discount, views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
     serializer_class = GamingSerializer
 
     def get_gallery_objects(self, pk):
@@ -112,15 +113,15 @@ class GamingViewSet(BaseItemViewSet):
 
     def get_additional_info(self, data):
         return {
-            'Модель': data['model'],
-            'Матеріал': data['material'],
-            'Колір': data['color']
+            'Модель': data['model'] if data['model'] else '-',
+            'Матеріал': data['material'] if data['material'] else '-',
+            'Колір': data['color'] if data['color'] else '-'
         }
 
 
 class HomeViewSet(BaseItemViewSet):
     queryset = Home.objects.all().prefetch_related(Prefetch('in_liked', queryset=User.objects.all().only('id'))).filter(
-        is_published=True).annotate(price_w_dis=F('price') - F('price') / 100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
+        is_published=True).annotate(price_w_dis=price_with_discount, views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5))))
     serializer_class = HomeSerializer
 
     def get_gallery_objects(self, pk):
@@ -128,9 +129,9 @@ class HomeViewSet(BaseItemViewSet):
 
     def get_additional_info(self, data):
         return {
-            'Для кімнат': data['room_type'],
-            'Матеріал': data['material'],
-            'Колір': data['color'],
-            'Вага': str(data['weight']) + ' кг',
-            'Розмір(ВхШхГ), см': data['dimensions'],
+            'Для кімнат': data['room_type'] if data['room_type'] else '-',
+            'Матеріал': data['material'] if data['material'] else '-',
+            'Колір': data['color'] if data['color'] else '-',
+            'Вага': str(data['weight']) + ' кг' if data['weight'] else '-',
+            'Розмір(ВхШхГ), см': data['dimensions'] if data['dimensions'] else '-',
         }

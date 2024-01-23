@@ -57,8 +57,11 @@ Win10
 2) ```cd .\TOPUS\```
 3) ```python -m venv venv```
 4) ```python manage.py .\venv\Scripts\activate```
-5) create .env <br>
-![Alt text](static/images/env.png),
+5) create .env
+- змінить шляхи до STATIC | MEDIA
+- а також POSTGRES_HOST=localhost
+<br>
+![Alt text](static/images/env.png)
 6) ```pip install -r requirements.txt```
 7) ```python manage.py makemigrations```
 8) ```python manage.py migrate```
@@ -67,7 +70,8 @@ Win10
 
 ## Що_у_планах
 
-__
+Переробити код створення товарів на більш універсальний, тобто для створення використовувалась лише 1 модель
+- Зробити так щоб при створенні характеристик товару можна було самому вписувати потрібні параметри
 
 
 ## Джерела
@@ -86,6 +90,20 @@ __
 
 
 ## Оновлення
+
+version 0.3.3
+- Інтегріція Docker + gunicorn + nginx
+- Для PurchaseHistoryApiView додано permission IsAuthenticated
+    - url для товару
+- В users/serializers перероблена функція get_products
+- Шлях до STATIC|MEDIA_ROOT вказуется в .env
+- Перед запуском серверу робится collectstatic
+- дефолтне зображення, а також фото "team" переміщене media -> static
+- Фікс кнопки "У кошику!"
+- Додано дефолтне значення для параметрів товару "-"
+- Для products/serializers написан базовий серіалайзер
+- В адмінці при створенні товару для неіснуючої категорії, категорія ствоюється автоматично ( cloth, gaming, for_home )
+
 
 version 0.3.2
 - Рефакторінг коду за допомогою flake8

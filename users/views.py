@@ -1,5 +1,6 @@
 from phonenumber_field.phonenumber import PhoneNumber
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -236,6 +237,7 @@ class PurchaseHistoryApiView(ListAPIView):
         ListAPIView (_type_): _description_
     """
     serializer_class = PurchaseHistorySerializer
+    permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication]
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
     pagination_class = Pagination

@@ -2,22 +2,44 @@ version: '3.7'
 
 services:
   web:
-    build: .
-    command: gunicorn TOPUS.wsgi:application --bind 0.0.0.0:8000
-    ports:
-      - 8000:8000
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: web
+    command: sh -c "python manage.py collectstatic --noinput && python manage.py test && gunicorn TOPUS.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - static_volume:/home/app/TOPUS-shop/collectstatic/
+      - media_volume:/home/app/TOPUS-shop/media
+    expose:
+      - 8000
     depends_on:
       - db
     env_file:
       - ./.env
+
   db:
     image: postgres:15-alpine
+    container_name: postgres
     volumes:
       - pgdata:/var/lib/postgresql/data/
     ports:
-      - "5432:5432"
+      - 5432:5432
     env_file:
       - ./.env
 
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    volumes:
+      - static_volume:/home/app/TOPUS-shop/collectstatic/
+      - media_volume:/home/app/TOPUS-shop/media
+    ports:
+      - 1337:80
+    depends_on:
+      - web
+
+
 volumes:
   pgdata:
+  static_volume:
+  media_volume:

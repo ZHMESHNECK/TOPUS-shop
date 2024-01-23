@@ -47,7 +47,9 @@ class ClothAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.owner = request.user
         if not obj.category:
-            obj.category = Category.objects.get(pk=1)
+            category, _ = Category.objects.get_or_create(
+                slug='cloth', defaults={'cat_name': 'Одяг', 'slug': 'cloth'})
+            obj.category = category
         if not obj.s_code or len(obj.s_code) < 10:
             obj.s_code = serial_code_randomizer(obj.category)
         obj.save()
@@ -75,7 +77,9 @@ class GamingAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.owner = request.user
         if not obj.category:
-            obj.category = Category.objects.get(pk=2)
+            category, _ = Category.objects.get_or_create(
+                slug='gaming', defaults={'cat_name': 'Ігрова переферія', 'slug': 'gaming'})
+            obj.category = category
         if not obj.s_code or len(obj.s_code) < 10:
             obj.s_code = serial_code_randomizer(obj.category)
         obj.save()
@@ -103,7 +107,9 @@ class HomeAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.owner = request.user
         if not obj.category:
-            obj.category = Category.objects.get(pk=3)
+            category, _ = Category.objects.get_or_create(
+                slug='for_home', defaults={'cat_name': 'Для дому', 'slug': 'for_home'})
+            obj.category = category
         if not obj.s_code or len(obj.s_code) < 10:
             obj.s_code = serial_code_randomizer(obj.category)
         obj.save()

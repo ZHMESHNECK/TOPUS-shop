@@ -38,8 +38,10 @@
         {% for item in purchase.products %}
         <div class="left-column">
             <div class="image-title">
-                <img src="{{ item.product_image }}" alt="картинка товара" width="100">
-                <p>{{ item.product_title }}</p>
+                <a href="{{ item.product_url }}">
+                    <img src="{{ item.product_image }}" alt="картинка товара" width="100">
+                </a>
+                    <p>{{ item.product_title }}</p>
             </div>
             <div class="info">
                 <div class="top-row">

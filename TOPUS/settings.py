@@ -16,7 +16,7 @@ import mimetypes
 import environ
 import os
 
-mimetypes.add_type("application/javascript", ".js", True)
+mimetypes.add_type('application/javascript', '.js', True)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -34,8 +34,10 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = env('DJANGO_ALLOWED_HOSTS').split(' ')
-INTERNAL_IPS = [
-    "127.0.0.1",
+INTERNAL_IPS = ['127.0.0.1']
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:1337'
 ]
 
 
@@ -148,10 +150,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
-
+STATIC_ROOT = env('COLLECT_STATIC')
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = env('MEDIA_ROOT')
 
 
 # Default primary key field type
@@ -165,19 +167,19 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 
-    'DATETIME_FORMAT': "%Y-%m-%d %H:%M",
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
     'DEFAULT_PAGINATION_CLASS': 'utils.pagination.Pagination',
     'PAGE_SIZE': 25
 }
 # JWT configure
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "UPDATE_LAST_LOGIN": False,
-    "AUTH_HEADER_TYPES": ("JWT",),
-    "ALGORITHM": "HS256",
-    "SIGNING_KEY": SECRET_KEY,
-    "ROTATE_REFRESH_TOKENS": True,
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'UPDATE_LAST_LOGIN': False,
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'ROTATE_REFRESH_TOKENS': True,
 }
 
 # Djoser configure
@@ -236,7 +238,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('AUTH_GOOGLE_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('AUTH_GOOGLE_SECRET')
 
 # Email configure
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = env('EMAIL_USER')

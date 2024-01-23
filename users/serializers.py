@@ -75,23 +75,16 @@ class PurchaseHistorySerializer(ModelSerializer):
         return f'{obj.customer.last_name} {obj.customer.first_name} {obj.customer.surname}'
 
     def get_products(self, obj):
-
-        products_data = []
-
-        for products in obj.orderproduct_set.all():
-            product = products.product
-            price = product.price
-            discount = product.discount
-
-            product_data = {
-                'product_image': product.main_image.url,
-                'product_url': product.get_absolute_url(),
-                'product_title': product.title,
+        products_data = [
+            {
+                'product_image': products.product.main_image.url,
+                'product_url': products.product.get_absolute_url,
+                'product_title': products.product.title,
                 'product_quantity': products.quantity,
-                'product_price': float(price - price / 100 * discount),
-                'product_total': float(price - price / 100 * discount) * products.quantity
-            }
-            products_data.append(product_data)
+                'product_price': float(products.product.price - products.product.price / 100 * products.product.discount),
+                'product_total': float(products.product.price - products.product.price / 100 * products.product.discount) * products.quantity
+            } for products in obj.orderproduct_set.all()
+        ]
 
         return products_data
 
@@ -106,21 +99,15 @@ class EmailPurchaseSerializer(ModelSerializer):
                   'products', 'pickup', 'address', 'summ_of_pay')
 
     def get_products(self, obj):
-
-        products_data = []
-
-        for products in obj.orderproduct_set.all():
-            product = products.product
-            price = product.price
-            discount = product.discount
-
-            product_data = {
-                'product_image': product.main_image.url,
-                'product_title': product.title,
+        products_data = [
+            {
+                'product_image': products.product.main_image.url,
+                'product_url': products.product.get_absolute_url,
+                'product_title': products.product.title,
                 'product_quantity': products.quantity,
-                'product_price': float(price - price / 100 * discount),
-                'product_total': float(price - price / 100 * discount) * products.quantity
-            }
-            products_data.append(product_data)
+                'product_price': float(products.product.price - products.product.price / 100 * products.product.discount),
+                'product_total': float(products.product.price - products.product.price / 100 * products.product.discount) * products.quantity
+            } for products in obj.orderproduct_set.all()
+        ]
 
         return products_data

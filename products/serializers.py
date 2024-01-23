@@ -3,58 +3,38 @@ from rest_framework import serializers
 from products.models import Clothes, Gaming, Home, MainModel
 
 
-class ClothSerializer(ModelSerializer):
-
+class BaseItemSerializer(ModelSerializer):
     price_w_dis = serializers.DecimalField(
         max_digits=7, decimal_places=2, read_only=True)
     views = serializers.CharField(read_only=True)
     absolute_url = serializers.SerializerMethodField()
+    main_image = serializers.SerializerMethodField()
 
     class Meta:
+        exclude = ('owner', 'viewed', 'is_published')
+
+    def get_absolute_url(self, obj):
+        return obj.get_absolute_url()
+
+    def get_main_image(self, obj):
+        return obj.main_image.url
+
+
+class ClothSerializer(BaseItemSerializer):
+    class Meta(BaseItemSerializer.Meta):
         model = Clothes
-        exclude = ('owner', 'viewed', 'is_published')
-
-    def get_absolute_url(self, obj):
-        return obj.get_absolute_url()
 
 
-class GamingSerializer(ModelSerializer):
-    price_w_dis = serializers.DecimalField(
-        max_digits=7, decimal_places=2, read_only=True)
-    views = serializers.CharField(read_only=True)
-    absolute_url = serializers.SerializerMethodField()
-
-    class Meta:
+class GamingSerializer(BaseItemSerializer):
+    class Meta(BaseItemSerializer.Meta):
         model = Gaming
-        exclude = ('owner', 'viewed', 'is_published')
-
-    def get_absolute_url(self, obj):
-        return obj.get_absolute_url()
 
 
-class HomeSerializer(ModelSerializer):
-    price_w_dis = serializers.DecimalField(
-        max_digits=7, decimal_places=2, read_only=True)
-    views = serializers.CharField(read_only=True)
-    absolute_url = serializers.SerializerMethodField()
-
-    class Meta:
+class HomeSerializer(BaseItemSerializer):
+    class Meta(BaseItemSerializer.Meta):
         model = Home
-        exclude = ('owner', 'viewed', 'is_published')
-
-    def get_absolute_url(self, obj):
-        return obj.get_absolute_url()
 
 
-class SearchSerializer(ModelSerializer):
-    price_w_dis = serializers.DecimalField(
-        max_digits=7, decimal_places=2, read_only=True)
-    views = serializers.CharField(read_only=True)
-    absolute_url = serializers.SerializerMethodField()
-
-    class Meta:
+class SearchSerializer(BaseItemSerializer):
+    class Meta(BaseItemSerializer.Meta):
         model = MainModel
-        exclude = ('owner', 'viewed', 'is_published', 'category')
-
-    def get_absolute_url(self, obj):
-        return obj.get_absolute_url()
