@@ -14,7 +14,6 @@ from datetime import timedelta
 from pathlib import Path
 import mimetypes
 import environ
-import os
 
 mimetypes.add_type('application/javascript', '.js', True)
 
@@ -34,10 +33,16 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = env('DJANGO_ALLOWED_HOSTS').split(' ')
-INTERNAL_IPS = ['127.0.0.1']
+INTERNAL_IPS = [
+    '127.0.0.1',
+    'www.topus-shop.com',
+    'topus-shop.com'
+]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://127.0.0.1:1337'
+    'http://127.0.0.1:1337',
+    'www.topus-shop.com',
+    'topus-shop.com'
 ]
 
 
@@ -149,7 +154,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 STATIC_ROOT = env('COLLECT_STATIC')
 
 MEDIA_URL = '/media/'

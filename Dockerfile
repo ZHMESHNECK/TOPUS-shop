@@ -23,14 +23,12 @@ RUN flake8 \
 #### FINAL
 FROM python:3.10-alpine
 
-RUN mkdir -p /home/app \
-&& addgroup -S app \
-&& adduser -S app -G app
-
 ENV APP_HOME=/home/app/TOPUS-shop
 
 # Створення дерикторій
-RUN mkdir -p $APP_HOME $APP_HOME/media $APP_HOME/media/category_photo $APP_HOME/media/cloth_photos $APP_HOME/media/gaming_photo $APP_HOME/media/home_photo $APP_HOME/media/main_photo
+RUN mkdir -p $APP_HOME $APP_HOME/staticfiles $APP_HOME/media $APP_HOME/media/category_photo $APP_HOME/media/cloth_photos $APP_HOME/media/gaming_photo $APP_HOME/media/home_photo $APP_HOME/media/main_photo \
+&& addgroup -S app \
+&& adduser -S app -G app
 
 WORKDIR $APP_HOME
 
@@ -40,14 +38,12 @@ COPY --from=builder /usr/src/app/TOPUS-shop/requirements.txt .
 
 RUN apk update \
 && apk add libpq \
-&& pip install --no-cache /wheels/*
+&& pip install --no-cache /wheels/* \
+&& chown -R app:app $APP_HOME
 
 
 COPY ./entrypoint.sh .
-
 COPY . .
-
-RUN chown -R app:app ${APP_HOME}
 
 USER app
 

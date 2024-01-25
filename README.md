@@ -91,6 +91,9 @@ Win10
 
 ## Оновлення
 
+version 0.3.4
+- Правки для продакшену
+
 version 0.3.3
 - Інтегріція Docker + gunicorn + nginx
 - Для PurchaseHistoryApiView додано permission IsAuthenticated
