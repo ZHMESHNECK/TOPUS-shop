@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  web:
+    image: zhmeshneck/topus-shop-web:v0.3
+    container_name: web
+    command: sh -c "python manage.py test && gunicorn TOPUS.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - static_volume:/home/app/TOPUS-shop/staticfiles/
+      - media_volume:/home/app/TOPUS-shop/media
+    expose:
+      - 8000
+    depends_on:
+      - postgres
+    env_file:
+      - ./.env
+    restart: always
+
+  postgres:
+    image: zhmeshneck/postgres:v0.1
+    container_name: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+    ports:
+      - 5433:5432
+    env_file:
+      - ./.env
+
+  nginx:
+    image: zhmeshneck/topus-shop-nginx:v0.3
+    container_name: nginx
+    volumes:
+      - static_volume:/home/app/TOPUS-shop/staticfiles/
+      - media_volume:/home/app/TOPUS-shop/media
+    ports:
+      - 1337:80
+    depends_on:
+      - web
+
+volumes:
+  pgdata:
+  static_volume:
+  media_volume:

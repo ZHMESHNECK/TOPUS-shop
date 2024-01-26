@@ -3,7 +3,6 @@ version: '3.7'
 services:
   web:
     image: zhmeshneck/topus-shop-web:v0.3
-    # build: .
     container_name: web
     command: sh -c "python manage.py test && gunicorn TOPUS.wsgi:application --bind 0.0.0.0:8000"
     volumes:
@@ -15,6 +14,8 @@ services:
       - postgres
     env_file:
       - ./.env
+    restart: always
+
   postgres:
     image: zhmeshneck/postgres:v0.1
     container_name: postgres
@@ -26,13 +27,16 @@ services:
       - ./.env
 
   nginx:
-    image: zhmeshneck/topus-shop-nginx:v0.1
+    image: zhmeshneck/topus-shop-nginx:v0.3
     container_name: nginx
     volumes:
       - static_volume:/home/app/TOPUS-shop/staticfiles/
       - media_volume:/home/app/TOPUS-shop/media
+      - /etc/letsencrypt/ssl/fullchain.pem:/etc/nginx/ssl/fullchain.pem
+      - /etc/letsencrypt/ssl/privkey.pem:/etc/nginx/ssl/privkey.pem
     ports:
-      - 1337:80
+      - 80:80
+      - 443:443
     depends_on:
       - web
 
