@@ -137,7 +137,7 @@ body {
             <div class="line"></div>
             {% for item in data %}
             <div class="order-item">
-                <img class="image-item" src="{{ item.product_image }}" alt="{{ item.product_title }}" width="110">
+                <a href="{{ item.product_url }}"><img class="image-item" src="{{ item.product_image }}" alt="{{ item.product_title }}" width="110"></a>
                 <div class="item-info">
                     <p class="item-title">{{ item.product_title }}</p>
                     <p class="item-option">Кількість: <strong>{{ item.product_quantity }} шт.</strong></p>

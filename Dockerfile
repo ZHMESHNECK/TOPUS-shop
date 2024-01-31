@@ -8,7 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # psycopg2
-RUN apk update \
+RUN apk update --no-cache \
 && apk add postgresql-dev gcc python3-dev musl-dev \
 && pip install flake8 gunicorn
 

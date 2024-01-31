@@ -57,11 +57,12 @@ Win10
 2) ```cd .\TOPUS\```
 3) ```python -m venv venv```
 4) ```python manage.py .\venv\Scripts\activate```
-5) create .env
-- змінить шляхи до STATIC | MEDIA
-- а також POSTGRES_HOST=localhost
-<br>
+5) ```create .env```
+    - змінить шляхи до STATIC | MEDIA
+    - а також POSTGRES_HOST=localhost
+
 ![Alt text](static/images/env.png)
+
 6) ```pip install -r requirements.txt```
 7) ```python manage.py makemigrations```
 8) ```python manage.py migrate```
@@ -91,6 +92,16 @@ Win10
 
 ## Оновлення
 
+version 0.3.7 - Realese !
+- Змінені end-points для djoser в users/views.py 
+- Додано домен для url зображень та самого товару у EmailPurchaserSerializer
+    - Додано посилання на товар у фіскальному чеку
+- Змінено permission на новий для BaseItemViewSet
+
+version 0.3.6
+- Доданні тести для перевірки djoser
+- Правки для продакшену
+
 version 0.3.5
 - Доданні файли docker-compose_prod \ nginx_dev
 - У футтер додано інформацію про не реальні товари
@@ -110,7 +121,6 @@ version 0.3.3
 - Додано дефолтне значення для параметрів товару "-"
 - Для products/serializers написан базовий серіалайзер
 - В адмінці при створенні товару для неіснуючої категорії, категорія ствоюється автоматично ( cloth, gaming, for_home )
-
 
 version 0.3.2
 - Рефакторінг коду за допомогою flake8

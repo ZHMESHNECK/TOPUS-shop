@@ -41,8 +41,8 @@ INTERNAL_IPS = [
 
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:1337',
-    'www.topus-shop.com',
-    'topus-shop.com'
+    'http://topus-shop.com',
+    'https://topus-shop.com'
 ]
 
 
@@ -155,6 +155,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = env('COLLECT_STATIC')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = env('MEDIA_ROOT')

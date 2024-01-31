@@ -12,7 +12,7 @@ from products.utils import serial_code_randomizer, ProductPriceFilter
 from relations.models import Relation
 from relations.utils import accept_post
 from utils.pagination import Pagination
-from users.permission import IsStaffOrReadOnly
+from users.permission import IsAdminOrReadOnly
 from users.models import User
 from cart.views import Cart
 
@@ -30,7 +30,7 @@ class BaseItemViewSet(ModelViewSet):
     """
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductPriceFilter
-    permission_classes = [IsStaffOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
     ordering_fields = ['price', 'date_created', 'rating']
     ordering = ['-date_created']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)

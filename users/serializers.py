@@ -78,7 +78,7 @@ class PurchaseHistorySerializer(ModelSerializer):
         products_data = [
             {
                 'product_image': products.product.main_image.url,
-                'product_url': products.product.get_absolute_url,
+                'product_url': products.product.get_absolute_url(),
                 'product_title': products.product.title,
                 'product_quantity': products.quantity,
                 'product_price': float(products.product.price - products.product.price / 100 * products.product.discount),
@@ -101,8 +101,8 @@ class EmailPurchaseSerializer(ModelSerializer):
     def get_products(self, obj):
         products_data = [
             {
-                'product_image': products.product.main_image.url,
-                'product_url': products.product.get_absolute_url,
+                'product_image': 'https://topus-shop.com' + products.product.main_image.url,
+                'product_url': 'https://topus-shop.com' + products.product.get_absolute_url(),
                 'product_title': products.product.title,
                 'product_quantity': products.quantity,
                 'product_price': float(products.product.price - products.product.price / 100 * products.product.discount),

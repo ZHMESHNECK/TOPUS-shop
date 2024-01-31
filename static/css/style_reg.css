@@ -3,6 +3,13 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
+
+}
+
+.projects-section {
+    background: linear-gradient(to bottom, #ffffff, #000000);
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .mains {
@@ -14,12 +21,6 @@ body {
     margin: 20px auto;
     /* transform: translate(-50%, -55%); */
     border-radius: 10px;
-}
-
-body {
-    background: linear-gradient(to bottom, #ffffff, #000000);
-    background-repeat: no-repeat;
-    background-size: cover;
 }
 
 .form-box {

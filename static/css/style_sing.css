@@ -6,7 +6,7 @@ body {
 }
 
 
-body {
+.projects-section {
     background: linear-gradient(to bottom, #ffffff, #000000);
     background-repeat: no-repeat;
     background-size: cover;

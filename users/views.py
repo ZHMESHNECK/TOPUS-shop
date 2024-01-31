@@ -30,10 +30,10 @@ class ActivateUser(GenericAPIView):
     def get(self, request, uid, token, format=None):
         payload = {"uid": uid, "token": token}
 
-        url = "http://localhost:8000/api/auth/users/activation/"
+        url = "https://topus-shop.com/api/auth/users/activation/"
         response = requests.post(url, json=payload)
 
-        if response.status_code in (204, 301, 302):
+        if response.status_code == 204:
             messages.success(
                 request, 'Профіль створено, тепер можете увійти')
             return redirect('home', permanent=True)
@@ -57,7 +57,7 @@ class ForgotPassword(PasswordResetView):
     def post(self, request, *args, **kwargs):
         try:
             data = {'email': request.POST['email']}
-            url = 'http://localhost:8000/api/auth/users/reset_password/'
+            url = 'https://topus-shop.com/api/auth/users/reset_password/'
             response = requests.post(url, data=data)
             if response.status_code != 204:
                 return render(request, '404.html')
@@ -82,7 +82,7 @@ class ChangePasswordUser(PasswordContextMixin, FormView):
         data = {"uid": kwargs['uidb64'], "token": kwargs['token'], "new_password": request.POST['new_password'],
                 "re_new_password": request.POST['re_new_password']}
 
-        url = 'http://localhost:8000/api/auth/users/reset_password_confirm/'
+        url = 'https://topus-shop.com/api/auth/users/reset_password_confirm/'
         response = requests.post(url, data=data)
         if response.status_code != 204:
             form.error_400(response.content.decode())
@@ -120,10 +120,10 @@ class RegisterView(CreateView):
             "re_password": form.clean_password2()
         }
 
-        url = 'http://localhost:8000/api/auth/users/'
+        url = 'https://topus-shop.com/api/auth/users/'
         response = requests.post(url, data=data)
 
-        if not response.status_code == 201:
+        if response.status_code != 201:
             form.error_400(response.content.decode())
 
             parametrs = {
