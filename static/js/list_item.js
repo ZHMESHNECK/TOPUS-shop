@@ -181,8 +181,9 @@ priceform.addEventListener('submit', function (e) {
     var currentUrl = window.location.href;
     var minPrice = document.getElementById('input-with-keypress-0').value;
     var maxPrice = document.getElementById('input-with-keypress-1').value;
+    var selectedValue = document.getElementById('orderSelect').value; // ordering
 
-    var str_ord_price = 'min_price=' + minPrice + '&max_price=' + maxPrice
+    var str_ord_price = 'min_price=' + minPrice + '&max_price=' + maxPrice + '&ordering=' + selectedValue
 
     localStorage.setItem('min_price', minPrice);
     localStorage.setItem('max_price', maxPrice);
@@ -192,7 +193,7 @@ priceform.addEventListener('submit', function (e) {
     var match = currentUrl.match(regex_min) || currentUrl.match(regex_max);
 
     if (match) {
-        var newUrl = currentUrl.replace(regex_min, 'min_price=' + minPrice + '$2').replace(regex_max, 'max_price=' + maxPrice + '$2');
+        var newUrl = currentUrl.replace(regex_min, 'min_price=' + minPrice + '$2').replace(regex_max, 'max_price=' + maxPrice + '$2') + '&ordering=' + selectedValue;
         window.location.href = newUrl
     } else {
         // Если параметр не найден, добавляем его к URL

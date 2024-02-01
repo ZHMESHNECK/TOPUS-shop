@@ -1,7 +1,7 @@
 from django_filters import FilterSet, NumberFilter
 from relations.models import Relation
-from products.models import MainModel
 from django.db.models import Avg, Count
+from products.models import MainModel
 from string import ascii_uppercase, digits
 import random
 
@@ -9,11 +9,9 @@ import random
 class ProductPriceFilter(FilterSet):
     """ Сортування товару по цені від - до
 
-    Args:
-        FilterSet (_type_): _description_
     """
-    min_price = NumberFilter(field_name='price', lookup_expr='gte')
-    max_price = NumberFilter(field_name='price', lookup_expr='lte')
+    min_price = NumberFilter(field_name='price_w_dis', lookup_expr='gte')
+    max_price = NumberFilter(field_name='price_w_dis', lookup_expr='lte')
 
     class Meta:
         model = MainModel

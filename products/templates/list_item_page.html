@@ -15,8 +15,8 @@
             <form method="get" id="orderForm">
                 <select class="select-css" id="orderSelect" name="ordering" onchange="applyOrdering()">
                     <option name="new" value="-date_created" onclick="applyOrdering()">Новинки</option>
-                    <option name="price" value="price" onclick="applyOrdering()">Від дешевих до дорогих</option>
-                    <option name="-price" value="-price" onclick="applyOrdering()">Від дорогих до дешевих</option>
+                    <option name="price" value="price_w_dis" onclick="applyOrdering()">Від дешевих до дорогих</option>
+                    <option name="-price" value="-price_w_dis" onclick="applyOrdering()">Від дорогих до дешевих</option>
                     <option name="rate" value="-rating" onclick="applyOrdering()">За рейтингом</option>
                 </select>
             </form>

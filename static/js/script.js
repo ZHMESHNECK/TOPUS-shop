@@ -168,20 +168,20 @@ formorder.addEventListener('submit', (e) => {
         }
     }
     // перевірка валідності персональних данних 
-    if (formData.get('first_name').length >= 2 && /^[a-zA-Zа-яА-Я]+$/.test(formData.get('first_name'))) {
+    if (formData.get('first_name').length >= 2 && /^[a-zA-Zа-яА-ЯїЇіІєЄґҐЬьЄє']+$/u.test(formData.get('first_name'))) {
         document.getElementById('firstNameError').innerHTML = ''
     } else {
         document.getElementById('firstNameError').innerHTML = "Введіть коректне ім'я"
         valid = false
     }
 
-    if (formData.get('last_name').length >= 2 && /^[a-zA-Zа-яА-Я]+$/.test(formData.get('last_name'))) {
+    if (formData.get('last_name').length >= 2 && /^[a-zA-Zа-яА-ЯїЇіІєЄґҐЬьЄє']+$/u.test(formData.get('last_name'))) {
         document.getElementById('lastNameError').innerHTML = ''
     } else {
         document.getElementById('lastNameError').innerHTML = 'Введіть коректне прізвище'
         valid = false
     }
-    if (formData.get('surname').length >= 2 && /^[a-zA-Z-яА-Я]+$/.test(formData.get('surname'))) {
+    if (formData.get('surname').length >= 2 && /^[a-zA-Zа-яА-ЯїЇіІєЄґҐЬьЄє']+$/u.test(formData.get('surname'))) {
         document.getElementById('surnameError').innerHTML = ''
     } else {
         document.getElementById('surnameError').innerHTML = 'Введіть коректне по батькові'

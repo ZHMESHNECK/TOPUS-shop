@@ -31,7 +31,7 @@ class BaseItemViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductPriceFilter
     permission_classes = [IsAdminOrReadOnly]
-    ordering_fields = ['price', 'date_created', 'rating']
+    ordering_fields = ['price_w_dis', 'date_created', 'rating']
     ordering = ['-date_created']
     renderer_classes = (renderers.JSONRenderer, renderers.TemplateHTMLRenderer)
     authentication_classes = [SessionAuthentication]

@@ -61,10 +61,10 @@ class MainApiTestCase(APITestCase):
             response.data['data']['results']))
 
     def test_order(self):
-        """Сортування
+        """Сортування по ціні від більшої до мешої
         """
         url = reverse('cloth-list')
-        response = self.client.get(url, data={'ordering': '-price'})
+        response = self.client.get(url, data={'ordering': '-price_w_dis'})
         items = Clothes.objects.filter(
             id__in=[self.item.id, self.item2.id, self.item3.id]).annotate(price_w_dis=F('price') - F('price') /
                                                                           100 * F('discount'), views=Count('viewed', filter=Q(rati__rate__in=(1, 2, 3, 4, 5)))).order_by('-price')

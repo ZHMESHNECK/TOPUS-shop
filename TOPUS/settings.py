@@ -14,6 +14,7 @@ from datetime import timedelta
 from pathlib import Path
 import mimetypes
 import environ
+import os
 
 mimetypes.add_type('application/javascript', '.js', True)
 
@@ -160,7 +161,7 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = env('MEDIA_ROOT')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Default primary key field type
