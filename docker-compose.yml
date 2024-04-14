@@ -1,9 +1,7 @@
-version: '3.7'
-
 services:
   web:
-    image: zhmeshneck/topus-shop-web:prod
-    # build: .
+    # image: zhmeshneck/topus-shop-web:prod
+    build: .
     container_name: web
     command: sh -c "python manage.py test cart/test products/tests relations/tests users/tests && gunicorn -c gunicorn_config.py TOPUS.wsgi:application"
     volumes:
