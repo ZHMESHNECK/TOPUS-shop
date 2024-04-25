@@ -32,8 +32,8 @@ services:
     volumes:
       - static_volume:/home/app/TOPUS-shop/staticfiles/
       - media_volume:/home/app/TOPUS-shop/media
-      - /etc/letsencrypt/ssl/fullchain.pem:/etc/nginx/ssl/fullchain.pem
-      - /etc/letsencrypt/ssl/privkey.pem:/etc/nginx/ssl/privkey.pem
+      - /etc/letsencrypt/live/topus-shop.com/fullchain.pem:/etc/nginx/ssl/fullchain.pem
+      - /etc/letsencrypt/live/topus-shop.com/privkey.pem:/etc/nginx/ssl/privkey.pem
     ports:
       - 80:80
       - 443:443
